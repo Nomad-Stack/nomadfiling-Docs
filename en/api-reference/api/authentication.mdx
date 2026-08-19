@@ -597,7 +597,7 @@ Yes. Every successful refresh revokes the old token row and returns a new access
 `invalid_grant` usually means the authorization code or refresh token is expired, revoked, already used, hashed lookup failed, the client ID does not match, the redirect URI does not match, or the PKCE verifier does not match the stored challenge.
 
   </Expandable>
-  <Expandable title="Does the server require PKCE?"">
+  <Expandable title="Does the server require PKCE?">
 
 PKCE is conditionally required. If the authorization request included `code_challenge`, the token request must include a valid `code_verifier`. For public clients, use PKCE on every authorization request.
 
