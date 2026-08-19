@@ -1,106 +1,93 @@
 ---
 title: Änderungsprotokoll
-description: Verfolgen Sie Nomadfiling-Produktupdates — neue Formulare, Funktionen, Integrationen und Verbesserungen auf der Steuererklärungsplattform.
+description: >-
+  Verfolgen Sie Nomadfiling-Produktupdates — neue Formulare, Funktionen,
+  Integrationen und Verbesserungen auf der Steuererklärungsplattform.
 ---
-
 ## Aktuelle Updates
 
 Verfolgen Sie Produktänderungen in Nomadfiling, einschließlich neuer Einreichungsworkflows, Zustellungsoptionen, KI-Funktionen und Plattformverbesserungen. Die unten stehenden Daten spiegeln die Rollout-Reihenfolge wider, die im Produkt-Codebase und Migrationszeitplan sichtbar ist.
 
-<Callout kind="info">
-
-Veröffentlichungsdaten sind ungefähr, wenn die Codebase kein öffentliches Launch-Datum bereitstellt. Einträge sind geordnet, um den beobachteten Produkt-Rollout von März bis Mai 2026 widerzuspiegeln.
-
+<Callout kind="info" collapsed="false">
+  Veröffentlichungsdaten sind ungefähr, wenn die Codebase kein öffentliches Launch-Datum bereitstellt. Einträge sind geordnet, um den beobachteten Produkt-Rollout von März bis Mai 2026 widerzuspiegeln.
 </Callout>
 
-<Update label="2026-05" description="MCP-Zugang, API-Schlüssel und Erweiterung KI-Workflows" tags={["feature", "improvement"]}>
+<Update label="2026-05" description="MCP-Zugang, API-Schlüssel und Erweiterung KI-Workflows" tags={["feature","improvement"]}>
+  ## MCP-Server-Zugang für KI-Agenten hinzugefügt
 
-## MCP-Server-Zugang für KI-Agenten hinzugefügt
+  Nomadfiling hat einen MCP-Server mit 14 Tools für KI-gestützte Workflows hinzugefügt. Dies ermöglicht die Verbindung kompatibler KI-Clients mit Einreichungs- und Compliance-Workflows über OAuth 2.1 mit PKCE.
 
-Nomadfiling hat einen MCP-Server mit 14 Tools für KI-gestützte Workflows hinzugefügt. Dies ermöglicht die Verbindung kompatibler KI-Clients mit Einreichungs- und Compliance-Workflows über OAuth 2.1 mit PKCE.
+  ## API-Schlüssel-Verwaltung hinzugefügt
 
-## API-Schlüssel-Verwaltung hinzugefügt
+  Sie können jetzt API-Schlüssel für MCP-Zugang im Produkt erstellen und widerrufen. Dies gibt Teams einen separaten Zugangspfad für agentenbasierte Workflows, ohne sich nur auf interaktive Anmeldung zu verlassen.
 
-Sie können jetzt API-Schlüssel für MCP-Zugang im Produkt erstellen und widerrufen. Dies gibt Teams einen separaten Zugangspfad für agentenbasierte Workflows, ohne sich nur auf interaktive Anmeldung zu verlassen.
+  ## KI-Einreichungsunterstützung erweitert
 
-## KI-Einreichungsunterstützung erweitert
+  KI-gestützter Compliance-Scan und Generierung unterstützender Erklärungen wurden hinzugefügt, um manuelle Prüfarbeit zu reduzieren. Der Compliance-Scanner analysiert hochgeladene PDFs, und der Erklärungsgenerator hilft beim Entwerfen unterstützender Formulierungen für Einreichungsanlagen.
 
-KI-gestützter Compliance-Scan und Generierung unterstützender Erklärungen wurden hinzugefügt, um manuelle Prüfarbeit zu reduzieren. Der Compliance-Scanner analysiert hochgeladene PDFs, und der Erklärungsgenerator hilft beim Entwerfen unterstützender Formulierungen für Einreichungsanlagen.
+  ## Produktentdeckung und Planung verbessert
 
-## Produktentdeckung und Planung verbessert
-
-Eine Feature-Roadmap mit Upvoting ist jetzt in der App verfügbar. Dies gibt Ihnen einen klareren Überblick darüber, was das Team in Erwägung zieht, und eine direkte Möglichkeit, Nachfrage zu signalisieren.
-
+  Eine Feature-Roadmap mit Upvoting ist jetzt in der App verfügbar. Dies gibt Ihnen einen klareren Überblick darüber, was das Team in Erwägung zieht, und eine direkte Möglichkeit, Nachfrage zu signalisieren.
 </Update>
 
-<Update label="2026-05" description="Verlängerungen, Unterstützung verspäteter Einreichungen und IRS-Faxzustellung" tags={["feature", "improvement"]}>
+<Update label="2026-05" description="Verlängerungen, Unterstützung verspäteter Einreichungen und IRS-Faxzustellung" tags={["feature","improvement"]}>
+  ## Form-7004-Verlängerungseinreichung hinzugefügt
 
-## Form-7004-Verlängerungseinreichung hinzugefügt
+  Nomadfiling hat einen Form-7004-Workflow mit Berechtigungsquiz und Verlängerungsformulargenerierung eingeführt. Dies hilft Ihnen festzustellen, ob eine Verlängerung zutrifft, bevor Sie das Einreichungspaket vorbereiten.
 
-Nomadfiling hat einen Form-7004-Workflow mit Berechtigungsquiz und Verlängerungsformulargenerierung eingeführt. Dies hilft Ihnen festzustellen, ob eine Verlängerung zutrifft, bevor Sie das Einreichungspaket vorbereiten.
+  ## Generierung verspäteter Einreichungsbriefe hinzugefügt
 
-## Generierung verspäteter Einreichungsbriefe hinzugefügt
+  Sie können jetzt einen verspäteten Einreichungsbrief mit einer Angabe vertretbarer Gründe als Teil des Einreichungsworkflows generieren. Dies ist für Fälle konzipiert, in denen Sie Begleitdokumentation neben überfälligen Einreichungen benötigen.
 
-Sie können jetzt einen verspäteten Einreichungsbrief mit einer Angabe vertretbarer Gründe als Teil des Einreichungsworkflows generieren. Dies ist für Fälle konzipiert, in denen Sie Begleitdokumentation neben überfälligen Einreichungen benötigen.
+  ## Faxzustellung über Telnyx hinzugefügt
 
-## Faxzustellung über Telnyx hinzugefügt
+  Faxversand wurde für IRS-Zustellungsworkflows hinzugefügt, einschließlich Postausgang und Fax-Statusbehandlung. Dies gibt Ihnen eine In-Produkt-Option für Formulare und Dokumente, die weiterhin auf Fax-Einreichung angewiesen sind.
 
-Faxversand wurde für IRS-Zustellungsworkflows hinzugefügt, einschließlich Postausgang und Fax-Statusbehandlung. Dies gibt Ihnen eine In-Produkt-Option für Formulare und Dokumente, die weiterhin auf Fax-Einreichung angewiesen sind.
-
-<Callout kind="tip">
-
-Wenn Ihre Einreichung Faxzustellung erfordert, prüfen Sie das generierte Paket vor dem Senden, damit Seitenanzahl, Deckblattdetails und angehängte Formulare Ihrer Einreichung entsprechen.
-
-</Callout>
-
+  <Callout kind="tip" collapsed="false">
+    Wenn Ihre Einreichung Faxzustellung erfordert, prüfen Sie das generierte Paket vor dem Senden, damit Seitenanzahl, Deckblattdetails und angehängte Formulare Ihrer Einreichung entsprechen.
+  </Callout>
 </Update>
 
 <Update label="2026-04" description="Partnerschaftseinreichungsunterstützung und Quellensteuerformulare" tags={["feature"]}>
+  ## Partnerschafts-Einreichungsworkflows hinzugefügt
 
-## Partnerschafts-Einreichungsworkflows hinzugefügt
+  Nomadfiling hat sich über Einreichungen ausländisch besessener Einpersonen-LLCs hinaus erweitert, um Partnerschaftseinreichungen zu unterstützen. Der neue Workflow deckt Form 1065 und zugehörige Partner-Berichtsdokumente ab.
 
-Nomadfiling hat sich über Einreichungen ausländisch besessener Einpersonen-LLCs hinaus erweitert, um Partnerschaftseinreichungen zu unterstützen. Der neue Workflow deckt Form 1065 und zugehörige Partner-Berichtsdokumente ab.
+  ## Schedule-K-1-, K-2- und K-3-Unterstützung hinzugefügt
 
-## Schedule-K-1-, K-2- und K-3-Unterstützung hinzugefügt
+  Partnerschaftseinreichungen umfassen jetzt Ausgaben auf Partnerebene und internationale Berichterstattung, einschließlich Datenerfassung für Schedule K-1, Schedule K-2 und Schedule K-3. Dies erweitert die Plattform für Partnerschaften mit grenzüberschreitenden Steuerberichtsanforderungen.
 
-Partnerschaftseinreichungen umfassen jetzt Ausgaben auf Partnerebene und internationale Berichterstattung, einschließlich Datenerfassung für Schedule K-1, Schedule K-2 und Schedule K-3. Dies erweitert die Plattform für Partnerschaften mit grenzüberschreitenden Steuerberichtsanforderungen.
+  ## Forms-8804-, 8805- und 1040-NR-Unterstützung hinzugefügt
 
-## Forms-8804-, 8805- und 1040-NR-Unterstützung hinzugefügt
-
-Das Partnerschafts-Release fügte auch Quellensteuer- und Nichtansässigen-Einreichungsunterstützung über Forms 8804, 8805 und 1040-NR hinzu. Dies verbindet Partnerschaftseinkommenszuordnung und Quellensteuer-Workflows im selben Einreichungssystem.
-
+  Das Partnerschafts-Release fügte auch Quellensteuer- und Nichtansässigen-Einreichungsunterstützung über Forms 8804, 8805 und 1040-NR hinzu. Dies verbindet Partnerschaftseinkommenszuordnung und Quellensteuer-Workflows im selben Einreichungssystem.
 </Update>
 
 <Update label="2026-03" description="Kernplattform-Launch und Kontogrundlagen" tags={["feature"]}>
+  ## Ersten Einreichungsworkflow gestartet
 
-## Ersten Einreichungsworkflow gestartet
+  Nomadfiling startete mit einem geführten Form-5472- und Form-1120-Workflow für ausländisch besessene US Disregarded Entities. Die Kernerfahrung umfasst schrittweise Dateneingabe, PDF-Generierung, Prüfung und verpackte Einreichungsausgaben.
 
-Nomadfiling startete mit einem geführten Form-5472- und Form-1120-Workflow für ausländisch besessene US Disregarded Entities. Die Kernerfahrung umfasst schrittweise Dateneingabe, PDF-Generierung, Prüfung und verpackte Einreichungsausgaben.
+  ## Kontozugang und Zahlungen hinzugefügt
 
-## Kontozugang und Zahlungen hinzugefügt
+  Das anfängliche Release umfasste Supabase Auth für Kontozugang und Stripe für Einmalzahlungen. Dies etablierte den Kern-Konto- und Checkout-Ablauf für bezahlte Einreichungsgenerierung.
 
-Das anfängliche Release umfasste Supabase Auth für Kontozugang und Stripe für Einmalzahlungen. Dies etablierte den Kern-Konto- und Checkout-Ablauf für bezahlte Einreichungsgenerierung.
+  ## Dashboard und Grundlagen der Einreichungsverwaltung hinzugefügt
 
-## Dashboard und Grundlagen der Einreichungsverwaltung hinzugefügt
-
-Die erste Dashboard-Erfahrung gab Benutzern einen Ort zur Verwaltung von Einreichungen und zum Durchlaufen des Vorbereitungsablaufs. Der Launch umfasste auch das Einmalpreismodell über vier Stufen, von $147 bis $497.
-
+  Die erste Dashboard-Erfahrung gab Benutzern einen Ort zur Verwaltung von Einreichungen und zum Durchlaufen des Vorbereitungsablaufs. Der Launch umfasste auch das Einmalpreismodell über vier Stufen, von $147 bis $497.
 </Update>
 
-<Update label="2026-03" description="Lokalisierung, Affiliate-Tracking und Analytics-Integrationen" tags={["improvement", "feature"]}>
+<Update label="2026-03" description="Lokalisierung, Affiliate-Tracking und Analytics-Integrationen" tags={["improvement","feature"]}>
+  ## 16-sprachige Oberflächenunterstützung hinzugefügt
 
-## 16-sprachige Oberflächenunterstützung hinzugefügt
+  Nomadfiling führte mehrsprachige UI-Unterstützung in 16 Sprachen ein. Dies erleichtert die Navigation durch den Einreichungsworkflow für Benutzer, die lieber in einer anderen Sprache als Englisch arbeiten.
 
-Nomadfiling führte mehrsprachige UI-Unterstützung in 16 Sprachen ein. Dies erleichtert die Navigation durch den Einreichungsworkflow für Benutzer, die lieber in einer anderen Sprache als Englisch arbeiten.
+  ## Affiliate-Tracking hinzugefügt
 
-## Affiliate-Tracking hinzugefügt
+  Affiliate-Zuordnung wurde über Tolt.io mit Stripe-verbundenem Referral-Tracking hinzugefügt. Dies unterstützt Partner- und Referral-Programme, die an bezahlte Conversions gebunden sind.
 
-Affiliate-Zuordnung wurde über Tolt.io mit Stripe-verbundenem Referral-Tracking hinzugefügt. Dies unterstützt Partner- und Referral-Programme, die an bezahlte Conversions gebunden sind.
+  ## Conversion-Tracking-Integrationen hinzugefügt
 
-## Conversion-Tracking-Integrationen hinzugefügt
-
-Meta Conversions API und Google Ads Conversion Tracking wurden hinzugefügt, um die Messung von Akquisitions- und Kaufereignissen zu verbessern. Diese Integrationen unterstützen Kampagnen-Zuordnung und Berichterstattung über Marketingkanäle hinweg.
-
+  Meta Conversions API und Google Ads Conversion Tracking wurden hinzugefügt, um die Messung von Akquisitions- und Kaufereignissen zu verbessern. Diese Integrationen unterstützen Kampagnen-Zuordnung und Berichterstattung über Marketingkanäle hinweg.
 </Update>
 
 ## Was sich insgesamt geändert hat
@@ -113,17 +100,17 @@ Die Plattform hat sich von einem fokussierten Form-5472- und Form-1120-Einreichu
 
 ## Verwandte Seiten
 
-<Columns cols={2}>
-  <Card title="Preise" href="/de/pricing" icon="bar-chart" cta="Preise ansehen">
+<Columns cols="2">
+  <Card title="Preise" href="/de/pricing" icon="bar-chart" cta="Preise ansehen" horizontal="false">
     Prüfen Sie Einmalpreisstufen und was jeder Plan umfasst.
   </Card>
-  <Card title="Roadmap" href="/de/roadmap" icon="rocket" cta="Geplante Funktionen ansehen">
+
+  <Card title="Roadmap" href="/de/roadmap" icon="rocket" cta="Geplante Funktionen ansehen" horizontal="false">
     Prüfen Sie anstehende Arbeit und stimmen Sie über die Funktionen ab, die Ihnen am wichtigsten sind.
   </Card>
 </Columns>
 
 <Expandable title="So lesen Sie dieses Änderungsprotokoll" default-open="false">
-
-Einträge fassen bemerkenswerte benutzerseitige Änderungen zusammen. Kleine interne Refactorings, Textänderungen und routinemäßige Wartungsarbeit werden nicht aufgeführt, es sei denn, sie haben die Art und Weise, wie Sie einreichen, bezahlen oder auf die Plattform zugreifen, wesentlich verändert.
-
+  Einträge fassen bemerkenswerte benutzerseitige Änderungen zusammen. Kleine interne Refactorings, Textänderungen und routinemäßige Wartungsarbeit werden nicht aufgeführt, es sei denn, sie haben die Art und Weise, wie Sie einreichen, bezahlen oder auf die Plattform zugreifen, wesentlich verändert.
 </Expandable>
+
