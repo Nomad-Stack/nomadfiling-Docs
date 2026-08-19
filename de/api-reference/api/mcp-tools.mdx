@@ -1,0 +1,1137 @@
+---
+title: MCP-Tools-Referenz
+description: Durchsuche alle 14 Nomadfiling-MCP-Tools — Filing-CRUD, Partnerschaftseinreichungen, Zahlungen, Faxprotokolle, Formularschema und PDF-URLs — mit Parametern, Antworten und Beispielen.
+---
+
+## Nomadfiling-Tools über deinen MCP-Client verwenden
+
+Nomadfiling stellt 14 authentifizierte MCP-Tools bereit, um Einreichungen aufzulisten, zu erstellen, zu aktualisieren und zu löschen, plus Zahlungsverlauf, Faxprotokolle, Formularschemas und PDF-Deep-Links. Nutze diese Seite als Referenz für Tool-Namen, Eingaben, Antwortformen und gängige Anfragemuster.
+
+<Callout kind="info">
+
+Jeder Tool-Aufruf erfordert Authentifizierung über deinen MCP-Client. Richte deine Anmeldedaten ein, bevor du ein Tool aufrufst.
+
+</Callout>
+
+<Columns cols={2}>
+<Card title="Authentifizierung" href="/de/api-reference/api/authentication" icon="lock" cta="Auth einrichten" />
+<Card title="API-Schlüssel erstellen" href="/de/account/api-keys" icon="key-round" cta="Schlüssel verwalten" />
+<Card title="MCP-Übersicht" href="/de/api-reference/api/mcp-overview" icon="book-open" cta="So funktioniert der Server" />
+<Card title="Formularleitfäden" href="/de/form-5472-1120" icon="file-text" cta="5472- und 1120-Felder prüfen" />
+</Columns>
+
+## Tools aus deinem Client aufrufen
+
+Die meisten MCP-Clients verpacken Tool-Aufrufe unterschiedlich, aber die Nutzlastform ist gleich: übergib den Tool-Namen und ein JSON-Objekt mit den Tool-Argumenten.
+
+<CodeGroup tabs="JSON,cURL">
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_filings",
+    "arguments": {
+      "limit": 10
+    }
+  }
+}
+```
+
+```bash
+curl -X POST "https://mcp.nomadfiling.com" \
+  -H "Authorization: Bearer sk_test_example_9xmk7q2r" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "tools/call",
+    "params": {
+      "name": "list_filings",
+      "arguments": {
+        "limit": 10
+      }
+    }
+  }'
+```
+
+</CodeGroup>
+
+Eine erfolgreiche Antwort enthält das in den folgenden Abschnitten definierte Tool-Ergebnis. Tools, die eine bestimmte Einreichung nachschlagen oder ändern, geben einen Fehler zurück, wenn die Einreichung nicht existiert oder nicht dem authentifizierten Nutzer gehört.
+
+## 5472- und 1120-Einreichungstools
+
+Diese Tools arbeiten mit Einreichungsdatensätzen für Einzelmitglieds-Workflows zu Form 5472 und Form 1120.
+
+### list_filings
+
+Listet 5472- und 1120-Einreichungen auf, die dem authentifizierten Nutzer gehören.
+
+<ParamField body="limit" param-type="number" required="false" show-location="false">
+
+Maximale Anzahl zurückzugebender Einreichungen. Standard ist `50`.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool gibt ein Array von Einreichungsübersichtsobjekten zurück.
+
+<ResponseField name="id" field-type="string" required="true">
+Eindeutige Einreichungskennung als UUID.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+Auf dem Einreichungsdatensatz gespeicherter LLC-Name.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number der Einreichung.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Auf der Einreichung gespeichertes Startdatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Auf der Einreichung gespeichertes Enddatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Aktueller Einreichungsstatus.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Zeitstempel, wann die Einreichung erstellt wurde.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_filings",
+    "arguments": {
+      "limit": 2
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c",
+    "llc_name": "Cedar Ridge Imports LLC",
+    "ein": "98-7654321",
+    "tax_year_begin": "2025-01-01",
+    "tax_year_end": "2025-12-31",
+    "status": "completed",
+    "created_at": "2026-01-14T18:22:11.302Z"
+  },
+  {
+    "id": "f03c32e7-d6ae-4bbc-a0cb-fcf2107ea6f0",
+    "llc_name": "North Harbor Trading LLC",
+    "ein": "81-2233445",
+    "tax_year_begin": "2024-01-01",
+    "tax_year_end": "2024-12-31",
+    "status": "completed",
+    "created_at": "2025-02-03T09:41:28.901Z"
+  }
+]
+```
+</Response>
+
+### get_filing
+
+Ruft die vollständigen Daten einer einzelnen 5472- und 1120-Einreichung ab.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Einreichungs-UUID.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool gibt die vollständige Einreichungszeile zurück, einschließlich des serialisierten Objekts `form_data`, das zum Befüllen der Einreichung verwendet wird.
+
+<ResponseField name="id" field-type="string" required="true">
+Eindeutige Einreichungskennung.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+LLC-Name der Einreichung.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Startdatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Enddatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Aktueller Einreichungsstatus.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Erstellungszeitstempel.
+</ResponseField>
+
+<ResponseField name="form_data" field-type="object" required="true">
+Vollständige Formularnutzlast der Einreichung, einschließlich Gesellschaft, Eigentümer, verbundener Partei, Transaktion, Unterschrift und optionaler Dokumentdaten.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_filing",
+    "arguments": {
+      "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c",
+  "llc_name": "Cedar Ridge Imports LLC",
+  "ein": "98-7654321",
+  "tax_year_begin": "2025-01-01",
+  "tax_year_end": "2025-12-31",
+  "status": "completed",
+  "created_at": "2026-01-14T18:22:11.302Z",
+  "form_data": {
+    "taxYearBegin": "2025-01-01",
+    "taxYearEnd": "2025-12-31",
+    "llcName": "Cedar Ridge Imports LLC",
+    "llcStreet": "4100 Meridian Ave",
+    "llcCity": "Miami, FL 33140",
+    "ein": "98-7654321",
+    "isInitialYear": true,
+    "ownerName": "Lucia Ortega",
+    "ownerCitizenship": "Spain",
+    "relatedParties": [
+      {
+        "id": "rp_1",
+        "name": "Iberia Holdings SL",
+        "relationship": "25pct_shareholder"
+      }
+    ],
+    "signerTitle": "Managing Member",
+    "signatureDate": "2026-01-14"
+  }
+}
+```
+</Response>
+
+<Callout kind="alert">
+
+`get_filing` gibt einen Fehler mit der Meldung `Filing not found` zurück, wenn die Einreichung nicht existiert oder nicht dem authentifizierten Nutzer gehört.
+
+</Callout>
+
+### create_filing
+
+Erstellt einen neuen 5472- und 1120-Einreichungsdatensatz.
+
+<ParamField body="form_data" param-type="object" required="true" show-location="false">
+
+Vollständige Einreichungsnutzlast. Dieses Objekt enthält die Formularwerte, die von der Nomadfiling-App verwendet werden.
+
+</ParamField>
+
+<ParamField body="llc_name" param-type="string" required="false" show-location="false">
+
+Auf der Einreichungszeile gespeicherter LLC-Name. Wenn weggelassen, fällt das Tool auf `form_data.llcName` zurück.
+
+</ParamField>
+
+<ParamField body="ein" param-type="string" required="false" show-location="false">
+
+Auf der Einreichungszeile gespeicherte Employer Identification Number. Wenn weggelassen, fällt das Tool auf `form_data.ein` zurück.
+
+</ParamField>
+
+<ParamField body="tax_year_begin" param-type="string" required="false" show-location="false">
+
+Auf der Einreichungszeile zu speicherndes Startdatum des Steuerjahres.
+
+</ParamField>
+
+<ParamField body="tax_year_end" param-type="string" required="false" show-location="false">
+
+Auf der Einreichungszeile zu speicherndes Enddatum des Steuerjahres.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool erstellt die Einreichung mit Status `completed` und gibt die neue Einreichungskennung und App-URL zurück.
+
+<ResponseField name="id" field-type="string" required="true">
+Neue Einreichungs-UUID.
+</ResponseField>
+
+<ResponseField name="view_url" field-type="string" required="true">
+App-URL zum Öffnen der Einreichung.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "create_filing",
+    "arguments": {
+      "form_data": {
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "llcName": "Blue Summit Ventures LLC",
+        "llcStreet": "88 Market Street",
+        "llcCity": "San Francisco, CA 94105",
+        "ein": "83-5566778",
+        "isInitialYear": false,
+        "ownerName": "Kenji Watanabe",
+        "ownerStreet": "2-14-7 Shibuya",
+        "ownerCity": "Tokyo",
+        "ownerCitizenship": "Japan",
+        "relatedParties": []
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+  "view_url": "https://app.nomadfiling.com/filing/a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+}
+```
+</Response>
+
+### update_filing
+
+Aktualisiert eine bestehende 5472- und 1120-Einreichung. Nur die von dir angegebenen Felder werden aktualisiert.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Einreichungs-UUID.
+
+</ParamField>
+
+<ParamField body="llc_name" param-type="string" required="false" show-location="false">
+
+Aktualisierter LLC-Name.
+
+</ParamField>
+
+<ParamField body="ein" param-type="string" required="false" show-location="false">
+
+Aktualisierte Employer Identification Number.
+
+</ParamField>
+
+<ParamField body="tax_year_begin" param-type="string" required="false" show-location="false">
+
+Aktualisiertes Startdatum des Steuerjahres.
+
+</ParamField>
+
+<ParamField body="tax_year_end" param-type="string" required="false" show-location="false">
+
+Aktualisiertes Enddatum des Steuerjahres.
+
+</ParamField>
+
+<ParamField body="form_data" param-type="object" required="false" show-location="false">
+
+Aktualisierte Formularnutzlast. Das Tool patcht nur die angegebenen Felder auf Zeilenebene der Einreichung.
+
+</ParamField>
+
+#### Antwort
+
+<ResponseField name="id" field-type="string" required="true">
+Aktualisierte Einreichungs-UUID.
+</ResponseField>
+
+<ResponseField name="view_url" field-type="string" required="true">
+App-URL zum Öffnen der aktualisierten Einreichung.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "update_filing",
+    "arguments": {
+      "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+      "llc_name": "Blue Summit Ventures LLC",
+      "form_data": {
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "llcName": "Blue Summit Ventures LLC",
+        "ein": "83-5566778",
+        "signerTitle": "Manager"
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+  "view_url": "https://app.nomadfiling.com/filing/a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+}
+```
+</Response>
+
+<Callout kind="alert">
+
+`update_filing` gibt `Filing not found` zurück, wenn die Einreichung nicht existiert oder der authentifizierte Nutzer sie nicht aktualisieren darf.
+
+</Callout>
+
+### delete_filing
+
+Löscht eine 5472- und 1120-Einreichung.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Einreichungs-UUID.
+
+</ParamField>
+
+#### Antwort
+
+<ResponseField name="ok" field-type="boolean" required="true">
+Gibt `true` zurück, wenn die Einreichung gelöscht wurde.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "delete_filing",
+    "arguments": {
+      "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "ok": true
+}
+```
+</Response>
+
+## Partnerschafts-Einreichungstools
+
+Diese Tools arbeiten mit Partnerschaftseinreichungen für Multi-Member-LLCs, einschließlich Form 1065, Schedule K-1 sowie den Workflows zu Form 8804 und 8805.
+
+### list_partnership_filings
+
+Listet Partnerschaftseinreichungen auf, die dem authentifizierten Nutzer gehören.
+
+<ParamField body="limit" param-type="number" required="false" show-location="false">
+
+Maximale Anzahl zurückzugebender Einreichungen. Standard ist `50`.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool gibt ein Array von Partnerschafts-Einreichungsübersichten in derselben Form wie `list_filings` zurück.
+
+<ResponseField name="id" field-type="string" required="true">
+Eindeutige Einreichungskennung als UUID.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+Auf der Einreichungszeile gespeicherter Partnerschaftsname.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Startdatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Enddatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Aktueller Einreichungsstatus.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Erstellungszeitstempel.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_partnership_filings",
+    "arguments": {
+      "limit": 2
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a",
+    "llc_name": "Juniper Atlas Partners LLC",
+    "ein": "86-4433221",
+    "tax_year_begin": "2025-01-01",
+    "tax_year_end": "2025-12-31",
+    "status": "completed",
+    "created_at": "2026-02-09T15:08:41.221Z"
+  }
+]
+```
+</Response>
+
+### get_partnership_filing
+
+Ruft die vollständigen Daten einer Partnerschaftseinreichung ab.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+UUID der Partnerschaftseinreichung.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool gibt die vollständige Einreichungszeile zurück, einschließlich des serialisierten Objekts `form_data`.
+
+<ResponseField name="id" field-type="string" required="true">
+Eindeutige Einreichungskennung.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+Auf der Einreichungszeile gespeicherter Partnerschaftsname.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Startdatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Enddatum des Steuerjahres.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Aktueller Einreichungsstatus.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Erstellungszeitstempel.
+</ResponseField>
+
+<ResponseField name="form_data" field-type="object" required="true">
+Vollständige Partnerschafts-Formularnutzlast, einschließlich Partnerdaten, Einkommen, Abzügen, Schedule K und Quellensteuerwerten.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_partnership_filing",
+    "arguments": {
+      "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a",
+  "llc_name": "Juniper Atlas Partners LLC",
+  "ein": "86-4433221",
+  "tax_year_begin": "2025-01-01",
+  "tax_year_end": "2025-12-31",
+  "status": "completed",
+  "created_at": "2026-02-09T15:08:41.221Z",
+  "form_data": {
+    "partnershipName": "Juniper Atlas Partners LLC",
+    "ein": "86-4433221",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78701",
+    "accountingMethod": "cash",
+    "taxYearBegin": "2025-01-01",
+    "taxYearEnd": "2025-12-31",
+    "partners": [
+      {
+        "id": "4dbf5ee0-b584-4bc0-8101-2cb423909e3f",
+        "name": "Mariana Silva",
+        "type": "general",
+        "isForeign": true,
+        "entityType": "individual",
+        "withholdingRate": "37"
+      }
+    ]
+  }
+}
+```
+</Response>
+
+<Callout kind="alert">
+
+`get_partnership_filing` gibt `Filing not found` zurück, wenn die Einreichung nicht existiert oder nicht dem authentifizierten Nutzer gehört.
+
+</Callout>
+
+### create_partnership_filing
+
+Erstellt eine neue Partnerschaftseinreichung.
+
+<ParamField body="form_data" param-type="object" required="true" show-location="false">
+
+Vollständige Nutzlast der Partnerschaftseinreichung. Das Tool leitet `llc_name` von `form_data.partnershipName` ab.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool erstellt die Einreichung mit Status `completed`.
+
+<ResponseField name="id" field-type="string" required="true">
+Neue UUID der Partnerschaftseinreichung.
+</ResponseField>
+
+<ResponseField name="view_url" field-type="string" required="true">
+App-URL für den Partnerschafts-Workflow.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "create_partnership_filing",
+    "arguments": {
+      "form_data": {
+        "partnershipName": "Summit Oak Advisory LLC",
+        "ein": "92-6677880",
+        "street": "1550 Blake Street",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80202",
+        "businessActivity": "Management consulting",
+        "businessActivityCode": "541611",
+        "dateBusinessStarted": "2025-01-15",
+        "accountingMethod": "cash",
+        "totalAssets": "25000",
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "partners": []
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "4fe24805-f32a-4c80-ab95-e408819802f4",
+  "view_url": "https://app.nomadfiling.com/partnership"
+}
+```
+</Response>
+
+### update_partnership_filing
+
+Aktualisiert eine bestehende Partnerschaftseinreichung.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+UUID der Partnerschaftseinreichung.
+
+</ParamField>
+
+<ParamField body="form_data" param-type="object" required="true" show-location="false">
+
+Aktualisierte Nutzlast der Partnerschaftseinreichung. Abgeleitete Zeilenfelder werden aus diesem Objekt neu berechnet.
+
+</ParamField>
+
+#### Antwort
+
+<ResponseField name="ok" field-type="boolean" required="true">
+Gibt `true` zurück, wenn die Partnerschaftseinreichung aktualisiert wurde.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "update_partnership_filing",
+    "arguments": {
+      "id": "4fe24805-f32a-4c80-ab95-e408819802f4",
+      "form_data": {
+        "partnershipName": "Summit Oak Advisory LLC",
+        "ein": "92-6677880",
+        "street": "1550 Blake Street",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80202",
+        "businessActivity": "Management consulting",
+        "businessActivityCode": "541611",
+        "dateBusinessStarted": "2025-01-15",
+        "accountingMethod": "cash",
+        "totalAssets": "42000",
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "partners": []
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "ok": true
+}
+```
+</Response>
+
+### delete_partnership_filing
+
+Löscht eine Partnerschaftseinreichung.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+UUID der Partnerschaftseinreichung.
+
+</ParamField>
+
+#### Antwort
+
+<ResponseField name="ok" field-type="boolean" required="true">
+Gibt `true` zurück, wenn die Partnerschaftseinreichung gelöscht wurde.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "delete_partnership_filing",
+    "arguments": {
+      "id": "4fe24805-f32a-4c80-ab95-e408819802f4"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "ok": true
+}
+```
+</Response>
+
+## Konto- und Hilfs-Tools
+
+Diese Tools stellen Zahlungen, Faxverlauf, Schema-Metadaten und PDF-URLs bereit.
+
+### list_payments
+
+Listet bis zu 100 Zahlungsdatensätze für den authentifizierten Nutzer auf.
+
+#### Antwort
+
+<ResponseField name="id" field-type="string" required="true">
+Zahlungskennung.
+</ResponseField>
+
+<ResponseField name="amount" field-type="number" required="true">
+Zahlungsbetrag.
+</ResponseField>
+
+<ResponseField name="currency" field-type="string" required="true">
+Währungscode der Zahlung.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Zahlungsstatus.
+</ResponseField>
+
+<ResponseField name="filings_purchased" field-type="number" required="true">
+Anzahl der gekauften Einreichungen oder Guthaben.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Erstellungszeitstempel.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_payments",
+    "arguments": {}
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "pay_01JY6Y8KQ4ZC8W7PZ4M2J4BN0N",
+    "amount": 299,
+    "currency": "usd",
+    "status": "succeeded",
+    "filings_purchased": 1,
+    "created_at": "2026-01-02T11:15:09.104Z"
+  }
+]
+```
+</Response>
+
+### list_fax_logs
+
+Listet bis zu 100 Faxprotokolldatensätze für den authentifizierten Nutzer auf.
+
+#### Antwort
+
+<ResponseField name="id" field-type="string" required="true">
+Kennung des Faxprotokolls.
+</ResponseField>
+
+<ResponseField name="to_number" field-type="string" required="true">
+Empfänger-Faxnummer.
+</ResponseField>
+
+<ResponseField name="from_number" field-type="string" required="true">
+Absender-Faxnummer.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Faxzustellstatus.
+</ResponseField>
+
+<ResponseField name="pages_sent" field-type="number" required="true">
+Anzahl der gesendeten Seiten.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Erstellungszeitstempel.
+</ResponseField>
+
+<ResponseField name="completed_at" field-type="string" required="false">
+Abschlusszeitstempel, wenn das Fax die Verarbeitung beendet hat.
+</ResponseField>
+
+<ResponseField name="failure_reason" field-type="string" required="false">
+Fehlergrund, wenn die Zustellung nicht erfolgreich abgeschlossen wird.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_fax_logs",
+    "arguments": {}
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "fax_01JY6YFRGQ2KQ2H29M3X6X8T8D",
+    "to_number": "+12125550199",
+    "from_number": "+16465550101",
+    "status": "delivered",
+    "pages_sent": 6,
+    "created_at": "2026-01-20T16:32:50.002Z",
+    "completed_at": "2026-01-20T16:35:17.447Z",
+    "failure_reason": null
+  }
+]
+```
+</Response>
+
+### get_form_schema
+
+Gibt das unterstützte Formularfeldschema entweder für den 5472- und 1120-Workflow oder den Partnerschafts-Workflow zurück.
+
+<ParamField body="kind" param-type="string" required="true" enum="5472,partnership" show-location="false">
+
+Wählt, welches Schema zurückgegeben wird.
+
+</ParamField>
+
+#### Antwort
+
+Das Tool gibt einen Schema-Deskriptor mit einer Beschreibung auf oberster Ebene und einem Objekt `fields` zurück.
+
+<ResponseField name="description" field-type="string" required="true">
+Menschenlesbare Beschreibung des ausgewählten Formularschemas.
+</ResponseField>
+
+<ResponseField name="fields" field-type="object" required="true">
+Zuordnung unterstützter Feldnamen zu Feldbeschreibungen für die ausgewählte Einreichungsart.
+</ResponseField>
+
+#### Enthaltene 5472-Felder
+
+Das Schema `5472` enthält diese Felder auf oberster Ebene: `taxYearBegin`, `taxYearEnd`, `llcName`, `llcStreet`, `llcCity`, `ein`, `totalAssets`, `businessActivity`, `businessActivityCode`, `isInitialYear`, `countryIncorporation`, `dateIncorporation`, `taxResidentCountry`, `principalBusinessCountries`, `ownerName`, `ownerStreet`, `ownerCity`, `ownerUSId`, `ownerRefId`, `ownerFTIN`, `ownerBusinessCountries`, `ownerCitizenship`, `ownerTaxResidentCountry`, `relatedParties`, `signerTitle`, `signatureDate`, `generateForm7004` und `generateLateFilingLetter`.
+
+#### Enthaltene Partnerschaftsfelder
+
+Das Schema `partnership` enthält diese Felder auf oberster Ebene: `partnershipName`, `ein`, `street`, `city`, `state`, `zip`, `businessActivity`, `businessActivityCode`, `dateBusinessStarted`, `accountingMethod`, `totalAssets`, `taxYearBegin`, `taxYearEnd`, `partners`, `income`, `deductions`, `scheduleK` und `withholding`.
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_form_schema",
+    "arguments": {
+      "kind": "5472"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "description": "Field descriptions for the Form 5472 and Form 1120 workflow",
+  "fields": {
+    "taxYearBegin": "Tax year start date",
+    "taxYearEnd": "Tax year end date",
+    "llcName": "Legal name of the LLC",
+    "llcStreet": "Street address of the LLC",
+    "llcCity": "City, state, and ZIP for the LLC",
+    "ein": "Employer Identification Number",
+    "totalAssets": "Total assets at year end",
+    "businessActivity": "Primary business activity",
+    "businessActivityCode": "Business activity code",
+    "relatedParties": "Array of related party objects"
+  }
+}
+```
+</Response>
+
+### get_pdf_url
+
+Gibt einen Deep-Link zur Nomadfiling-App zurück, unter dem die Einreichung geöffnet und PDFs angesehen oder heruntergeladen werden können.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Einreichungs-UUID.
+
+</ParamField>
+
+<ParamField body="kind" param-type="string" required="false" enum="5472,partnership" show-location="false">
+
+Hinweis zum Einreichungstyp. Standard ist `5472`. Das Tool erkennt die korrekte Einreichungstabelle automatisch, bevor es die URL zurückgibt.
+
+</ParamField>
+
+#### Antwort
+
+<ResponseField name="url" field-type="string" required="true">
+Deep-Link zur Einreichung in der Nomadfiling-App.
+</ResponseField>
+
+<ResponseField name="kind" field-type="string" required="true">
+Aufgelöste Einreichungsart, entweder `5472` oder `partnership`.
+</ResponseField>
+
+#### Beispiel
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_pdf_url",
+    "arguments": {
+      "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "url": "https://app.nomadfiling.com/filing/f5dbb2d8-118d-4688-97f0-85b2f278d29c",
+  "kind": "5472"
+}
+```
+</Response>
+
+## Gängige Muster
+
+Verwende dieselbe Einreichungs-`id` über die Lookup-, Update-, Delete- und PDF-URL-Tools. Erstellungstools geben die `id` zurück, die du für spätere Operationen benötigst.
+
+<CodeGroup tabs="Erstellen dann abrufen,PDF-URL holen">
+
+```json
+{
+  "create_filing_result": {
+    "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+    "view_url": "https://app.nomadfiling.com/filing/a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+  },
+  "next_call": {
+    "method": "tools/call",
+    "params": {
+      "name": "get_filing",
+      "arguments": {
+        "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_pdf_url",
+    "arguments": {
+      "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a",
+      "kind": "partnership"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+<Callout kind="tip">
+
+Wenn du Einreichungsnutzlasten außerhalb der Nomadfiling-App erzeugst, rufe zuerst `get_form_schema` auf, um die erwarteten Feldnamen auf oberster Ebene für den Einreichungstyp zu prüfen, den du erstellen möchtest.
+
+</Callout>
+
+## Verwandte Seiten
+
+<Columns cols={2}>
+<Card title="MCP-Übersicht" href="/de/api-reference/api/mcp-overview" icon="book-open" cta="Den Server verstehen" />
+<Card title="API-Anfragen authentifizieren" href="/de/api-reference/api/authentication" icon="lock" cta="Auth konfigurieren" />
+<Card title="Form 5472 und 1120" href="/de/form-5472-1120" icon="file-text" cta="Einreichungsfelder prüfen" />
+<Card title="Partnerschaftserklärung" href="/de/partnership-filing" icon="users" cta="Partnerschaftsfelder prüfen" />
+</Columns>
+
+## FAQ
+
+<ExpandableGroup>
+<Expandable title="Erfordern alle Tools Authentifizierung?" default-open="true">
+
+Ja. Jedes Nomadfiling-MCP-Tool wird über `tools/call` aufgerufen und erfordert eine authentifizierte MCP-Client-Sitzung.
+
+</Expandable>
+<Expandable title="Was passiert, wenn ich optionale Felder beim Erstellen einer Einreichung weglasse?">
+
+Für `create_filing` fällt der Server auf `form_data.llcName` für `llc_name` und `form_data.ein` für `ein` zurück, wenn diese Zeilenfelder weggelassen werden. Für `create_partnership_filing` leitet der Server `llc_name` von `form_data.partnershipName` ab.
+
+</Expandable>
+<Expandable title="Was ist der Unterschied zwischen view_url und get_pdf_url?">
+
+`view_url` wird von Create- und Update-Tools als praktischer Link zurückgegeben. `get_pdf_url` löst den Einreichungstyp auf und gibt den Deep-Link zurück, den du später verwenden kannst, wenn du nur eine Einreichungs-`id` hast.
+
+</Expandable>
+<Expandable title="Kann ich get_form_schema als vollständige Validierungsspezifikation verwenden?">
+
+Nein. `get_form_schema` gibt Feldbeschreibungen und unterstützte Feldnamen auf oberster Ebene zurück. Nutze es, um Nutzlasten zu formen, aber gehe nicht davon aus, dass es die Validierung auf Anwendungsebene ersetzt.
+
+</Expandable>
+<Expandable title="Wie wähle ich zwischen 5472- und Partnerschafts-Tools?">
+
+Verwende das 5472-Toolset für Einzelmitglieds-Einreichungs-Workflows, die in [Form 5472 und 1120](/de/form-5472-1120) dokumentiert sind. Verwende das Partnerschafts-Toolset für Multi-Member-LLC-Partnerschafts-Workflows, die in [Partnerschaftserklärung](/de/partnership-filing) dokumentiert sind.
+
+</Expandable>
+</ExpandableGroup>
