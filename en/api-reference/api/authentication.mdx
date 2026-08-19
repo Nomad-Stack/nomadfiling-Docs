@@ -26,13 +26,15 @@ Authorization: Bearer nf_4a6d3a58c8f0b21f6b4e9d0a7f3c1b2e5d6f7a8b9c0d1e2f3a4b5c6
 
 **Server verification**
 
-- Checks that the token starts with `nf_`
-- Computes the SHA-256 hash of the raw token
-- Compares that hash to `api_keys.key_hash`
-- Verifies the row exists in `api_keys`
-- Verifies `expires_at` is either `null` or in the future
-- Updates `api_keys.last_used_at` asynchronously
-- Returns `user_id` on success, or `null` on failure
+<ul>
+  <li>Checks that the token starts with `nf_`</li>
+  <li>Computes the SHA-256 hash of the raw token</li>
+  <li>Compares that hash to `api_keys.key_hash`</li>
+  <li>Verifies the row exists in `api_keys`</li>
+  <li>Verifies `expires_at` is either `null` or in the future</li>
+  <li>Updates `api_keys.last_used_at` asynchronously</li>
+  <li>Returns `user_id` on success, or `null` on failure</li>
+</ul>
 
   </Tab>
   <Tab title="OAuth 2.1" icon="lock">
@@ -47,14 +49,16 @@ Authorization: Bearer mcp_at_0SxQYxjC4gG2P7rZlN8vWmKb3uD5eHqTfA1pLs9nJcY
 
 **Server verification**
 
-- Checks that the token starts with `mcp_at_`
-- Computes the SHA-256 hash of the raw token
-- Compares that hash to `oauth_tokens.access_token_hash`
-- Verifies the row exists in `oauth_tokens`
-- Verifies `revoked` is `false`
-- Verifies `expires_at` is in the future
-- Updates `oauth_tokens.last_used_at` asynchronously
-- Returns `user_id` on success, or `null` on failure
+<ul>
+  <li>Checks that the token starts with `mcp_at_`</li>
+  <li>Computes the SHA-256 hash of the raw token</li>
+  <li>Compares that hash to `oauth_tokens.access_token_hash`</li>
+  <li>Verifies the row exists in `oauth_tokens`</li>
+  <li>Verifies `revoked` is `false`</li>
+  <li>Verifies `expires_at` is in the future</li>
+  <li>Updates `oauth_tokens.last_used_at` asynchronously</li>
+  <li>Returns `user_id` on success, or `null` on failure</li>
+</ul>
 
   </Tab>
 </Tabs>

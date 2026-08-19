@@ -26,13 +26,15 @@ Authorization: Bearer nf_4a6d3a58c8f0b21f6b4e9d0a7f3c1b2e5d6f7a8b9c0d1e2f3a4b5c6
 
 **Serverprüfung**
 
-- Prüft, dass das Token mit `nf_` beginnt
-- Berechnet den SHA-256-Hash des Roh-Tokens
-- Vergleicht diesen Hash mit `api_keys.key_hash`
-- Prüft, dass die Zeile in `api_keys` existiert
-- Prüft, dass `expires_at` entweder `null` oder in der Zukunft liegt
-- Aktualisiert `api_keys.last_used_at` asynchron
-- Gibt bei Erfolg `user_id` zurück, bei Fehler `null`
+<ul>
+  <li>Prüft, dass das Token mit `nf_` beginnt</li>
+  <li>Berechnet den SHA-256-Hash des Roh-Tokens</li>
+  <li>Vergleicht diesen Hash mit `api_keys.key_hash`</li>
+  <li>Prüft, dass die Zeile in `api_keys` existiert</li>
+  <li>Prüft, dass `expires_at` entweder `null` oder in der Zukunft liegt</li>
+  <li>Aktualisiert `api_keys.last_used_at` asynchron</li>
+  <li>Gibt bei Erfolg `user_id` zurück, bei Fehler `null`</li>
+</ul>
 
   </Tab>
   <Tab title="OAuth 2.1" icon="lock">
@@ -47,14 +49,16 @@ Authorization: Bearer mcp_at_0SxQYxjC4gG2P7rZlN8vWmKb3uD5eHqTfA1pLs9nJcY
 
 **Serverprüfung**
 
-- Prüft, dass das Token mit `mcp_at_` beginnt
-- Berechnet den SHA-256-Hash des Roh-Tokens
-- Vergleicht diesen Hash mit `oauth_tokens.access_token_hash`
-- Prüft, dass die Zeile in `oauth_tokens` existiert
-- Prüft, dass `revoked` `false` ist
-- Prüft, dass `expires_at` in der Zukunft liegt
-- Aktualisiert `oauth_tokens.last_used_at` asynchron
-- Gibt bei Erfolg `user_id` zurück, bei Fehler `null`
+<ul>
+  <li>Prüft, dass das Token mit `mcp_at_` beginnt</li>
+  <li>Berechnet den SHA-256-Hash des Roh-Tokens</li>
+  <li>Vergleicht diesen Hash mit `oauth_tokens.access_token_hash`</li>
+  <li>Prüft, dass die Zeile in `oauth_tokens` existiert</li>
+  <li>Prüft, dass `revoked` `false` ist</li>
+  <li>Prüft, dass `expires_at` in der Zukunft liegt</li>
+  <li>Aktualisiert `oauth_tokens.last_used_at` asynchron</li>
+  <li>Gibt bei Erfolg `user_id` zurück, bei Fehler `null`</li>
+</ul>
 
   </Tab>
 </Tabs>
