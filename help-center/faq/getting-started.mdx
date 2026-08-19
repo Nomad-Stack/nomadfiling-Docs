@@ -1,22 +1,168 @@
 ---
-title: How do I get started?
-description: Learn how to create your first Nomadfiling project.
+title: Getting started FAQ
+description: Answers to common questions about signing up, creating your first filing, pricing, and what to prepare before you start.
 ---
 
-## Steps
+## Common questions about getting started
 
-1. Sign up at `https://app.nomadfiling.com`.
-2. Verify your email address.
-3. Click "New Project" on your dashboard.
-4. Enter a project name and description.
-5. Click "Create" to save your project.
+Nomadfiling helps you prepare U.S. tax filings for foreign-owned LLCs without installing software or filling forms by hand. If you are deciding whether the product fits your situation, these answers cover the questions most new users ask first.
 
-Your new project is ready to organize documentation!
+<Callout kind="info">
 
-## Example
+Nomadfiling runs in your browser at `app.nomadfiling.com`. You can enter your filing data before checkout, then pay only when you are ready to generate and download your PDFs.
 
-```bash
-curl -X POST https://api.nomadfiling.com/v1/projects \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{"name": "My Project"}'
-```
+</Callout>
+
+<ExpandableGroup>
+  <Expandable title="What is Nomadfiling and what forms does it handle?" default-open="true">
+
+  Nomadfiling is a U.S. tax filing platform for foreign-owned LLCs. It guides you through a filing wizard, collects the information your return needs, and generates the tax documents as PDFs.
+
+  Nomadfiling handles these forms and related documents:
+
+  - **Form 5472** for related party transactions
+  - **Form 1120** for the corporate return filing requirement that accompanies Form 5472
+  - **Form 1065** for partnership returns
+  - **Schedule K-1, K-2, and K-3**
+  - **Form 8804 and Form 8805** for withholding reporting
+  - **Form 1040-NR**
+  - **Form 7004** for filing extensions
+  - **Late filing penalty letters**
+
+  If your filing involves multiple related parties, Nomadfiling can generate separate Form 5472 filings as needed.
+
+  </Expandable>
+
+  <Expandable title="Do I need to install any software?">
+
+  No. Nomadfiling runs entirely in your browser at `app.nomadfiling.com`.
+
+  You do not need to download desktop software, install plugins, or manage updates. Sign in, open the filing wizard, and continue from any supported browser.
+
+  </Expandable>
+
+  <Expandable title="How do I create my first filing?">
+
+  Start at `app.nomadfiling.com`, create your account, and open the filing wizard from the home page or the `/quiz` path. The wizard walks you through the filing in eight steps, so you can enter everything in a clear order.
+
+  The filing flow includes these steps:
+
+  - **Entity** — enter your LLC or reporting entity details
+  - **Owner** — add the foreign owner information
+  - **Related Party** — add one or more related parties
+  - **Transactions** — enter related party transaction amounts
+  - **Signature** — add your signature, signing date, and title
+  - **Supporting Statements** — include statements and optional documents
+  - **Review** — check all entered information before generating files
+  - **PDF Preview** — preview and download the generated PDFs
+
+  When you finish the last step, you can generate your documents and download them.
+
+  </Expandable>
+
+  <Expandable title="What information do I need before starting?">
+
+  Gather your entity details before you begin so you can complete the wizard in one pass. Most users need business information, owner details, and any transaction amounts that belong on the filing.
+
+  Prepare these items first:
+
+  - **LLC details** — legal name, address, EIN, incorporation date, and total assets
+  - **Business details** — business activity and NAICS code
+  - **Foreign owner details** — name, address, tax residency, and FTIN if available
+  - **Related party details** — names and identifying information for any related parties
+  - **Transaction amounts** — amounts paid to or received from related parties, if applicable
+
+  If you do not have every optional detail yet, you can still start the filing and return later to update it.
+
+  </Expandable>
+
+  <Expandable title="How much does it cost?">
+
+  Nomadfiling uses one-time pricing, not a subscription. You pay for the number of filings you need.
+
+  Current pricing:
+
+  - **1 filing** — `$147`
+  - **2 filings** — `$197`
+  - **5 filings** — `$297`
+  - **Unlimited filings** — `$497`
+
+  Promotion codes are supported at checkout when available.
+
+  </Expandable>
+
+  <Expandable title="Do I need to pay before entering my data?">
+
+  No. You can complete the filing wizard before payment.
+
+  The payment step appears at the end, when you are ready to generate and download the PDFs. That lets you confirm your entity details, owner information, transactions, and supporting statements before you pay.
+
+  </Expandable>
+
+  <Expandable title="What languages does the interface support?">
+
+  Nomadfiling supports 16 interface languages.
+
+  Available languages include:
+
+  - **English**
+  - **German**
+  - **Arabic**
+  - **Spanish**
+  - **French**
+  - **Hindi**
+  - **Indonesian**
+  - **Italian**
+  - **Japanese**
+  - **Korean**
+  - **Portuguese**
+  - **Russian**
+  - **Thai**
+  - **Turkish**
+  - **Chinese**
+
+  If your preferred language is available in the interface, you can switch to it while using the app.
+
+  </Expandable>
+
+  <Expandable title="Can I edit a filing after creating it?">
+
+  Yes. Open your [dashboard](/dashboard), find the filing you want to update, and select **Edit**.
+
+  Nomadfiling stores your filings in the dashboard, where you can view, edit, or delete them. After editing, regenerate the PDFs to reflect your changes.
+
+  </Expandable>
+
+  <Expandable title="Can I send my filing to the IRS by fax?">
+
+  Yes. Nomadfiling includes a built-in fax service powered by Telnyx.
+
+  After you generate your PDFs, you can send them directly to IRS fax numbers from the app. Nomadfiling also provides a fax outbox where you can track delivery status after sending.
+
+  <Callout kind="tip">
+
+  If you plan to fax your filing, review the generated PDFs before sending so the faxed copy matches the final version you intend to submit.
+
+  </Callout>
+
+  </Expandable>
+
+  <Expandable title="What is the MCP server and do I need it?">
+
+  The MCP server lets AI tools connect to your Nomadfiling account programmatically. Developers can use it to build workflows where AI agents interact with filings, account data, or product functions.
+
+  Most users do not need the MCP server. If you use Nomadfiling through the web app to prepare and download filings, you can ignore it.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Related guides
+
+If you want a guided walkthrough instead of an FAQ, start with the quickstart and pricing pages.
+
+<Columns cols={2}>
+  <Card title="Quickstart" href="/quickstart" icon="rocket" cta="Open guide" />
+  <Card title="Pricing" href="/getting-started/pricing" icon="bar-chart" cta="View plans" />
+  <Card title="Introduction" href="/introduction" icon="book-open" cta="Learn the basics" />
+  <Card title="Features" href="/features" icon="check-circle" cta="See what Nomadfiling includes" />
+</Columns>

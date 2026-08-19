@@ -1,0 +1,213 @@
+---
+title: Dashboard and filing management
+description: View, filter, edit, and delete your saved tax filings from the Nomadfiling dashboard, and track your filing credits.
+---
+
+## Manage your saved filings from one place
+
+The dashboard at `/dashboard` shows every filing saved to your account, starting with the most recently created. From this page, you can track filing credits, filter filings by tax year, open a filing to review it, return to editing, or delete it when you no longer need it.
+
+<Callout kind="info">
+
+You must be signed in to open the dashboard. If you are not logged in, Nomadfiling redirects you to `/login`.
+
+</Callout>
+
+## What you can do in the dashboard
+
+The dashboard is built for ongoing filing management rather than first-time setup. It combines your saved filings, your available filing credits, and account navigation in one screen.
+
+### Review your filing list
+
+Each filing appears as a card with the key details you need to identify it quickly:
+
+- **LLC name**
+- **EIN**
+- **Tax year range**
+- **Creation date**
+
+Nomadfiling loads filings from your saved records and orders them by creation date in descending order, so the newest filing appears first.
+
+### Track filing credits
+
+The credit summary at the top of the dashboard shows how many filings you have used against your paid credits.
+
+Nomadfiling calculates this by summing the `filings_purchased` value from your paid payments:
+
+- If at least one paid payment includes `-1`, the dashboard shows **Unlimited**
+- Otherwise, it shows **X of Y filings used**
+
+That makes it easy to see whether you need to buy more credits before creating another filing.
+
+<Callout kind="tip">
+
+If your credit count does not match what you expect, check the status of your purchases on the [Payments](/account/payments) page. Only paid payments count toward your filing total.
+
+</Callout>
+
+### Filter by tax year
+
+Use the year filter to narrow the list to a specific filing period. The dashboard extracts unique years from each filing's `tax_year_end` value and shows them as pill buttons.
+
+The filter always includes:
+
+- **All** for every filing
+- One button for each detected year, such as **2024** or **2023**
+
+Years are sorted from newest to oldest so recent filings stay easiest to reach.
+
+### Use the account navigation
+
+The dashboard navigation gives you access to the rest of your account tools without leaving the signed-in area.
+
+Available navigation items include:
+
+- **Dashboard**
+- **Fax Outbox**
+- **Payments**
+- **Account**
+- **Language** switcher
+- **Logout**
+
+On smaller screens, the same navigation is available through the mobile hamburger menu.
+
+## Work with an existing filing
+
+Most dashboard actions start from a filing card. Choose the action that matches what you need to do next.
+
+<Steps>
+  <Step title="Find the filing you want to manage" icon="folder">
+
+  Scan the filing cards or use the year filter to reduce the list first. This is the fastest way to find the right entity when you have filings across multiple tax years.
+
+  When you find the correct card, confirm the LLC name, EIN, and tax year before taking action.
+
+  </Step>
+  <Step title="Choose the right action" icon="play-circle">
+
+  Each filing card includes these actions:
+
+  - **Edit** opens `/edit/:filingId` so you can continue updating the filing
+  - **View** opens `/filing/:filingId` to review the saved filing
+  - **Download** opens `/filing/:filingId` so you can access the generated filing output
+  - **Delete** starts the removal flow for that filing
+
+  If you only need to inspect details or retrieve documents, use **View** or **Download**. Use **Edit** when you need to change filing data.
+
+  </Step>
+  <Step title="Confirm destructive changes before deleting" icon="trash">
+
+  When you choose **Delete**, Nomadfiling shows a confirmation dialog before removing the filing.
+
+  After you confirm, Nomadfiling deletes the filing's PDF files from the `filing-pdfs` storage bucket and then deletes the filing record itself. Once that process finishes, the filing no longer appears in your dashboard.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+
+Deleting a filing removes both the saved filing record and its stored PDF files. If you may need the documents later, download them before you delete the filing.
+
+</Callout>
+
+## Understand each dashboard action
+
+### Edit
+
+Use **Edit** to reopen a filing in the editor at `/edit/:filingId`. This is the right choice when you need to correct entity details, update transaction amounts, or regenerate documents after making changes.
+
+If the filing opens successfully, you return to the editing flow with that filing loaded instead of starting from a blank form.
+
+### View
+
+Use **View** to open the filing detail page at `/filing/:filingId`. This helps when you want to review a saved filing without changing its data.
+
+Choose this option when you are verifying filing details, checking tax year information, or confirming that a filing was saved correctly.
+
+### Download
+
+Use **Download** from the filing page to access the generated output associated with that filing. This is the best option when you are ready to keep a local copy for your records or submit documents through your normal workflow.
+
+If the filing has generated documents available, the filing page gives you access to those saved outputs.
+
+### Delete
+
+Use **Delete** only when you are sure you no longer need the filing in your account. Deletion is permanent because it removes the stored PDFs first and then deletes the filing record.
+
+If you are unsure, open the filing and download the documents before you delete it.
+
+## What happens if you have no filings yet
+
+If your account does not have any saved filings, the dashboard shows a **No filings yet** empty state instead of the filing list.
+
+That empty state includes a **Create First Filing** call to action that links to `/`, so you can start a new filing immediately.
+
+## Troubleshooting common dashboard questions
+
+<ExpandableGroup>
+  <Expandable title="Why does the dashboard send me to the login page?">
+
+  The dashboard is available only to signed-in users. If your session has expired or you are not logged in, Nomadfiling redirects you to `/login`.
+
+  Sign in again, then return to `/dashboard`.
+
+  </Expandable>
+  <Expandable title="Why do I see Unlimited instead of a credit count?">
+
+  The dashboard shows **Unlimited** when any paid payment on your account has `filings_purchased` set to `-1`.
+
+  This means your account has an unlimited filing entitlement instead of a fixed filing quota.
+
+  </Expandable>
+  <Expandable title="Why is a year missing from the filter?">
+
+  The year filter is built from the `tax_year_end` value on your saved filings. If a year is missing, check whether the filing was saved with the expected tax year end date.
+
+  If no saved filing uses that year, the dashboard does not show a filter button for it.
+
+  </Expandable>
+  <Expandable title="What exactly is deleted when I remove a filing?">
+
+  Deleting a filing removes the generated PDF files from the `filing-pdfs` storage bucket and then deletes the filing record from the database.
+
+  After deletion, the filing no longer appears in the dashboard and its stored PDFs are no longer available from your account.
+
+  </Expandable>
+  <Expandable title="What is the difference between View and Download?">
+
+  **View** opens the filing page so you can inspect the saved filing. **Download** takes you to the same filing route, where you can access the filing output.
+
+  If you want to review first, choose **View**. If you are retrieving documents, choose **Download**.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Related pages
+
+<Columns cols={2}>
+  <Card title="Create a new filing" href="/quickstart" icon="rocket" cta="Open quickstart">
+  Start your next filing if your dashboard is empty or you have credits available.
+  </Card>
+  <Card title="Review payments and credits" href="/account/payments" icon="bar-chart" cta="Open payments">
+  Check paid purchases and confirm how your filing credits are calculated.
+  </Card>
+  <Card title="Manage your account" href="/account/profile" icon="settings" cta="Open account">
+  Update account details and review your signed-in profile settings.
+  </Card>
+  <Card title="Understand Form 5472 and 1120" href="/form-5472-1120" icon="book-open" cta="Read guide">
+  Review the filing workflow and document set before editing or creating a filing.
+  </Card>
+</Columns>
+
+## Next steps
+
+Now that you know how to manage saved filings, you can either create another return or review your available credits before you start.
+
+<Columns cols={2}>
+  <Card title="Start a filing" href="/quickstart" icon="arrow-right" cta="Go to quickstart">
+  Create a new filing from the guided flow.
+  </Card>
+  <Card title="Check pricing" href="/getting-started/pricing" icon="check-circle" cta="View pricing">
+  Compare filing options and decide whether you need more credits.
+  </Card>
+</Columns>

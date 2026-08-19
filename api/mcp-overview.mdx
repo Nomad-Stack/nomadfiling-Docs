@@ -1,0 +1,653 @@
+---
+title: MCP server overview
+description: Connect AI agents to Nomadfiling through the Model Context Protocol server — learn about the protocol, transport, authentication, and available endpoints.
+---
+
+## Connect agents to the Nomadfiling MCP server
+
+Nomadfiling exposes a Model Context Protocol server for AI agents that need to discover filing tools, read tool schemas, and create filings over a standard JSON-RPC interface. The server runs as a Deno-based Supabase Edge Function, uses streamable HTTP transport, and stays stateless between requests.
+
+<Callout kind="info">
+
+Authenticate only `tools/call` requests. Methods such as `initialize`, `ping`, and `tools/list` work without authentication, which lets clients discover capabilities before presenting a login or API key flow.
+
+</Callout>
+
+### Server identity
+
+Use these values when configuring MCP clients or validating the `initialize` response.
+
+<ParamField body="baseUrl" param-type="string" required="true" show-location="false">
+
+`{SUPABASE_URL}/functions/v1/mcp-server`
+
+</ParamField>
+
+<ParamField body="runtime" param-type="string" show-location="false">
+
+Deno on Supabase Edge Functions.
+
+</ParamField>
+
+<ParamField body="transport" param-type="string" show-location="false">
+
+Streamable HTTP.
+
+</ParamField>
+
+<ParamField body="sessionModel" param-type="string" show-location="false">
+
+Stateless. The server does not rely on persistent sessions between requests.
+
+</ParamField>
+
+<ParamField body="protocolVersion" param-type="string" show-location="false">
+
+`2025-06-18`
+
+</ParamField>
+
+<ParamField body="serverName" param-type="string" show-location="false">
+
+`nomadfiling-mcp`
+
+</ParamField>
+
+<ParamField body="serverVersion" param-type="string" show-location="false">
+
+`1.1.0`
+
+</ParamField>
+
+<ParamField body="appUrl" param-type="string" show-location="false">
+
+`https://app.nomadfiling.com`
+
+</ParamField>
+
+<ParamField body="instructions" param-type="string" show-location="false">
+
+`NomadFiling MCP — manage US LLC filings (Form 5472/1120, Partnership, K-1, 8804/8805). Use get_form_schema first, then create_filing.`
+
+</ParamField>
+
+### What the server is for
+
+The MCP server is designed for agent-driven filing workflows. A client typically connects, reads the available tools, requests the schema for a form, and then submits structured filing data.
+
+That makes the server a good fit for:
+
+- AI desktop clients such as Claude Desktop
+- Chat-based integrations that support MCP connections
+- Custom agent runtimes that can send JSON-RPC over HTTP
+- Internal automations that need tool discovery before execution
+
+### Common request flow
+
+Most integrations follow the same sequence, even if the client handles some of it for you.
+
+```mermaid
+sequenceDiagram
+  participant Client as MCP client
+  participant Server as Nomadfiling MCP server
+  participant App as Nomadfiling app
+
+  Client->>Server: initialize
+  Server-->>Client: protocolVersion, capabilities, serverInfo
+  Client->>Server: tools/list
+  Server-->>Client: tool schemas
+  Client->>Server: tools/call get_form_schema
+  Server-->>Client: structured schema
+  Client->>Server: tools/call create_filing
+  Server-->>Client: filing result
+  Note over Client,App: OAuth clients may visit the app during authorization
+```
+
+## Use the MCP endpoint
+
+Send JSON-RPC requests to the root MCP endpoint. If your client requests server-sent events with the `Accept` header set to `text/event-stream`, the same endpoint returns SSE-formatted responses.
+
+<Request tabs="cURL,JavaScript" default-tab="1">
+```bash
+curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "init_001",
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2025-06-18",
+      "clientInfo": {
+        "name": "acme-agent",
+        "version": "1.0.0"
+      }
+    }
+  }'
+```
+
+```javascript
+const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "init_001",
+    method: "initialize",
+    params: {
+      protocolVersion: "2025-06-18",
+      clientInfo: {
+        name: "acme-agent",
+        version: "1.0.0"
+      }
+    }
+  })
+})
+
+const data = await response.json()
+console.log(data)
+```
+</Request>
+
+<Response tabs="200" default-tab="1">
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "init_001",
+  "result": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {},
+    "serverInfo": {
+      "name": "nomadfiling-mcp",
+      "version": "1.1.0"
+    },
+    "instructions": "NomadFiling MCP — manage US LLC filings (Form 5472/1120, Partnership, K-1, 8804/8805). Use get_form_schema first, then create_filing."
+  }
+}
+```
+</Response>
+
+A successful `initialize` call confirms that the client and server can speak the same protocol version. After that, call `tools/list` to discover tool schemas before attempting any authenticated tool execution.
+
+### Request server-sent events
+
+Use SSE when your MCP client expects `event: message` frames instead of a plain JSON body.
+
+<CodeGroup tabs="cURL,JavaScript">
+```bash
+curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "ping_001",
+    "method": "ping",
+    "params": {}
+  }'
+```
+
+```javascript
+const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "text/event-stream"
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "ping_001",
+    method: "ping",
+    params: {}
+  })
+})
+
+const text = await response.text()
+console.log(text)
+```
+</CodeGroup>
+
+The event payload is formatted as `event: message` followed by `data:` and the JSON-RPC response body.
+
+## Authenticate tool calls
+
+Authenticate `tools/call` with either a NomadFiling API key or an OAuth 2.1 access token. Both authentication methods use the `Authorization` header with the `Bearer` scheme.
+
+### Supported authentication methods
+
+<Tabs>
+  <Tab title="API key" icon="key">
+
+Use an API key when you control the integration and do not need an end-user OAuth consent flow. API keys use the `nf_` prefix, and the server verifies a SHA-256 hash against stored key records.
+
+<ParamField body="authorizationHeader" param-type="string" show-location="false">
+
+`Authorization: Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a`
+
+</ParamField>
+
+<ParamField body="verification" param-type="string" show-location="false">
+
+The server hashes the presented token with SHA-256 and compares it against `api_keys.key_hash`.
+
+</ParamField>
+
+<ParamField body="expiry" param-type="string" show-location="false">
+
+Configurable per key.
+
+</ParamField>
+
+<ParamField body="usageTracking" param-type="string" show-location="false">
+
+Successful authentication updates `last_used_at`.
+
+</ParamField>
+
+  </Tab>
+  <Tab title="OAuth access token" icon="lock">
+
+Use OAuth when an agent acts on behalf of a user or when you need dynamic client registration and refresh tokens. Access tokens use the `mcp_at_` prefix, and the server verifies a SHA-256 hash against stored OAuth token records.
+
+<ParamField body="authorizationHeader" param-type="string" show-location="false">
+
+`Authorization: Bearer mcp_at_example_7jd3p4n8q2r6s1t5v9w0x3y6`
+
+</ParamField>
+
+<ParamField body="verification" param-type="string" show-location="false">
+
+The server hashes the presented token with SHA-256 and compares it against `oauth_tokens.access_token_hash`.
+
+</ParamField>
+
+<ParamField body="expiry" param-type="string" show-location="false">
+
+1 hour.
+
+</ParamField>
+
+<ParamField body="revocationCheck" param-type="string" show-location="false">
+
+The server rejects revoked tokens and expired tokens.
+
+</ParamField>
+
+<ParamField body="usageTracking" param-type="string" show-location="false">
+
+Successful authentication updates `last_used_at`.
+
+</ParamField>
+
+  </Tab>
+</Tabs>
+
+<Callout kind="alert">
+
+If you send `tools/call` without valid credentials, the server returns HTTP `401` and includes a `WWW-Authenticate` header. Handle that response as an authentication challenge, not as a tool-level failure.
+
+</Callout>
+
+### Example authenticated tool call
+
+This example shows the pattern for invoking a tool after discovery. Replace the tool name and arguments with a real tool from [`/api/mcp-tools`](/api/mcp-tools).
+
+<Request tabs="cURL,JavaScript" default-tab="1">
+```bash
+curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "tool_001",
+    "method": "tools/call",
+    "params": {
+      "name": "get_form_schema",
+      "arguments": {
+        "formType": "form-5472-1120"
+      }
+    }
+  }'
+```
+
+```javascript
+const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a"
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "tool_001",
+    method: "tools/call",
+    params: {
+      name: "get_form_schema",
+      arguments: {
+        formType: "form-5472-1120"
+      }
+    }
+  })
+})
+
+const data = await response.json()
+console.log(data)
+```
+</Request>
+
+<Response tabs="200,401" default-tab="1">
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "tool_001",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"formType\":\"form-5472-1120\",\"schema\":{\"type\":\"object\"}}"
+      }
+    ],
+    "structuredContent": {
+      "formType": "form-5472-1120",
+      "schema": {
+        "type": "object"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "tool_001",
+  "error": {
+    "code": -32001,
+    "message": "Unauthorized"
+  }
+}
+```
+</Response>
+
+A successful tool result includes both a text payload and `structuredContent`. Tool-level failures use an error-shaped tool payload, while protocol-level failures use JSON-RPC errors.
+
+## Understand the available endpoints
+
+The MCP server exposes both the main JSON-RPC channel and OAuth discovery endpoints.
+
+### OAuth and MCP endpoints
+
+<ParamField path="/.well-known/oauth-protected-resource" param-type="GET" required="true">
+
+Returns OAuth protected resource metadata as defined by RFC 9728.
+
+</ParamField>
+
+<ParamField path="/.well-known/oauth-authorization-server" param-type="GET" required="true">
+
+Returns OAuth 2.1 authorization server metadata.
+
+</ParamField>
+
+<ParamField path="/.well-known/openid-configuration" param-type="GET" required="true">
+
+Returns the same authorization server metadata through an OpenID configuration-style path.
+
+</ParamField>
+
+<ParamField path="/register" param-type="POST" required="true">
+
+Registers OAuth clients dynamically using RFC 7591.
+
+</ParamField>
+
+<ParamField path="/authorize" param-type="GET" required="true">
+
+Starts the authorization flow and redirects to `https://app.nomadfiling.com/oauth/authorize`.
+
+</ParamField>
+
+<ParamField path="/approve" param-type="POST" required="true">
+
+Approves OAuth consent in a frontend-facing flow that uses a Supabase JWT.
+
+</ParamField>
+
+<ParamField path="/token" param-type="POST" required="true">
+
+Issues tokens for the `authorization_code` and `refresh_token` grants.
+
+</ParamField>
+
+<ParamField path="/" param-type="POST" required="true">
+
+Handles MCP JSON-RPC requests and supports SSE responses.
+
+</ParamField>
+
+### CORS behavior
+
+Browser-based clients can call the server directly. The function returns permissive CORS headers and responds to `OPTIONS` preflight requests with status `200` and headers only.
+
+<ParamField body="Access-Control-Allow-Origin" param-type="string" show-location="false">
+
+`*`
+
+</ParamField>
+
+<ParamField body="Access-Control-Allow-Methods" param-type="string" show-location="false">
+
+`GET, POST, OPTIONS, DELETE`
+
+</ParamField>
+
+<ParamField body="Access-Control-Allow-Headers" param-type="string" show-location="false">
+
+`authorization, x-client-info, apikey, content-type, mcp-session-id, mcp-protocol-version`
+
+</ParamField>
+
+<ParamField body="Access-Control-Expose-Headers" param-type="string" show-location="false">
+
+`mcp-session-id, www-authenticate`
+
+</ParamField>
+
+## JSON-RPC methods and behavior
+
+The server implements a focused MCP method set. Some methods are informational, while `tools/call` executes authenticated actions.
+
+### Supported methods
+
+<ParamField body="initialize" param-type="method" show-location="false">
+
+No authentication required. Returns `protocolVersion`, `capabilities`, `serverInfo`, and `instructions`.
+
+</ParamField>
+
+<ParamField body="ping" param-type="method" show-location="false">
+
+No authentication required. Returns an empty object.
+
+</ParamField>
+
+<ParamField body="notifications/initialized" param-type="method" show-location="false">
+
+No authentication required. Returns HTTP `202`.
+
+</ParamField>
+
+<ParamField body="notifications/cancelled" param-type="method" show-location="false">
+
+No authentication required. Returns HTTP `202`.
+
+</ParamField>
+
+<ParamField body="tools/list" param-type="method" show-location="false">
+
+No authentication required. Returns all tool schemas.
+
+</ParamField>
+
+<ParamField body="tools/call" param-type="method" show-location="false">
+
+Authentication required. Dispatches execution to the named tool.
+
+</ParamField>
+
+<ParamField body="resources/list" param-type="method" show-location="false">
+
+Returns an empty result.
+
+</ParamField>
+
+<ParamField body="prompts/list" param-type="method" show-location="false">
+
+Returns an empty result.
+
+</ParamField>
+
+### Error handling
+
+Use HTTP status and JSON-RPC error codes together. Parse failures happen before method dispatch, while authorization failures happen when a protected tool request reaches the server.
+
+| Condition | HTTP status | JSON-RPC code | Meaning |
+|---|---:|---:|---|
+| Invalid JSON body | 400 | -32700 | Parse error |
+| Unknown method | 200 | -32601 | Method not found |
+| Unauthenticated protected tool call | 401 | -32001 | Unauthorized |
+
+### Tool response shape
+
+Successful tool execution returns MCP content plus a structured payload your client can parse directly.
+
+<ResponseField name="content" field-type="array" required="true">
+
+An array of message parts. Successful tool responses include a text item whose `text` field contains a JSON string.
+
+</ResponseField>
+
+<ResponseField name="content[].type" field-type="string" required="true">
+
+For current tool responses, the value is `text`.
+
+</ResponseField>
+
+<ResponseField name="content[].text" field-type="string" required="true">
+
+A human-readable or serialized JSON payload.
+
+</ResponseField>
+
+<ResponseField name="structuredContent" field-type="object" required="true">
+
+A machine-readable representation of the same result.
+
+</ResponseField>
+
+When a tool fails at the application layer, the server returns an MCP tool error payload instead of a successful `structuredContent` result.
+
+<ResponseField name="isError" field-type="boolean" required="true">
+
+Set to `true` for tool-level failures.
+
+</ResponseField>
+
+<ResponseField name="content" field-type="array" required="true">
+
+Contains at least one text message describing the error.
+
+</ResponseField>
+
+## Token formats and lifetimes
+
+Token prefixes help clients distinguish the credential type before sending a request. The server stores sensitive token material as SHA-256 hashes rather than raw secrets.
+
+### Credential inventory
+
+| Credential | Prefix | Lifetime |
+|---|---|---|
+| API key | `nf_` | Configurable |
+| OAuth client ID | `mcp_client_` | Permanent |
+| OAuth client secret | `mcp_secret_` | Permanent |
+| Authorization code | `mcp_code_` | 5 minutes |
+| Access token | `mcp_at_` | 1 hour |
+| Refresh token | `mcp_rt_` | 30 days |
+
+## Recommended integration pattern
+
+Call `get_form_schema` before `create_filing`. That sequence matches the server instructions and reduces tool-call failures caused by missing or malformed filing fields.
+
+<Steps>
+  <Step title="Initialize the connection" icon="play-circle">
+
+Send `initialize` to confirm the protocol version and capture the returned server metadata.
+
+Your client is ready for discovery when the response includes `protocolVersion` set to `2025-06-18` and `serverInfo.name` set to `nomadfiling-mcp`.
+
+  </Step>
+  <Step title="Discover tools" icon="search">
+
+Call `tools/list` without authentication if your client supports anonymous discovery, or with authentication if your integration prefers a single authenticated channel.
+
+Success looks like a JSON-RPC result containing the available tool definitions.
+
+  </Step>
+  <Step title="Fetch the form schema" icon="code">
+
+Call `tools/call` with the `get_form_schema` tool before submitting data.
+
+Success looks like a tool result with `structuredContent` that describes the expected filing shape for the selected form.
+
+  </Step>
+  <Step title="Create the filing" icon="check-circle">
+
+Call `tools/call` again with `create_filing` and a payload that matches the schema you just retrieved.
+
+A successful submission returns an MCP tool result rather than a protocol error.
+
+  </Step>
+</Steps>
+
+## Frequently asked questions
+
+<ExpandableGroup>
+  <Expandable title="Do I need authentication for every MCP method?" default-open="false">
+
+No. `initialize`, `ping`, and `tools/list` work without authentication. Authenticate `tools/call` requests with either an API key or an OAuth access token.
+
+  </Expandable>
+  <Expandable title="Does the server keep an MCP session between requests?" default-open="false">
+
+No. The transport is stateless. Send all data the server needs with each request and do not rely on persistent server-side session state.
+
+  </Expandable>
+  <Expandable title="Does the server support browser-based clients?" default-open="false">
+
+Yes. The server returns permissive CORS headers and handles `OPTIONS` preflight requests with a `200` response and no body.
+
+  </Expandable>
+  <Expandable title="What happens if my client requests resources or prompts?" default-open="false">
+
+`resources/list` and `prompts/list` return empty results. Tool discovery and execution are the primary integration surfaces today.
+
+  </Expandable>
+  <Expandable title="How should I handle SSE responses?" default-open="false">
+
+If your client sends `Accept: text/event-stream`, parse the response as server-sent events. Each message is formatted as an `event: message` frame with the JSON-RPC payload in the `data:` line.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Related pages
+
+<Columns cols={2}>
+  <Card title="Authentication" href="/api/authentication" icon="lock" cta="Read the auth guide" />
+  <Card title="MCP tools" href="/api/mcp-tools" icon="code" cta="Browse tool definitions" />
+  <Card title="Manage API keys" href="/account/api-keys" icon="settings" cta="Create an API key" />
+  <Card title="Form 5472 and 1120 filings" href="/form-5472-1120" icon="file-text" cta="Review filing fields" />
+</Columns>
+
+For partnership workflows, see [Partnership filing](/partnership-filing).

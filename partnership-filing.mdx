@@ -1,0 +1,325 @@
+---
+title: Partnership filing wizard (Form 1065)
+description: Walk through each step of the Nomadfiling partnership filing wizard — from partnership info through partners, income, Schedule K, withholding, international reporting, and PDF generation.
+---
+
+## File a partnership return from one guided workflow
+
+Nomadfiling walks you through an 8-step partnership filing flow for Form 1065 and the related schedules and withholding forms that multi-member LLCs often need. You enter the partnership's core details, add each partner, complete the financial and international sections, review everything, and then generate the PDF package.
+
+<Callout kind="info">
+
+The partnership wizard defaults to **2 partners**, and each partner can have their own signature. The tax year defaults to **01/01/2025** through **12/31/2025**.
+
+</Callout>
+
+## What the partnership wizard generates
+
+Complete the full workflow to generate the forms tied to the data you enter in the wizard.
+
+- **Form 1065** for the partnership return
+- **Schedule K-1** for each partner
+- **Schedule K-2**
+- **Schedule K-3**
+- **Form 8804**
+- **Form 8805**
+- **Form 1040-NR** for partners
+
+<Callout kind="tip">
+
+If you also file for a foreign-owned single-member LLC, see the [Form 5472 and 1120 workflow](/form-5472-1120).
+
+</Callout>
+
+## Follow the 8 wizard steps
+
+<Steps>
+  <Step title="Enter partnership info" icon="building-2">
+
+  Start with the entity details that appear on the Form 1065 return. This step establishes the filing period, accounting method, and business identity used throughout the rest of the workflow.
+
+  Use this step to enter the partnership's basic information:
+
+  <ParamField body="partnershipName" param-type="string" required="true" show-location="false">Legal name of the partnership.</ParamField>
+  <ParamField body="ein" param-type="string" required="true" show-location="false">Employer Identification Number for the partnership.</ParamField>
+  <ParamField body="street" param-type="string" show-location="false">Street address for the business.</ParamField>
+  <ParamField body="city" param-type="string" show-location="false">City portion of the business address.</ParamField>
+  <ParamField body="state" param-type="string" show-location="false">State portion of the business address.</ParamField>
+  <ParamField body="zip" param-type="string" show-location="false">ZIP code for the business address.</ParamField>
+  <ParamField body="businessActivity" param-type="string" show-location="false">Description of the partnership's business activity.</ParamField>
+  <ParamField body="businessProduct" param-type="string" show-location="false">Primary product or service the partnership provides.</ParamField>
+  <ParamField body="businessActivityCode" param-type="string" show-location="false">Business activity code used for the return.</ParamField>
+  <ParamField body="dateBusinessStarted" param-type="string" show-location="false">Date the partnership began business operations.</ParamField>
+  <ParamField body="accountingMethod" param-type="string" enum="cash,accrual,other" show-location="false">Accounting method used for the return.</ParamField>
+  <ParamField body="totalAssets" param-type="string" show-location="false">Total assets reported for the partnership.</ParamField>
+  <ParamField body="taxYearBegin" param-type="string" show-location="false">Beginning date of the tax year. Defaults to `01/01/2025`.</ParamField>
+  <ParamField body="taxYearEnd" param-type="string" show-location="false">Ending date of the tax year. Defaults to `12/31/2025`.</ParamField>
+
+  When this step is complete, you should have the partnership's filing identity and tax year locked in before moving to partner-level allocations.
+
+  </Step>
+
+  <Step title="Add partners" icon="users">
+
+  Add every partner who needs to appear on the return and on Schedule K-1. The wizard defaults to two partners, but you should include all partners for the filing year.
+
+  Each partner record collects ownership, allocation, capital, liability, and international tax details:
+
+  <ParamField body="name" param-type="string" required="true" show-location="false">Partner name.</ParamField>
+  <ParamField body="street" param-type="string" show-location="false">Partner street address.</ParamField>
+  <ParamField body="city" param-type="string" show-location="false">Partner city.</ParamField>
+  <ParamField body="country" param-type="string" show-location="false">Partner country.</ParamField>
+  <ParamField body="tin" param-type="string" show-location="false">Partner taxpayer identification number.</ParamField>
+  <ParamField body="type" param-type="string" enum="general,limited" show-location="false">Partner classification for the return.</ParamField>
+  <ParamField body="isForeign" param-type="boolean" show-location="false">Marks whether the partner is foreign.</ParamField>
+  <ParamField body="entityType" param-type="string" enum="individual,corporation,llc,trust,other" show-location="false">Entity type for the partner.</ParamField>
+  <ParamField body="dateOfEntry" param-type="string" show-location="false">Date the partner entered the partnership.</ParamField>
+  <ParamField body="profitBegin" param-type="string" show-location="false">Partner profit percentage at the beginning of the year.</ParamField>
+  <ParamField body="profitEnd" param-type="string" show-location="false">Partner profit percentage at the end of the year.</ParamField>
+  <ParamField body="lossBegin" param-type="string" show-location="false">Partner loss percentage at the beginning of the year.</ParamField>
+  <ParamField body="lossEnd" param-type="string" show-location="false">Partner loss percentage at the end of the year.</ParamField>
+  <ParamField body="capitalBegin" param-type="string" show-location="false">Partner capital percentage at the beginning of the year.</ParamField>
+  <ParamField body="capitalEnd" param-type="string" show-location="false">Partner capital percentage at the end of the year.</ParamField>
+  <ParamField body="liabilities.nonrecourse" param-type="string" show-location="false">Partner share of nonrecourse liabilities.</ParamField>
+  <ParamField body="liabilities.qualifiedNonrecourse" param-type="string" show-location="false">Partner share of qualified nonrecourse financing.</ParamField>
+  <ParamField body="liabilities.recourse" param-type="string" show-location="false">Partner share of recourse liabilities.</ParamField>
+  <ParamField body="capitalAccount.beginning" param-type="string" show-location="false">Beginning capital account balance.</ParamField>
+  <ParamField body="capitalAccount.contributions" param-type="string" show-location="false">Capital contributed during the year.</ParamField>
+  <ParamField body="capitalAccount.currentYearIncome" param-type="string" show-location="false">Current-year income allocated to the partner.</ParamField>
+  <ParamField body="capitalAccount.withdrawals" param-type="string" show-location="false">Withdrawals and distributions affecting capital.</ParamField>
+  <ParamField body="capitalAccount.ending" param-type="string" show-location="false">Ending capital account balance.</ParamField>
+  <ParamField body="capitalAccount.method" param-type="string" enum="tax_basis,gaap,section_704b,other" show-location="false">Method used to maintain the capital account.</ParamField>
+  <ParamField body="ectiShare" param-type="string" show-location="false">Partner share of effectively connected taxable income.</ParamField>
+  <ParamField body="withholdingRate" param-type="string" show-location="false">Withholding rate used for the partner. Defaults to `37`.</ParamField>
+  <ParamField body="filingStatus" param-type="string" enum="single,married_separate,qualifying_surviving" show-location="false">Filing status used when partner-level forms require it.</ParamField>
+  <ParamField body="signatureDataUrl" param-type="string" show-location="false">Partner signature image data used for generated forms.</ParamField>
+  <ParamField body="scheduleOI.citizenshipCountries" param-type="string" show-location="false">Citizenship countries for Schedule O-I reporting.</ParamField>
+  <ParamField body="scheduleOI.visaType" param-type="string" show-location="false">Visa type for the partner, when applicable.</ParamField>
+  <ParamField body="scheduleOI.treatyCountry" param-type="string" show-location="false">Treaty country relevant to the partner.</ParamField>
+  <ParamField body="scheduleOI.treatyArticle" param-type="string" show-location="false">Treaty article used for reporting.</ParamField>
+  <ParamField body="scheduleOI.treatyRate" param-type="string" show-location="false">Treaty rate associated with the partner.</ParamField>
+
+  This step drives both the partner roster and the downstream K-1, 8805, K-3, and partner-specific outputs, so accuracy here matters more than speed.
+
+  </Step>
+
+  <Step title="Enter income and deductions" icon="bar-chart">
+
+  Fill in the page 1 financial amounts for the partnership return. The wizard separates income items from deductions so you can verify totals before moving into distributive reporting.
+
+  Income fields include:
+
+  <ParamField body="income.grossReceipts" param-type="string" show-location="false">Gross receipts or sales.</ParamField>
+  <ParamField body="income.returnsAllowances" param-type="string" show-location="false">Returns and allowances.</ParamField>
+  <ParamField body="income.costOfGoodsSold" param-type="string" show-location="false">Cost of goods sold.</ParamField>
+  <ParamField body="income.grossProfit" param-type="string" show-location="false">Gross profit.</ParamField>
+  <ParamField body="income.ordinaryIncomeFromOther" param-type="string" show-location="false">Ordinary income from other partnerships, estates, and trusts.</ParamField>
+  <ParamField body="income.netFarmProfit" param-type="string" show-location="false">Net farm profit or loss.</ParamField>
+  <ParamField body="income.netGainLoss" param-type="string" show-location="false">Net gain or loss from Form 4797 or similar items.</ParamField>
+  <ParamField body="income.otherIncome" param-type="string" show-location="false">Other income not captured elsewhere.</ParamField>
+  <ParamField body="income.totalIncome" param-type="string" show-location="false">Total income for the return.</ParamField>
+
+  Deduction fields include:
+
+  <ParamField body="deductions.salaries" param-type="string" show-location="false">Salaries and wages.</ParamField>
+  <ParamField body="deductions.guaranteedPayments" param-type="string" show-location="false">Guaranteed payments.</ParamField>
+  <ParamField body="deductions.repairsAndMaintenance" param-type="string" show-location="false">Repairs and maintenance expense.</ParamField>
+  <ParamField body="deductions.badDebts" param-type="string" show-location="false">Bad debts.</ParamField>
+  <ParamField body="deductions.rent" param-type="string" show-location="false">Rent expense.</ParamField>
+  <ParamField body="deductions.taxesAndLicenses" param-type="string" show-location="false">Taxes and licenses.</ParamField>
+  <ParamField body="deductions.interestExpense" param-type="string" show-location="false">Interest expense.</ParamField>
+  <ParamField body="deductions.depreciation" param-type="string" show-location="false">Depreciation expense.</ParamField>
+  <ParamField body="deductions.depletion" param-type="string" show-location="false">Depletion.</ParamField>
+  <ParamField body="deductions.retirement" param-type="string" show-location="false">Retirement plan contributions.</ParamField>
+  <ParamField body="deductions.employeeBenefits" param-type="string" show-location="false">Employee benefit programs.</ParamField>
+  <ParamField body="deductions.otherDeductions" param-type="string" show-location="false">Other deductions.</ParamField>
+  <ParamField body="deductions.totalDeductions" param-type="string" show-location="false">Total deductions.</ParamField>
+  <ParamField body="deductions.ordinaryBusinessIncome" param-type="string" show-location="false">Ordinary business income or loss.</ParamField>
+
+  After this step, you should be able to reconcile the partnership's operating results before assigning distributive items on Schedule K.
+
+  </Step>
+
+  <Step title="Complete Schedule K" icon="book-open">
+
+  Use Schedule K to report the partnership's distributive items at the entity level. These amounts feed the partner reporting package and should align with the partnership's books and supporting schedules.
+
+  <ParamField body="scheduleK.ordinaryIncome" param-type="string" show-location="false">Ordinary business income or loss.</ParamField>
+  <ParamField body="scheduleK.rentalRealEstate" param-type="string" show-location="false">Net rental real estate income or loss.</ParamField>
+  <ParamField body="scheduleK.otherRental" param-type="string" show-location="false">Other net rental income or loss.</ParamField>
+  <ParamField body="scheduleK.guaranteedPaymentsServices" param-type="string" show-location="false">Guaranteed payments for services.</ParamField>
+  <ParamField body="scheduleK.guaranteedPaymentsCapital" param-type="string" show-location="false">Guaranteed payments for the use of capital.</ParamField>
+  <ParamField body="scheduleK.interestIncome" param-type="string" show-location="false">Interest income.</ParamField>
+  <ParamField body="scheduleK.ordinaryDividends" param-type="string" show-location="false">Ordinary dividends.</ParamField>
+  <ParamField body="scheduleK.qualifiedDividends" param-type="string" show-location="false">Qualified dividends.</ParamField>
+  <ParamField body="scheduleK.royalties" param-type="string" show-location="false">Royalty income.</ParamField>
+  <ParamField body="scheduleK.netSTCapitalGain" param-type="string" show-location="false">Net short-term capital gain or loss.</ParamField>
+  <ParamField body="scheduleK.netLTCapitalGain" param-type="string" show-location="false">Net long-term capital gain or loss.</ParamField>
+  <ParamField body="scheduleK.section1231Gain" param-type="string" show-location="false">Section 1231 gain or loss.</ParamField>
+  <ParamField body="scheduleK.otherIncome" param-type="string" show-location="false">Other income or loss items.</ParamField>
+  <ParamField body="scheduleK.section179" param-type="string" show-location="false">Section 179 deduction.</ParamField>
+  <ParamField body="scheduleK.otherDeductions" param-type="string" show-location="false">Other deductions.</ParamField>
+  <ParamField body="scheduleK.selfEmploymentA" param-type="string" show-location="false">Self-employment earnings category A.</ParamField>
+  <ParamField body="scheduleK.selfEmploymentB" param-type="string" show-location="false">Self-employment earnings category B.</ParamField>
+  <ParamField body="scheduleK.selfEmploymentC" param-type="string" show-location="false">Self-employment earnings category C.</ParamField>
+  <ParamField body="scheduleK.foreignTaxesPaid" param-type="string" show-location="false">Foreign taxes paid or accrued.</ParamField>
+  <ParamField body="scheduleK.taxExemptIncome" param-type="string" show-location="false">Tax-exempt income.</ParamField>
+  <ParamField body="scheduleK.distributions" param-type="string" show-location="false">Distributions to partners.</ParamField>
+
+  Use this step after page 1 is complete so your distributive items reflect the same underlying numbers.
+
+  </Step>
+
+  <Step title="Enter withholding data" icon="shield">
+
+  Enter the amounts used for Forms 8804 and 8805. This step focuses on effectively connected taxable income and quarterly payments tied to withholding obligations.
+
+  <ParamField body="withholding.totalECTI" param-type="string" show-location="false">Total effectively connected taxable income used for withholding calculations.</ParamField>
+  <ParamField body="withholding.payments.q1" param-type="string" show-location="false">First-quarter withholding payment.</ParamField>
+  <ParamField body="withholding.payments.q2" param-type="string" show-location="false">Second-quarter withholding payment.</ParamField>
+  <ParamField body="withholding.payments.q3" param-type="string" show-location="false">Third-quarter withholding payment.</ParamField>
+  <ParamField body="withholding.payments.q4" param-type="string" show-location="false">Fourth-quarter withholding payment.</ParamField>
+
+  If the partnership has foreign partners, confirm that each partner's `ectiShare` and withholding rate are consistent with the totals you enter here.
+
+  </Step>
+
+  <Step title="Complete international reporting" icon="globe">
+
+  Use the international step for Schedule K-2 and Schedule K-3 reporting. The wizard stores these values in Part X line groups for both income and deductions.
+
+  Each K-2 Part X line captures the same set of allocation buckets:
+
+  <ParamField body="k2PartX.incomeLines.*.total" param-type="string" show-location="false">Total amount for the line.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.partnerDetermination" param-type="string" show-location="false">Amount determined at the partner level.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.usSourceECI" param-type="string" show-location="false">U.S.-source effectively connected income.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.foreignSourceECI" param-type="string" show-location="false">Foreign-source effectively connected income.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.usNonEciFDAP" param-type="string" show-location="false">U.S. non-ECI fixed, determinable, annual, or periodic income.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.usNonEciOther" param-type="string" show-location="false">Other U.S. non-ECI amounts.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.foreignNonECI" param-type="string" show-location="false">Foreign-source non-ECI amounts.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.total" param-type="string" show-location="false">Total deduction amount for the line.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.partnerDetermination" param-type="string" show-location="false">Deduction amount determined at the partner level.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.usSourceECI" param-type="string" show-location="false">Deduction tied to U.S.-source effectively connected income.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.foreignSourceECI" param-type="string" show-location="false">Deduction tied to foreign-source effectively connected income.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.usNonEciFDAP" param-type="string" show-location="false">Deduction tied to U.S. non-ECI fixed, determinable, annual, or periodic income.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.usNonEciOther" param-type="string" show-location="false">Deduction tied to other U.S. non-ECI amounts.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.foreignNonECI" param-type="string" show-location="false">Deduction tied to foreign-source non-ECI amounts.</ParamField>
+
+  <Callout kind="info">
+
+  You do not need to force every international detail into earlier steps. The wizard separates partner identity data from K-2 and K-3 allocation data so you can complete entity and partner setup first.
+
+  </Callout>
+
+  </Step>
+
+  <Step title="Review the return" icon="check-circle">
+
+  Review all entered data before generating forms. This step is designed for validation, not new data entry.
+
+  Confirm these items before you continue:
+
+  - Partnership name, EIN, and tax year
+  - Partner count and partner classifications
+  - Capital account balances and liability allocations
+  - Income, deductions, and ordinary business income
+  - Schedule K totals
+  - Withholding totals and quarterly payments
+  - International allocations for K-2 and K-3
+
+  If anything looks off, jump back to the relevant step, correct the data, and return to review.
+
+  </Step>
+
+  <Step title="Generate PDFs" icon="file-text">
+
+  Generate the partnership filing package after review is complete. This final step produces the PDFs based on the data from the prior steps.
+
+  Expect the output package to include:
+
+  - Form 1065
+  - One Schedule K-1 for each partner
+  - Schedule K-2
+  - Schedule K-3
+  - Form 8804
+  - Form 8805
+  - Form 1040-NR for partners
+
+  Success looks like a downloadable PDF set that matches the partner count and the reporting sections you completed earlier in the wizard.
+
+  </Step>
+</Steps>
+
+## How the data flows through the return
+
+The wizard starts with entity-level facts, then moves into partner-level ownership and capital data, then into financial reporting, and finally into withholding and international allocations. That order reduces rework because later sections depend on the partnership and partner records you enter first.
+
+A practical way to work through the filing is to gather your partnership return inputs in this order:
+
+- Partnership legal and tax-year information
+- Full partner roster and ownership details
+- Book and tax financials for page 1
+- Schedule K amounts
+- Foreign partner withholding data
+- K-2 and K-3 allocation details
+
+<Callout kind="alert">
+
+If a partner is foreign, review that partner's `isForeign`, `ectiShare`, withholding rate, and Schedule O-I details together. Inconsistent partner-level data can affect Forms 8805, 1040-NR, and international schedules.
+
+</Callout>
+
+## Questions that come up often
+
+<ExpandableGroup>
+  <Expandable title="Do I need to add every partner before I can finish the return?" default-open="true">
+
+  Yes. The generated filing package depends on the full partner roster because Nomadfiling creates partner-level outputs such as Schedule K-1, Form 8805, and Form 1040-NR. Add all partners before you move to final review.
+
+  </Expandable>
+
+  <Expandable title="Can each partner sign separately?">
+
+  Yes. Each partner record includes its own `signatureDataUrl`, so the wizard supports a separate signature for each partner.
+
+  </Expandable>
+
+  <Expandable title="What if the partnership has more than two partners?">
+
+  The wizard starts with two partners by default, but that is only the starting state. Add the remaining partners so the return and generated schedules match the actual ownership structure for the year.
+
+  </Expandable>
+
+  <Expandable title="When should I complete the withholding step?">
+
+  Complete withholding after you finish partner setup, income and deductions, and Schedule K. By that point, you have the numbers needed to enter total ECTI and quarterly payments with fewer adjustments.
+
+  </Expandable>
+
+  <Expandable title="What is the international step used for?">
+
+  The international step captures K-2 and K-3 Part X income and deduction allocations. It is where you break line items into U.S.-source ECI, foreign-source ECI, U.S. non-ECI categories, and foreign non-ECI categories.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Related pages
+
+<Columns cols={2}>
+  <Card title="Quickstart" href="/quickstart" icon="rocket" cta="Open guide">
+    Start with the core Nomadfiling workflow before preparing a partnership return.
+  </Card>
+  <Card title="All features" href="/features" icon="settings" cta="View features">
+    See the filing workflows, automation tools, and output options available in Nomadfiling.
+  </Card>
+  <Card title="Form 5472 and 1120" href="/form-5472-1120" icon="file-text" cta="View workflow">
+    Compare the partnership workflow with the filing flow for foreign-owned single-member LLCs.
+  </Card>
+  <Card title="Fax service" href="/fax-service" icon="upload" cta="Learn more">
+    Send completed forms and related filing documents through the built-in fax workflow.
+  </Card>
+</Columns>
+
+## What to do next
+
+Once you understand the wizard structure, the next step is to prepare your source data before starting the filing. Pricing, plan details, and onboarding information are available on the [pricing page](/getting-started/pricing).

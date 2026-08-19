@@ -1,160 +1,129 @@
 ---
 title: Changelog
-description: Version history with recent updates, new features, and changes.
+description: Track Nomadfiling product updates — new forms, features, integrations, and improvements across the tax filing platform.
 ---
 
-## Recent Releases
+## Recent updates
 
-Stay up to date with the latest improvements to Nomadfiling. Check this page for new features, bug fixes, and breaking changes.
+Follow product changes across Nomadfiling, including new filing workflows, delivery options, AI features, and platform improvements. Dates below reflect the rollout sequence visible in the product codebase and migration timeline.
 
 <Callout kind="info">
-  Subscribe to our RSS feed or join the Discord community to get notified about new releases automatically.
+
+Release dates are approximate where the codebase does not expose a public launch date. Entries are ordered to reflect the observed product rollout from March through May 2026.
+
 </Callout>
 
-<Update label="2024-10-15" description="v1.2.0" tags={["feature", "improvement"]}>
+<Update label="2026-05" description="MCP access, API keys, and AI workflow expansion" tags={["feature", "improvement"]}>
 
-## New Features
+## Added MCP server access for AI agents
 
-- Added real-time collaboration for documentation editing with multiple users.
-- Introduced version history and rollback for pages.
-- New search bar with fuzzy matching across all docs.
+Nomadfiling added an MCP server with 14 tools for AI-assisted workflows. This makes it possible to connect compatible AI clients to filing and compliance workflows through OAuth 2.1 with PKCE.
 
-## Improvements
+## Added API key management
 
-- Enhanced performance for large documentation sites (20% faster load times).
-- Improved mobile responsiveness for the editor interface.
+You can now create and revoke API keys for MCP access from the product. This gives teams a separate access path for agent-based workflows without relying only on interactive sign-in.
 
-## Bug Fixes
+## Expanded AI filing assistance
 
-- Fixed issue where images failed to upload in certain browsers.
-- Resolved sync errors during offline editing.
+AI-powered compliance scanning and supporting statement generation were added to reduce manual review work. The compliance scanner analyzes uploaded PDFs, and the statement generator helps draft supporting language for filing attachments.
 
-</Update>
+## Improved product discovery and planning
 
-<Update label="2024-09-20" description="v1.1.0" tags={["feature", "bugfix"]}>
-
-## New Features
-
-- Integrated GitHub sync for seamless version control.
-- Added custom themes and branding options (e.g., primary color `#3B82F6`).
-
-## Bug Fixes
-
-- Fixed authentication token refresh loops.
-- Corrected table rendering issues in preview mode.
+A feature roadmap with upvoting is now available in the app. This gives you a clearer view of what the team is considering and a direct way to signal demand.
 
 </Update>
 
-<Update label="2024-08-10" description="v1.0.0" tags={["breaking", "feature"]}>
+<Update label="2026-05" description="Extensions, late filing support, and IRS fax delivery" tags={["feature", "improvement"]}>
 
-## Initial Release
+## Added Form 7004 extension filing support
 
-- Core documentation editor with MDX support.
-- Project organization with folders and tags.
-- Basic authentication via API keys.
+Nomadfiling introduced a Form 7004 workflow with an eligibility quiz and extension form generation. This helps you determine whether an extension applies before preparing the filing package.
 
-## Breaking Changes
+## Added late filing letter generation
 
-- Updated configuration format from JSON to YAML for better readability.
+You can now generate a late filing letter with a reasonable cause statement as part of the filing workflow. This is designed for cases where you need supporting documentation alongside delinquent filings.
+
+## Added fax delivery through Telnyx
+
+Fax sending was added for IRS delivery workflows, including an outbox and fax status handling. This gives you an in-product option for forms and documents that still rely on fax submission.
+
+<Callout kind="tip">
+
+If your filing requires fax delivery, check the generated package before sending so the page count, cover page details, and attached forms match your submission.
+
+</Callout>
 
 </Update>
 
-## Upgrade Instructions
+<Update label="2026-04" description="Partnership filing support and withholding forms" tags={["feature"]}>
 
-Follow these steps to update your Nomadfiling instance to the latest version.
+## Added partnership filing workflows
 
-<Steps>
-  <Step title="Backup Your Data" icon="database">
+Nomadfiling expanded beyond foreign-owned single-member LLC filings to support partnership filings. The new workflow covers Form 1065 and related partner reporting documents.
 
-    Create a full backup of your documentation space.
+## Added Schedule K-1, K-2, and K-3 support
 
-    ```
-    nomadfiling backup --output ./backup-$(date +%Y%m%d)
-    ```
+Partnership filings now include partner-level and international reporting outputs, including Schedule K-1, Schedule K-2, and Schedule K-3 data collection. This broadens the platform for partnerships with cross-border tax reporting needs.
 
-  </Step>
-  <Step title="Update CLI" icon="download">
-    <Tabs>
-      <Tab title="npm" icon="package">
-````bash
-npm install -g nomadfiling@latest
-````
-      </Tab>
-      <Tab title="yarn" icon="package">
-````bash
-yarn global add nomadfiling@latest
-````
-      </Tab>
-    </Tabs>
-  </Step>
-  <Step title="Run Migration" icon="settings">
+## Added Forms 8804, 8805, and 1040-NR support
 
-    Apply any database migrations.
+The partnership release also added withholding and nonresident filing support through Forms 8804, 8805, and 1040-NR. This connects partnership income allocation and withholding workflows in the same filing system.
 
-    ```
-    nomadfiling migrate
-    ```
+</Update>
 
-  </Step>
-  <Step title="Restart Server" icon="refresh-cw">
+<Update label="2026-03" description="Core platform launch and account foundations" tags={["feature"]}>
 
-    Restart your Nomadfiling server to apply changes.
+## Launched the first filing workflow
 
-    ```
-    nomadfiling start
-    ```
+Nomadfiling launched with a guided Form 5472 and Form 1120 workflow for foreign-owned U.S. disregarded entities. The core experience includes step-by-step data entry, PDF generation, review, and packaged filing outputs.
 
-  </Step>
-</Steps>
+## Added account access and payments
 
-## Upcoming Roadmap
+The initial release included Supabase Auth for account access and Stripe for one-time payments. This established the core account and checkout flow for paid filing generation.
 
-View our planned features and improvements.
+## Added the dashboard and filing management basics
 
-<Board title="Q4 2024 Roadmap">
-  <BoardColumn title="Planned" color="0" icon="calendar">
-    <BoardCard
-      title="AI-powered content suggestions"
-      description="Auto-generate outlines and summaries"
-      icon="sparkles"
-      dueDate="2024-12-15"
-    />
-    <BoardCard
-      title="Advanced analytics"
-      description="Page views, edit history, contributor stats"
-      icon="bar-chart-3"
-    />
-  </BoardColumn>
-  <BoardColumn title="In Progress" color="1" icon="loader-2">
-    <BoardCard
-      title="Webhook integrations"
-      description="Connect to Slack, Discord, and custom endpoints"
-      icon="zap"
-      author="Engineering Team"
-    />
-  </BoardColumn>
-  <BoardColumn title="Completed" color="2" icon="check-circle">
-    <BoardCard
-      title="Export to PDF"
-      description="Generate printable documentation"
-      createdAt="2024-10-15"
-    />
-  </BoardColumn>
-</Board>
+The first dashboard experience gave users a place to manage filings and move through the preparation flow. The launch also included the one-time pricing model across four tiers, ranging from $147 to $497.
 
-## Next Steps
+</Update>
+
+<Update label="2026-03" description="Localization, affiliate tracking, and analytics integrations" tags={["improvement", "feature"]}>
+
+## Added 16-language interface support
+
+Nomadfiling introduced multilingual UI support across 16 languages. This makes the filing workflow easier to navigate for users who prefer to work in a language other than English.
+
+## Added affiliate tracking
+
+Affiliate attribution was added through Tolt.io with Stripe-connected referral tracking. This supports partner and referral programs tied to paid conversions.
+
+## Added conversion tracking integrations
+
+Meta Conversions API and Google Ads conversion tracking were added to improve measurement of acquisition and purchase events. These integrations support campaign attribution and reporting across marketing channels.
+
+</Update>
+
+## What changed overall
+
+The platform has moved from a focused Form 5472 and Form 1120 filing tool into a broader tax filing system for foreign-owned LLCs and partnerships. Recent work concentrated on three areas:
+
+- **More filing coverage** through partnership, extension, and late filing workflows
+- **More delivery and automation** through fax delivery, AI assistance, MCP access, and API keys
+- **More accessibility and operations support** through multilingual UI, affiliate tracking, analytics, and roadmap voting
+
+## Related pages
 
 <Columns cols={2}>
-  <Card title="Quickstart" icon="book-open" href="/quickstart">
-    Get started with Nomadfiling in minutes.
+  <Card title="Pricing" href="/pricing" icon="bar-chart" cta="View pricing">
+    Review one-time pricing tiers and what each plan includes.
   </Card>
-  <Card title="Authentication" icon="shield" href="/authentication">
-    Secure your documentation space.
+  <Card title="Roadmap" href="/roadmap" icon="rocket" cta="See planned features">
+    Check upcoming work and vote on the features that matter most to you.
   </Card>
 </Columns>
 
-<Expandable title="View Full Detailed Changelog" default-open="false">
+<Expandable title="How to read this changelog" default-open="false">
 
-For a complete list of all changes including minor patches, visit our [GitHub releases page](https://github.com/nomadfiling/nomadfiling/releases).
+Entries summarize notable user-facing changes. Small internal refactors, copy edits, and routine maintenance work are not listed unless they materially changed how you file, pay, or access the platform.
 
 </Expandable>

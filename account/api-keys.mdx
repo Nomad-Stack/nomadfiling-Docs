@@ -1,0 +1,343 @@
+---
+title: API key management
+description: Create and manage API keys to connect Claude Desktop, ChatGPT, and other AI agents to your Nomadfiling account through the MCP server.
+---
+
+## Create and manage API keys for MCP access
+
+API keys let you connect Nomadfiling to Claude Desktop and other MCP clients without sharing your account password. You create keys from the API Keys page, copy the plaintext value once, then use that key as a Bearer token when a client connects to the MCP server.
+
+<Callout kind="info">
+
+The API Keys page lives at `/api-keys` and requires sign-in. If your session has expired, Nomadfiling redirects you to `/login`.
+
+</Callout>
+
+### Before you start
+
+You need:
+
+- A Nomadfiling account with access to the dashboard
+- An active session in the web app
+- The MCP server URL for your environment
+- A client that supports either API key authentication or OAuth, depending on the integration path
+
+The MCP endpoint is:
+
+```text
+{VITE_SUPABASE_URL}/functions/v1/mcp-server
+```
+
+If you are configuring a local client file, keep the endpoint and key together so you can test the connection immediately after creating the key.
+
+### Create an API key
+
+Create the key in the dashboard first, then copy it into your MCP client configuration.
+
+<Steps>
+  <Step title="Open the API Keys page" icon="key">
+
+  Sign in to Nomadfiling, then open `/api-keys`. If you are not signed in, the app sends you to `/login` before showing the page.
+
+  You should see a form to create a new key and a list of existing keys below it.
+
+  </Step>
+
+  <Step title="Enter a name for the key" icon="edit">
+
+  Add a descriptive name such as `Claude Desktop on MacBook Pro` or `Internal agent staging`. Nomadfiling requires a name and shows a warning if you leave the field blank.
+
+  A good name makes it easier to revoke the correct key later without interrupting other clients.
+
+  </Step>
+
+  <Step title="Generate the key" icon="plus">
+
+  Click the button to generate the key. Nomadfiling creates 32 cryptographically random bytes, formats them as a hex token with the `nf_` prefix, and produces a 67-character key.
+
+  The app hashes the token with SHA-256 before storing it and saves only the hash, the key name, and a short prefix for identification.
+
+  </Step>
+
+  <Step title="Copy the plaintext key immediately" icon="copy">
+
+  After generation, Nomadfiling shows the full plaintext token once in a banner with a copy button. The banner states that the key will not be shown again.
+
+  Copy the key into your password manager, secret store, or MCP client configuration before you dismiss the banner.
+
+  </Step>
+
+  <Step title="Dismiss the banner after saving the key" icon="check-circle">
+
+  Click **Got it** after you have saved the key. Nomadfiling clears the plaintext value at that point, and you cannot recover it later.
+
+  If you lose the key, create a new one and update any clients that used the old value.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+
+Nomadfiling shows the plaintext API key only once. After you dismiss the banner, the stored record contains only a SHA-256 hash and a short prefix such as `nf_a3f2b1c4d…`.
+
+</Callout>
+
+### What Nomadfiling stores for each key
+
+Nomadfiling stores enough metadata to identify and manage the key without retaining the secret itself.
+
+<ParamField body="name" param-type="string" required="true" show-location="false">
+
+The label you assign to the key in the dashboard. Use a name that maps to a device, environment, or client.
+
+</ParamField>
+
+<ParamField body="key_prefix" param-type="string" required="true" show-location="false">
+
+A short display prefix derived from the token, formatted from the first characters of the key and an ellipsis. Nomadfiling uses this prefix in the key list so you can identify which key to revoke.
+
+</ParamField>
+
+<ParamField body="key_hash" param-type="string" required="true" show-location="false">
+
+A SHA-256 hash of the plaintext token. Nomadfiling stores the hash instead of the secret.
+
+</ParamField>
+
+<ParamField body="user_id" param-type="string" required="true" show-location="false">
+
+The account that owns the key.
+
+</ParamField>
+
+<ParamField body="created_at" param-type="string" required="true" show-location="false">
+
+The creation timestamp shown in the key list.
+
+</ParamField>
+
+<ParamField body="last_used_at" param-type="string" required="false" show-location="false">
+
+The last time the key was used. Use this field to find stale keys before revoking them.
+
+</ParamField>
+
+### Review and revoke keys
+
+The API Keys page lists every key for your account with:
+
+- **Name**
+- **Key prefix**
+- **Creation date**
+- **Last-used date**
+
+Each row also includes a red trash icon for deletion. When you delete a key, Nomadfiling asks for confirmation with the message `Delete this API key? Any MCP client using it will stop working.`
+
+<Callout kind="tip">
+
+Revoke unused keys regularly. The **last-used date** is the fastest way to spot old local configs, retired laptops, or test agents that no longer need access.
+
+</Callout>
+
+### Configure Claude Desktop with an API key
+
+Claude Desktop connects to Nomadfiling's MCP server by sending your API key in the `Authorization` header as a Bearer token.
+
+<CodeGroup tabs="macOS or Windows JSON config,Equivalent MCP server definition">
+```json
+{
+  "mcpServers": {
+    "nomadfiling": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "{VITE_SUPABASE_URL}/functions/v1/mcp-server"
+      ],
+      "env": {
+        "MCP_REMOTE_HEADERS": "{\"Authorization\":\"Bearer nf_example_9a7c4d2e1f6b8c3d5a9e7f4b2c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6\"}"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "name": "nomadfiling",
+  "transport": {
+    "type": "http",
+    "url": "{VITE_SUPABASE_URL}/functions/v1/mcp-server",
+    "headers": {
+      "Authorization": "Bearer nf_example_9a7c4d2e1f6b8c3d5a9e7f4b2c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6"
+    }
+  }
+}
+```
+</CodeGroup>
+
+After you save the configuration, restart Claude Desktop. A successful connection makes the Nomadfiling tools available in the client.
+
+### Configure ChatGPT with OAuth
+
+ChatGPT uses OAuth rather than a manually pasted API key. Add Nomadfiling as a custom connector from the ChatGPT settings UI, then let ChatGPT discover the OAuth metadata automatically.
+
+<Steps>
+  <Step title="Open connectors in ChatGPT" icon="settings">
+
+  In ChatGPT, go to **Settings**, then **Connectors**, then **Add custom connector**.
+
+  </Step>
+
+  <Step title="Enter the MCP server URL" icon="external-link">
+
+  Use the Nomadfiling MCP base URL as the connector target. ChatGPT reads OAuth metadata from the well-known discovery endpoints exposed by the server.
+
+  </Step>
+
+  <Step title="Complete OAuth authorization" icon="lock">
+
+  Finish the sign-in and consent flow in the browser window ChatGPT opens. The server supports OAuth discovery for authorization and protected resource metadata.
+
+  After the flow completes, ChatGPT can call Nomadfiling tools without a manually created API key.
+
+  </Step>
+</Steps>
+
+The OAuth discovery endpoints are:
+
+```text
+/.well-known/oauth-authorization-server
+/.well-known/oauth-protected-resource
+```
+
+### Configure a custom OAuth client
+
+If you are building your own MCP-compatible client, use the server's OAuth endpoints directly.
+
+<ParamField body="authorization endpoint" param-type="URL" required="true" show-location="false">
+
+The endpoint your client sends users to for the authorization code flow.
+
+</ParamField>
+
+<ParamField body="token endpoint" param-type="URL" required="true" show-location="false">
+
+The endpoint your client exchanges the authorization code with to obtain access and refresh tokens.
+
+</ParamField>
+
+<ParamField body="registration endpoint" param-type="URL" required="true" show-location="false">
+
+The endpoint for dynamic client registration when your client supports it.
+
+</ParamField>
+
+<ParamField body="scope" param-type="string" required="true" show-location="false">
+
+Use the `mcp` scope.
+
+</ParamField>
+
+<ParamField body="code challenge method" param-type="string" required="true" show-location="false">
+
+Use `S256`. PKCE is required.
+
+</ParamField>
+
+<ParamField body="grant types" param-type="string" required="true" show-location="false">
+
+Use `authorization_code` and `refresh_token`.
+
+</ParamField>
+
+<Expandable title="OAuth integration details" default-open="false">
+
+Use OAuth when your client manages browser-based sign-in, token refresh, and connector-style account linking. This is the right fit for ChatGPT-style integrations and for custom clients that should not ask users to paste raw API keys.
+
+Nomadfiling exposes authorize, token, and register endpoints and supports the `mcp` scope with PKCE `S256`. Your client should treat refresh tokens as long-lived secrets and store them in the same secure location you use for access tokens.
+
+</Expandable>
+
+### Available MCP tools
+
+Once your client is connected, it can call the following tools exposed by the Nomadfiling MCP server.
+
+- `list_filings`
+- `create_filing`
+- `get_filing`
+- `update_filing`
+- `delete_filing`
+- `list_partnership_filings`
+- `get_partnership_filing`
+- `create_partnership_filing`
+- `update_partnership_filing`
+- `delete_partnership_filing`
+- `list_payments`
+- `list_fax_logs`
+- `get_form_schema`
+- `get_pdf_url`
+
+Use the MCP tool reference for tool inputs, outputs, and behavior details.
+
+### Security practices
+
+A few habits prevent most key-related outages and leaks.
+
+<ExpandableGroup>
+  <Expandable title="Store keys outside local config files when possible" default-open="false">
+
+  Prefer a password manager, OS credential store, or secrets manager over a plain text file. If your MCP client requires a local JSON config, restrict file access to your user account and avoid syncing the file into shared folders.
+
+  </Expandable>
+
+  <Expandable title="Create separate keys per client or environment" default-open="false">
+
+  Use different keys for Claude Desktop, internal tools, staging agents, and production automations. Separate keys make revocation precise and reduce downtime when a single machine is lost or rotated.
+
+  </Expandable>
+
+  <Expandable title="Rotate keys after device changes or suspected exposure" default-open="false">
+
+  If a laptop is replaced, a config file is shared accidentally, or a secret appears in logs, create a new key first, update the client, verify the connection, and then revoke the old key.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Frequently asked questions
+
+<ExpandableGroup>
+  <Expandable title="Can I see an API key again after closing the banner?" default-open="false">
+
+  No. Nomadfiling shows the plaintext key once and stores only a SHA-256 hash plus a short prefix. If you did not save the key, create a replacement and update the client that needs it.
+
+  </Expandable>
+
+  <Expandable title="What happens when I delete a key?" default-open="false">
+
+  Any MCP client using that key stops working immediately. Delete only after you have confirmed the key is no longer in use or after you have deployed a replacement key.
+
+  </Expandable>
+
+  <Expandable title="Should I use an API key or OAuth?" default-open="false">
+
+  Use an API key for local clients such as Claude Desktop or lightweight custom agents that send a static Bearer token. Use OAuth for connector-style integrations such as ChatGPT or for clients that need browser-based account linking and token refresh.
+
+  </Expandable>
+
+  <Expandable title="How do I identify the right key to revoke?" default-open="false">
+
+  Match the key name and visible prefix in the dashboard against the client configuration you deployed. The last-used date also helps you distinguish active keys from stale ones.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Related pages
+
+<Columns cols={2}>
+  <Card title="MCP overview" href="/api/mcp-overview" icon="book-open" cta="Open guide" />
+  <Card title="Authentication" href="/api/authentication" icon="lock" cta="View auth options" />
+  <Card title="MCP tools" href="/api/mcp-tools" icon="terminal" cta="Browse tools" />
+  <Card title="Profile settings" href="/account/profile" icon="users" cta="Manage account" />
+</Columns>
+
+If you want to test the connection after setup, return to the [dashboard](/dashboard) and create or review a filing before calling Nomadfiling from your MCP client.

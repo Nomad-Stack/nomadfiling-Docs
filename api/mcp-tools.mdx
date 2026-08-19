@@ -1,0 +1,1137 @@
+---
+title: MCP tools reference
+description: Browse all 14 Nomadfiling MCP tools — filing CRUD, partnership filings, payments, fax logs, form schema, and PDF URLs — with parameters, responses, and examples.
+---
+
+## Use Nomadfiling tools through your MCP client
+
+Nomadfiling exposes 14 authenticated MCP tools for listing, creating, updating, and deleting filings, plus payment history, fax logs, form schemas, and PDF deep links. Use this page as the reference for tool names, inputs, response shapes, and common request patterns.
+
+<Callout kind="info">
+
+Every tool call requires authentication through your MCP client. Set up your credentials before calling any tool.
+
+</Callout>
+
+<Columns cols={2}>
+<Card title="Authentication" href="/api/authentication" icon="lock" cta="Set up auth" />
+<Card title="Create API keys" href="/account/api-keys" icon="key-round" cta="Manage keys" />
+<Card title="MCP overview" href="/api/mcp-overview" icon="book-open" cta="See how the server works" />
+<Card title="Form guides" href="/form-5472-1120" icon="file-text" cta="Review 5472 and 1120 fields" />
+</Columns>
+
+## Call tools from your client
+
+Most MCP clients wrap tool calls differently, but the payload shape is the same: pass the tool name and a JSON object containing the tool arguments.
+
+<CodeGroup tabs="JSON,cURL">
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_filings",
+    "arguments": {
+      "limit": 10
+    }
+  }
+}
+```
+
+```bash
+curl -X POST "https://mcp.nomadfiling.com" \
+  -H "Authorization: Bearer sk_test_example_9xmk7q2r" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "tools/call",
+    "params": {
+      "name": "list_filings",
+      "arguments": {
+        "limit": 10
+      }
+    }
+  }'
+```
+
+</CodeGroup>
+
+A successful response contains the tool result defined in each section below. Tools that look up or mutate a specific filing return an error when the filing does not exist or does not belong to the authenticated user.
+
+## 5472 and 1120 filing tools
+
+These tools work with single-member filing records for Form 5472 and Form 1120 workflows.
+
+### list_filings
+
+List 5472 and 1120 filings owned by the authenticated user.
+
+<ParamField body="limit" param-type="number" required="false" show-location="false">
+
+Maximum number of filings to return. Defaults to `50`.
+
+</ParamField>
+
+#### Response
+
+The tool returns an array of filing summary objects.
+
+<ResponseField name="id" field-type="string" required="true">
+Unique filing identifier as a UUID.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+LLC name stored on the filing record.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number for the filing.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Tax year start date stored on the filing.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Tax year end date stored on the filing.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Current filing status.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Timestamp when the filing was created.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_filings",
+    "arguments": {
+      "limit": 2
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c",
+    "llc_name": "Cedar Ridge Imports LLC",
+    "ein": "98-7654321",
+    "tax_year_begin": "2025-01-01",
+    "tax_year_end": "2025-12-31",
+    "status": "completed",
+    "created_at": "2026-01-14T18:22:11.302Z"
+  },
+  {
+    "id": "f03c32e7-d6ae-4bbc-a0cb-fcf2107ea6f0",
+    "llc_name": "North Harbor Trading LLC",
+    "ein": "81-2233445",
+    "tax_year_begin": "2024-01-01",
+    "tax_year_end": "2024-12-31",
+    "status": "completed",
+    "created_at": "2025-02-03T09:41:28.901Z"
+  }
+]
+```
+</Response>
+
+### get_filing
+
+Get the full data for a single 5472 and 1120 filing.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Filing UUID.
+
+</ParamField>
+
+#### Response
+
+The tool returns the full filing row, including the serialized `form_data` object used to populate the filing.
+
+<ResponseField name="id" field-type="string" required="true">
+Unique filing identifier.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+LLC name for the filing.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Tax year start date.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Tax year end date.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Current filing status.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Creation timestamp.
+</ResponseField>
+
+<ResponseField name="form_data" field-type="object" required="true">
+Complete form payload for the filing, including entity, owner, related party, transaction, signature, and optional-document data.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_filing",
+    "arguments": {
+      "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c",
+  "llc_name": "Cedar Ridge Imports LLC",
+  "ein": "98-7654321",
+  "tax_year_begin": "2025-01-01",
+  "tax_year_end": "2025-12-31",
+  "status": "completed",
+  "created_at": "2026-01-14T18:22:11.302Z",
+  "form_data": {
+    "taxYearBegin": "2025-01-01",
+    "taxYearEnd": "2025-12-31",
+    "llcName": "Cedar Ridge Imports LLC",
+    "llcStreet": "4100 Meridian Ave",
+    "llcCity": "Miami, FL 33140",
+    "ein": "98-7654321",
+    "isInitialYear": true,
+    "ownerName": "Lucia Ortega",
+    "ownerCitizenship": "Spain",
+    "relatedParties": [
+      {
+        "id": "rp_1",
+        "name": "Iberia Holdings SL",
+        "relationship": "25pct_shareholder"
+      }
+    ],
+    "signerTitle": "Managing Member",
+    "signatureDate": "2026-01-14"
+  }
+}
+```
+</Response>
+
+<Callout kind="alert">
+
+`get_filing` returns an error with the message `Filing not found` when the filing does not exist or is not owned by the authenticated user.
+
+</Callout>
+
+### create_filing
+
+Create a new 5472 and 1120 filing record.
+
+<ParamField body="form_data" param-type="object" required="true" show-location="false">
+
+Complete filing payload. This object contains the form values used by the Nomadfiling app.
+
+</ParamField>
+
+<ParamField body="llc_name" param-type="string" required="false" show-location="false">
+
+LLC name stored on the filing row. If omitted, the tool falls back to `form_data.llcName`.
+
+</ParamField>
+
+<ParamField body="ein" param-type="string" required="false" show-location="false">
+
+Employer Identification Number stored on the filing row. If omitted, the tool falls back to `form_data.ein`.
+
+</ParamField>
+
+<ParamField body="tax_year_begin" param-type="string" required="false" show-location="false">
+
+Tax year start date to store on the filing row.
+
+</ParamField>
+
+<ParamField body="tax_year_end" param-type="string" required="false" show-location="false">
+
+Tax year end date to store on the filing row.
+
+</ParamField>
+
+#### Response
+
+The tool creates the filing with status `completed` and returns the new filing identifier and app URL.
+
+<ResponseField name="id" field-type="string" required="true">
+New filing UUID.
+</ResponseField>
+
+<ResponseField name="view_url" field-type="string" required="true">
+App URL for opening the filing.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "create_filing",
+    "arguments": {
+      "form_data": {
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "llcName": "Blue Summit Ventures LLC",
+        "llcStreet": "88 Market Street",
+        "llcCity": "San Francisco, CA 94105",
+        "ein": "83-5566778",
+        "isInitialYear": false,
+        "ownerName": "Kenji Watanabe",
+        "ownerStreet": "2-14-7 Shibuya",
+        "ownerCity": "Tokyo",
+        "ownerCitizenship": "Japan",
+        "relatedParties": []
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+  "view_url": "https://app.nomadfiling.com/filing/a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+}
+```
+</Response>
+
+### update_filing
+
+Update an existing 5472 and 1120 filing. Only fields you provide are updated.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Filing UUID.
+
+</ParamField>
+
+<ParamField body="llc_name" param-type="string" required="false" show-location="false">
+
+Updated LLC name.
+
+</ParamField>
+
+<ParamField body="ein" param-type="string" required="false" show-location="false">
+
+Updated Employer Identification Number.
+
+</ParamField>
+
+<ParamField body="tax_year_begin" param-type="string" required="false" show-location="false">
+
+Updated tax year start date.
+
+</ParamField>
+
+<ParamField body="tax_year_end" param-type="string" required="false" show-location="false">
+
+Updated tax year end date.
+
+</ParamField>
+
+<ParamField body="form_data" param-type="object" required="false" show-location="false">
+
+Updated form payload. The tool patches only the provided fields at the filing row level.
+
+</ParamField>
+
+#### Response
+
+<ResponseField name="id" field-type="string" required="true">
+Updated filing UUID.
+</ResponseField>
+
+<ResponseField name="view_url" field-type="string" required="true">
+App URL for opening the updated filing.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "update_filing",
+    "arguments": {
+      "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+      "llc_name": "Blue Summit Ventures LLC",
+      "form_data": {
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "llcName": "Blue Summit Ventures LLC",
+        "ein": "83-5566778",
+        "signerTitle": "Manager"
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+  "view_url": "https://app.nomadfiling.com/filing/a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+}
+```
+</Response>
+
+<Callout kind="alert">
+
+`update_filing` returns `Filing not found` when the filing does not exist or the authenticated user is not allowed to update it.
+
+</Callout>
+
+### delete_filing
+
+Delete a 5472 and 1120 filing.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Filing UUID.
+
+</ParamField>
+
+#### Response
+
+<ResponseField name="ok" field-type="boolean" required="true">
+Returns `true` when the filing is deleted.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "delete_filing",
+    "arguments": {
+      "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "ok": true
+}
+```
+</Response>
+
+## Partnership filing tools
+
+These tools work with multi-member LLC partnership filings, including Form 1065, Schedule K-1, and Forms 8804 and 8805 workflows.
+
+### list_partnership_filings
+
+List partnership filings owned by the authenticated user.
+
+<ParamField body="limit" param-type="number" required="false" show-location="false">
+
+Maximum number of filings to return. Defaults to `50`.
+
+</ParamField>
+
+#### Response
+
+The tool returns an array of partnership filing summaries with the same shape as `list_filings`.
+
+<ResponseField name="id" field-type="string" required="true">
+Unique filing identifier as a UUID.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+Partnership name stored on the filing row.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Tax year start date.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Tax year end date.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Current filing status.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Creation timestamp.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_partnership_filings",
+    "arguments": {
+      "limit": 2
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a",
+    "llc_name": "Juniper Atlas Partners LLC",
+    "ein": "86-4433221",
+    "tax_year_begin": "2025-01-01",
+    "tax_year_end": "2025-12-31",
+    "status": "completed",
+    "created_at": "2026-02-09T15:08:41.221Z"
+  }
+]
+```
+</Response>
+
+### get_partnership_filing
+
+Get the full data for a partnership filing.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Partnership filing UUID.
+
+</ParamField>
+
+#### Response
+
+The tool returns the full filing row, including the serialized `form_data` object.
+
+<ResponseField name="id" field-type="string" required="true">
+Unique filing identifier.
+</ResponseField>
+
+<ResponseField name="llc_name" field-type="string" required="true">
+Partnership name stored on the filing row.
+</ResponseField>
+
+<ResponseField name="ein" field-type="string" required="true">
+Employer Identification Number.
+</ResponseField>
+
+<ResponseField name="tax_year_begin" field-type="string" required="true">
+Tax year start date.
+</ResponseField>
+
+<ResponseField name="tax_year_end" field-type="string" required="true">
+Tax year end date.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Current filing status.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Creation timestamp.
+</ResponseField>
+
+<ResponseField name="form_data" field-type="object" required="true">
+Complete partnership form payload, including partner data, income, deductions, Schedule K, and withholding values.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_partnership_filing",
+    "arguments": {
+      "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a",
+  "llc_name": "Juniper Atlas Partners LLC",
+  "ein": "86-4433221",
+  "tax_year_begin": "2025-01-01",
+  "tax_year_end": "2025-12-31",
+  "status": "completed",
+  "created_at": "2026-02-09T15:08:41.221Z",
+  "form_data": {
+    "partnershipName": "Juniper Atlas Partners LLC",
+    "ein": "86-4433221",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78701",
+    "accountingMethod": "cash",
+    "taxYearBegin": "2025-01-01",
+    "taxYearEnd": "2025-12-31",
+    "partners": [
+      {
+        "id": "4dbf5ee0-b584-4bc0-8101-2cb423909e3f",
+        "name": "Mariana Silva",
+        "type": "general",
+        "isForeign": true,
+        "entityType": "individual",
+        "withholdingRate": "37"
+      }
+    ]
+  }
+}
+```
+</Response>
+
+<Callout kind="alert">
+
+`get_partnership_filing` returns `Filing not found` when the filing does not exist or is not owned by the authenticated user.
+
+</Callout>
+
+### create_partnership_filing
+
+Create a new partnership filing.
+
+<ParamField body="form_data" param-type="object" required="true" show-location="false">
+
+Complete partnership filing payload. The tool derives `llc_name` from `form_data.partnershipName`.
+
+</ParamField>
+
+#### Response
+
+The tool creates the filing with status `completed`.
+
+<ResponseField name="id" field-type="string" required="true">
+New partnership filing UUID.
+</ResponseField>
+
+<ResponseField name="view_url" field-type="string" required="true">
+App URL for the partnership workflow.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "create_partnership_filing",
+    "arguments": {
+      "form_data": {
+        "partnershipName": "Summit Oak Advisory LLC",
+        "ein": "92-6677880",
+        "street": "1550 Blake Street",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80202",
+        "businessActivity": "Management consulting",
+        "businessActivityCode": "541611",
+        "dateBusinessStarted": "2025-01-15",
+        "accountingMethod": "cash",
+        "totalAssets": "25000",
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "partners": []
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "id": "4fe24805-f32a-4c80-ab95-e408819802f4",
+  "view_url": "https://app.nomadfiling.com/partnership"
+}
+```
+</Response>
+
+### update_partnership_filing
+
+Update an existing partnership filing.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Partnership filing UUID.
+
+</ParamField>
+
+<ParamField body="form_data" param-type="object" required="true" show-location="false">
+
+Updated partnership filing payload. Derived row fields are recalculated from this object.
+
+</ParamField>
+
+#### Response
+
+<ResponseField name="ok" field-type="boolean" required="true">
+Returns `true` when the partnership filing is updated.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "update_partnership_filing",
+    "arguments": {
+      "id": "4fe24805-f32a-4c80-ab95-e408819802f4",
+      "form_data": {
+        "partnershipName": "Summit Oak Advisory LLC",
+        "ein": "92-6677880",
+        "street": "1550 Blake Street",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80202",
+        "businessActivity": "Management consulting",
+        "businessActivityCode": "541611",
+        "dateBusinessStarted": "2025-01-15",
+        "accountingMethod": "cash",
+        "totalAssets": "42000",
+        "taxYearBegin": "2025-01-01",
+        "taxYearEnd": "2025-12-31",
+        "partners": []
+      }
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "ok": true
+}
+```
+</Response>
+
+### delete_partnership_filing
+
+Delete a partnership filing.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Partnership filing UUID.
+
+</ParamField>
+
+#### Response
+
+<ResponseField name="ok" field-type="boolean" required="true">
+Returns `true` when the partnership filing is deleted.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "delete_partnership_filing",
+    "arguments": {
+      "id": "4fe24805-f32a-4c80-ab95-e408819802f4"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "ok": true
+}
+```
+</Response>
+
+## Account and utility tools
+
+These tools expose payments, fax history, schema metadata, and PDF URLs.
+
+### list_payments
+
+List up to 100 payment records for the authenticated user.
+
+#### Response
+
+<ResponseField name="id" field-type="string" required="true">
+Payment identifier.
+</ResponseField>
+
+<ResponseField name="amount" field-type="number" required="true">
+Payment amount.
+</ResponseField>
+
+<ResponseField name="currency" field-type="string" required="true">
+Payment currency code.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Payment status.
+</ResponseField>
+
+<ResponseField name="filings_purchased" field-type="number" required="true">
+Number of filings or credits purchased.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Creation timestamp.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_payments",
+    "arguments": {}
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "pay_01JY6Y8KQ4ZC8W7PZ4M2J4BN0N",
+    "amount": 299,
+    "currency": "usd",
+    "status": "succeeded",
+    "filings_purchased": 1,
+    "created_at": "2026-01-02T11:15:09.104Z"
+  }
+]
+```
+</Response>
+
+### list_fax_logs
+
+List up to 100 fax log records for the authenticated user.
+
+#### Response
+
+<ResponseField name="id" field-type="string" required="true">
+Fax log identifier.
+</ResponseField>
+
+<ResponseField name="to_number" field-type="string" required="true">
+Recipient fax number.
+</ResponseField>
+
+<ResponseField name="from_number" field-type="string" required="true">
+Sender fax number.
+</ResponseField>
+
+<ResponseField name="status" field-type="string" required="true">
+Fax delivery status.
+</ResponseField>
+
+<ResponseField name="pages_sent" field-type="number" required="true">
+Number of pages sent.
+</ResponseField>
+
+<ResponseField name="created_at" field-type="string" required="true">
+Creation timestamp.
+</ResponseField>
+
+<ResponseField name="completed_at" field-type="string" required="false">
+Completion timestamp if the fax finished processing.
+</ResponseField>
+
+<ResponseField name="failure_reason" field-type="string" required="false">
+Reason for failure when delivery does not complete successfully.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "list_fax_logs",
+    "arguments": {}
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+[
+  {
+    "id": "fax_01JY6YFRGQ2KQ2H29M3X6X8T8D",
+    "to_number": "+12125550199",
+    "from_number": "+16465550101",
+    "status": "delivered",
+    "pages_sent": 6,
+    "created_at": "2026-01-20T16:32:50.002Z",
+    "completed_at": "2026-01-20T16:35:17.447Z",
+    "failure_reason": null
+  }
+]
+```
+</Response>
+
+### get_form_schema
+
+Return the supported form field schema for either the 5472 and 1120 workflow or the partnership workflow.
+
+<ParamField body="kind" param-type="string" required="true" enum="5472,partnership" show-location="false">
+
+Select which schema to return.
+
+</ParamField>
+
+#### Response
+
+The tool returns a schema descriptor with a top-level description and a `fields` object.
+
+<ResponseField name="description" field-type="string" required="true">
+Human-readable description of the selected form schema.
+</ResponseField>
+
+<ResponseField name="fields" field-type="object" required="true">
+Map of supported field names to field descriptions for the selected filing kind.
+</ResponseField>
+
+#### 5472 fields included
+
+The `5472` schema includes these top-level fields: `taxYearBegin`, `taxYearEnd`, `llcName`, `llcStreet`, `llcCity`, `ein`, `totalAssets`, `businessActivity`, `businessActivityCode`, `isInitialYear`, `countryIncorporation`, `dateIncorporation`, `taxResidentCountry`, `principalBusinessCountries`, `ownerName`, `ownerStreet`, `ownerCity`, `ownerUSId`, `ownerRefId`, `ownerFTIN`, `ownerBusinessCountries`, `ownerCitizenship`, `ownerTaxResidentCountry`, `relatedParties`, `signerTitle`, `signatureDate`, `generateForm7004`, and `generateLateFilingLetter`.
+
+#### Partnership fields included
+
+The `partnership` schema includes these top-level fields: `partnershipName`, `ein`, `street`, `city`, `state`, `zip`, `businessActivity`, `businessActivityCode`, `dateBusinessStarted`, `accountingMethod`, `totalAssets`, `taxYearBegin`, `taxYearEnd`, `partners`, `income`, `deductions`, `scheduleK`, and `withholding`.
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_form_schema",
+    "arguments": {
+      "kind": "5472"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "description": "Field descriptions for the Form 5472 and Form 1120 workflow",
+  "fields": {
+    "taxYearBegin": "Tax year start date",
+    "taxYearEnd": "Tax year end date",
+    "llcName": "Legal name of the LLC",
+    "llcStreet": "Street address of the LLC",
+    "llcCity": "City, state, and ZIP for the LLC",
+    "ein": "Employer Identification Number",
+    "totalAssets": "Total assets at year end",
+    "businessActivity": "Primary business activity",
+    "businessActivityCode": "Business activity code",
+    "relatedParties": "Array of related party objects"
+  }
+}
+```
+</Response>
+
+### get_pdf_url
+
+Return a deep link to the Nomadfiling app where the filing can be opened and PDFs can be previewed or downloaded.
+
+<ParamField body="id" param-type="string" required="true" show-location="false">
+
+Filing UUID.
+
+</ParamField>
+
+<ParamField body="kind" param-type="string" required="false" enum="5472,partnership" show-location="false">
+
+Filing type hint. Defaults to `5472`. The tool auto-detects the correct filing table before returning the URL.
+
+</ParamField>
+
+#### Response
+
+<ResponseField name="url" field-type="string" required="true">
+Deep link to the filing in the Nomadfiling app.
+</ResponseField>
+
+<ResponseField name="kind" field-type="string" required="true">
+Resolved filing kind, either `5472` or `partnership`.
+</ResponseField>
+
+#### Example
+
+<Request>
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_pdf_url",
+    "arguments": {
+      "id": "f5dbb2d8-118d-4688-97f0-85b2f278d29c"
+    }
+  }
+}
+```
+</Request>
+
+<Response>
+```json
+{
+  "url": "https://app.nomadfiling.com/filing/f5dbb2d8-118d-4688-97f0-85b2f278d29c",
+  "kind": "5472"
+}
+```
+</Response>
+
+## Common patterns
+
+Use the same filing `id` across the lookup, update, delete, and PDF URL tools. Creation tools return the `id` you need for later operations.
+
+<CodeGroup tabs="Create then fetch,Get PDF URL">
+
+```json
+{
+  "create_filing_result": {
+    "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77",
+    "view_url": "https://app.nomadfiling.com/filing/a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+  },
+  "next_call": {
+    "method": "tools/call",
+    "params": {
+      "name": "get_filing",
+      "arguments": {
+        "id": "a78f82c4-c6af-43ef-bc0a-cbbd7e28db77"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "get_pdf_url",
+    "arguments": {
+      "id": "17a5cb76-e3fe-4a21-b12b-a0a194dfef5a",
+      "kind": "partnership"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+<Callout kind="tip">
+
+If you are generating filing payloads outside the Nomadfiling app, call `get_form_schema` first to inspect the expected top-level field names for the filing type you want to create.
+
+</Callout>
+
+## Related pages
+
+<Columns cols={2}>
+<Card title="MCP overview" href="/api/mcp-overview" icon="book-open" cta="Understand the server" />
+<Card title="Authenticate API requests" href="/api/authentication" icon="lock" cta="Configure auth" />
+<Card title="Form 5472 and 1120" href="/form-5472-1120" icon="file-text" cta="Review filing fields" />
+<Card title="Partnership filing" href="/partnership-filing" icon="users" cta="Review partnership fields" />
+</Columns>
+
+## FAQ
+
+<ExpandableGroup>
+<Expandable title="Do all tools require authentication?" default-open="true">
+
+Yes. Every Nomadfiling MCP tool is called through `tools/call` and requires an authenticated MCP client session.
+
+</Expandable>
+<Expandable title="What happens if I omit optional fields when creating a filing?">
+
+For `create_filing`, the server falls back to `form_data.llcName` for `llc_name` and `form_data.ein` for `ein` when those row fields are omitted. For `create_partnership_filing`, the server derives `llc_name` from `form_data.partnershipName`.
+
+</Expandable>
+<Expandable title="What is the difference between view_url and get_pdf_url?">
+
+`view_url` is returned by create and update tools as a convenience link. `get_pdf_url` resolves the filing type and returns the deep link you can use later when you only have a filing `id`.
+
+</Expandable>
+<Expandable title="Can I use get_form_schema as a full validation spec?">
+
+No. `get_form_schema` returns field descriptions and supported top-level field names. Use it to shape payloads, but do not assume it replaces application-level validation.
+
+</Expandable>
+<Expandable title="How do I choose between 5472 and partnership tools?">
+
+Use the 5472 tool set for single-member filing workflows documented in [Form 5472 and 1120](/form-5472-1120). Use the partnership tool set for multi-member LLC partnership workflows documented in [Partnership filing](/partnership-filing).
+
+</Expandable>
+</ExpandableGroup>

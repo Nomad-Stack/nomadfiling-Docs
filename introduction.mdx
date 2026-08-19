@@ -1,46 +1,122 @@
 ---
-title: Introduction to Nomadfiling
-description: Landing page with Nomadfiling overview, key features, and quick navigation to get users oriented.
+title: Introduction
+description: Discover how Nomadfiling helps foreign-owned US LLCs prepare and file IRS tax forms — including Form 5472, 1120, and 1065 — in minutes.
 ---
 
-<Image src="https://blob-cdn.documentation.ai/org-2ebb2ef5-dd91-493f-9938-283fbdb14c81/doc-d2a73d2e-4391-4446-a5c8-2d0b41b7c4c1/1774416420393-s9t4cno1w99-Image-8.png?q=85&fm=auto&auto=compress%2Cformat" alt="Nomadfiling documentation" width="800" height="400" />
+<Image src="https://blob-cdn.documentation.ai/org-2ebb2ef5-dd91-493f-9938-283fbdb14c81/doc-d2a73d2e-4391-4446-a5c8-2d0b41b7c4c1/1774416420393-s9t4cno1w99-Image-8.png?q=85&fm=auto&auto=compress%2Cformat" alt="Nomadfiling tax filing application" width="800" height="400" />
 
-## Welcome to Nomadfiling
+## File US tax forms for a foreign-owned LLC with less guesswork
 
-Nomadfiling provides a centralized space to organize and manage all your project documentation. You can create, edit, and collaborate on docs effortlessly.
+Nomadfiling is a web application for foreign-owned US LLCs that prepares IRS filing documents through a step-by-step wizard. It helps you generate compliant PDF forms for common federal filing requirements without piecing together forms, instructions, and cover letters on your own.
 
-## Key Features
+Tax professionals can use Nomadfiling to speed up repeat filing work, and developers can connect AI agents through the MCP server for guided workflows and compliance tasks. The result is one place to prepare filings, generate supporting documents, and send completed packages by fax when required.
+
+<Callout kind="info">
+  Nomadfiling supports 16 interface languages and uses a one-time payment model instead of a recurring subscription.
+</Callout>
+
+## What Nomadfiling handles
+
+Nomadfiling covers the forms and supporting documents that foreign founders and cross-border tax practitioners deal with most often. The product centers on a guided filing wizard that collects your entity, ownership, transaction, and signature details, then generates IRS-ready PDFs.
 
 <Columns cols={2}>
-  <Card title="Organized Structure" icon="folder-tree" href="/organization">
-    Build hierarchical docs with folders and pages for easy navigation.
+  <Card title="Form 5472 and Form 1120" icon="file-text" href="/features">
+    Prepare filings for foreign-owned US disregarded entities, including related-party transaction reporting and the required pro forma return.
   </Card>
-  <Card title="Collaboration Tools" icon="users" href="/collaboration">
-    Invite team members and work together in real-time.
+  <Card title="Partnership Form 1065" icon="users" href="/features">
+    Generate partnership returns with supporting schedules for multi-owner structures and partnership reporting workflows.
   </Card>
-  <Card title="Version History" icon="git-branch" href="/versions">
-    Track changes and revert to previous versions anytime.
+  <Card title="Schedules K-1, K-2, and K-3" icon="book-open" href="/features">
+    Produce partner schedules needed for income allocation and international reporting.
   </Card>
-  <Card title="Search and Discovery" icon="search" href="/search">
-    Quickly find content across your entire documentation space.
+  <Card title="Forms 8804 and 8805" icon="shield" href="/features">
+    Handle withholding-related reporting for partnership structures with foreign partners.
+  </Card>
+  <Card title="Form 1040-NR" icon="edit" href="/features">
+    Support nonresident individual filing workflows connected to US-source income and withholding obligations.
+  </Card>
+  <Card title="Extensions and penalty letters" icon="arrow-right" href="/features">
+    Generate Form 7004 extension requests and late filing penalty letters when you need to respond after a missed deadline.
   </Card>
 </Columns>
 
-## Who Should Use Nomadfiling
+## Who it is for
 
-Nomadfiling suits developers, product teams, and documentation writers who need a simple yet powerful way to maintain project knowledge bases. Whether you document codebases, APIs, or user guides, this platform scales with your needs.
+Nomadfiling is built for readers who need a filing outcome, not a tax software learning curve. The platform fits three common use cases.
 
-## Quick Navigation
+- **Foreign business owners with US LLCs** — prepare annual filings when you need a clear path through Form 5472, Form 1120, extensions, or penalty response documents.
+- **Tax professionals and firm operators** — standardize recurring filing work, collect the same inputs each time, and generate consistent PDF packages faster.
+- **Developers building AI-assisted workflows** — connect Nomadfiling through its MCP server so Claude Desktop, ChatGPT, or custom agents can help gather data and drive filing tasks.
+
+## How the product works
+
+The main filing flow uses a guided wizard that breaks filing preparation into focused steps. For the Form 5472 workflow, the application collects reporting entity details, owner information, related party data, transactions, signatures, and supporting statements before generating the final PDF package.
+
+That structure matters because foreign-owned LLC filings often depend on details spread across owners, entities, and cross-border transactions. Instead of filling raw IRS PDFs by hand, you enter the data once and let Nomadfiling generate the forms and related documents from that information.
 
 <Columns cols={2}>
-  <Card title="Get Started" icon="rocket" href="/quickstart" horizontal>
-    Follow the quickstart guide to set up your first project.
+  <Card title="Start with the filing wizard" icon="play-circle" href="/quickstart">
+    Follow the guided setup, enter your entity data, and generate your first filing package.
   </Card>
-  <Card title="Core Concepts" icon="book-open" href="/concepts" horizontal>
-    Learn the fundamental building blocks of Nomadfiling.
+  <Card title="Review pricing" icon="bar-chart" href="/getting-started/pricing">
+    Choose a one-time filing plan based on how many filings you need to prepare.
   </Card>
 </Columns>
+
+## Key features
+
+<Columns cols={2}>
+  <Card title="Guided filing wizard" icon="rocket" href="/quickstart">
+    Move through a step-by-step workflow instead of completing IRS PDFs manually.
+  </Card>
+  <Card title="IRS-ready PDF generation" icon="file-text" href="/features">
+    Generate compliant PDF forms for filing, review, signature, and recordkeeping.
+  </Card>
+  <Card title="Direct fax sending" icon="upload" href="/features">
+    Send filing packages to the IRS by fax through the built-in Telnyx fax workflow.
+  </Card>
+  <Card title="AI compliance scanner" icon="zap" href="/features">
+    Check filing information for likely compliance issues before you finalize documents.
+  </Card>
+  <Card title="AI-generated supporting statements" icon="code" href="/features">
+    Create supporting statement drafts and additional filing documents from the information you already entered.
+  </Card>
+  <Card title="MCP server integration" icon="terminal" href="/features">
+    Connect AI agents to Nomadfiling with OAuth 2.1 and PKCE-based authentication.
+  </Card>
+</Columns>
+
+## Pricing at a glance
+
+Nomadfiling uses one-time pricing based on how many filings you need. That makes it easier to use the product for a specific deadline without committing to an annual subscription.
+
+| Plan | Price | Best for |
+|---|---:|---|
+| 1 filing | $147 | One LLC or a single annual filing requirement |
+| 2 filings | $197 | Founders managing more than one entity or filing cycle |
+| 5 filings | $297 | Small firms or repeat annual use |
+| Unlimited | $497 | Higher-volume preparers and ongoing client work |
 
 <Callout kind="tip">
-  This documentation was generated as a starter kit. Customize the content to match your product.
+  If you are comparing plans, start with the filing count you expect this season. You can review the current plan details on the [pricing page](/getting-started/pricing).
 </Callout>
+
+## For developers and AI-assisted workflows
+
+Nomadfiling includes an MCP server for teams that want to integrate filing workflows into AI tools. That setup is useful when you want an agent to collect structured filing data, guide a user through requirements, or trigger downstream compliance steps in a broader workflow.
+
+The product stack includes a React frontend, a Supabase backend with Postgres, authentication and edge functions, Stripe for payments, Telnyx for fax delivery, and `pdf-lib` for form generation. If you are evaluating Nomadfiling as part of a larger automation flow, start with the product capabilities on the features page and then move into setup material.
+
+## Choose your next step
+
+<Columns cols={3}>
+  <Card title="Get started" icon="rocket" href="/quickstart">
+    Prepare your first filing and see the wizard flow end to end.
+  </Card>
+  <Card title="Explore features" icon="settings" href="/features">
+    Review the forms, delivery options, and AI-assisted capabilities in more detail.
+  </Card>
+  <Card title="Check pricing" icon="bar-chart" href="/getting-started/pricing">
+    Pick the one-time plan that matches your filing volume.
+  </Card>
+</Columns>

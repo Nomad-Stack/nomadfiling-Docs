@@ -1,0 +1,173 @@
+---
+title: Pricing
+description: Compare Nomadfiling's one-time filing plans — from a single filing to unlimited access — and understand how credits and payments work.
+---
+
+## Choose the filing plan that matches how many returns you need to generate.
+
+Nomadfiling uses one-time payments, not subscriptions. You buy filing credits once, use them from your account, and track the remaining balance in your dashboard.
+
+<Callout kind="info">
+
+All plans are paid through Stripe Checkout. Promotion codes are supported at checkout, and your payment history stays available on the [Payments](/account/payments) page.
+
+</Callout>
+
+### Plan highlights
+
+<Columns cols={2}>
+  <Card
+    title="Starter"
+    href="/quickstart"
+    icon="file-text"
+    cta="Start with 1 filing"
+  >
+
+  Best if you only need to prepare a single filing.
+
+  - **Price:** $147
+  - **Credits included:** 1 filing
+  - **Stripe price ID:** `price_1TEqcrHIvgNhIHYGBJnafSgN`
+
+  </Card>
+  <Card
+    title="Business"
+    href="/quickstart"
+    icon="check-circle"
+    cta="Choose 2 filings"
+  >
+
+  Best value if you expect to file more than once.
+
+  - **Price:** $197
+  - **Credits included:** 2 filings
+  - **Marked in app as:** Best Value
+  - **Stripe price ID:** `price_1TGeBDHIvgNhIHYGOwTTydsM`
+
+  </Card>
+  <Card
+    title="Enterprise"
+    href="/quickstart"
+    icon="building"
+    cta="Choose 5 filings"
+  >
+
+  Best if you manage several filings and want a larger credit balance upfront.
+
+  - **Price:** $297
+  - **Credits included:** 5 filings
+  - **Stripe price ID:** `price_1TGeBZHIvgNhIHYGQ1MaHS0B`
+
+  </Card>
+  <Card
+    title="Unlimited Forever"
+    href="/quickstart"
+    icon="rocket"
+    cta="Get unlimited access"
+  >
+
+  Best if you do not want to manage filing credits at all.
+
+  - **Price:** $497
+  - **Credits included:** Unlimited
+  - **Stripe price ID:** `price_1TGeBwHIvgNhIHYGAwrU7wnL`
+
+  </Card>
+</Columns>
+
+### Compare plans
+
+| Plan | One-time price | Filings included | Best for | Stripe price ID |
+| --- | ---: | ---: | --- | --- |
+| Starter | $147 | 1 | One filing | `price_1TEqcrHIvgNhIHYGBJnafSgN` |
+| Business | $197 | 2 | Repeat filers who want the best value | `price_1TGeBDHIvgNhIHYGOwTTydsM` |
+| Enterprise | $297 | 5 | Higher filing volume | `price_1TGeBZHIvgNhIHYGQ1MaHS0B` |
+| Unlimited Forever | $497 | Unlimited | Ongoing filing access without credit limits | `price_1TGeBwHIvgNhIHYGAwrU7wnL` |
+
+### What your purchase includes
+
+Your plan adds filing capacity to your account after payment is verified. The dashboard then shows how many filings you purchased, how many you have used, and how many remain.
+
+- **Starter** adds 1 filing credit.
+- **Business** adds 2 filing credits.
+- **Enterprise** adds 5 filing credits.
+- **Unlimited Forever** removes the filing limit and shows **Unlimited** in the dashboard.
+
+If you want to review your balance after purchase, open the [Dashboard](/account/dashboard).
+
+<Callout kind="tip">
+
+If you are unsure which plan to choose, Business is the safest default for users who expect to prepare more than one filing. It includes 2 filings and is marked as the best-value option in the app.
+
+</Callout>
+
+### How payment works
+
+You select a plan after completing the filing quiz. Nomadfiling then sends you to Stripe Checkout to complete the purchase securely.
+
+After Stripe returns you to the app, the payment is verified and saved to your account. The verification flow records the purchase in the payments table with the number of filings purchased, then updates what you see in your dashboard and payment history.
+
+Payment records can appear with these statuses:
+
+- **paid** — the purchase completed successfully and credits are available
+- **pending** — the checkout session exists but verification has not finished yet
+- **failed** — the payment did not complete successfully
+
+### Where to see receipts and payment history
+
+Every completed purchase appears on the [Payments](/account/payments) page. That page shows your payment history and receipt links, so you can review past purchases without going back through checkout.
+
+### Separate checkout for Form 7004 extensions
+
+Form 7004 tax extensions use a separate checkout flow from filing plans. If you purchase an extension, Nomadfiling creates that payment through a dedicated extension checkout instead of using your filing-credit balance.
+
+### Affiliate and referral tracking
+
+If you arrived through a partner or referral link, Nomadfiling can pass referral tracking data through checkout. Affiliate attribution is supported during the Stripe payment flow.
+
+### Billing FAQ
+
+<ExpandableGroup>
+  <Expandable title="Is Nomadfiling a subscription?" default-open="true">
+
+  No. Nomadfiling uses one-time payments only. You buy filing credits once, and the credits stay in your account until you use them. Unlimited Forever is also a one-time purchase, not a recurring plan.
+
+  </Expandable>
+  <Expandable title="Do plans renew automatically?">
+
+  No plans renew automatically. Nomadfiling does not charge you again unless you start a new checkout and complete another purchase.
+
+  </Expandable>
+  <Expandable title="Can I use promotion codes?">
+
+  Yes. Stripe Checkout supports promotion codes for eligible purchases.
+
+  </Expandable>
+  <Expandable title="How do I know how many filings I have left?">
+
+  Open the [Dashboard](/account/dashboard). The dashboard shows your purchased credits, used filings, and remaining balance. If your account has unlimited access, the remaining balance shows as **Unlimited**.
+
+  </Expandable>
+  <Expandable title="Where can I find receipts for past purchases?">
+
+  Open the [Payments](/account/payments) page to see payment history and receipt links.
+
+  </Expandable>
+  <Expandable title="What happens after I pay?">
+
+  After checkout, Stripe returns you to the app with payment confirmation details in the URL. Nomadfiling verifies the Stripe session, saves the payment record, and applies the filing credits to your account.
+
+  </Expandable>
+  <Expandable title="Does Form 7004 use the same credits as filing plans?">
+
+  No. Form 7004 extensions use a separate checkout flow.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Next steps
+
+<Columns cols={2}>
+  <Card title="Start your filing" href="/quickstart" icon="arrow-right" cta="Open quickstart" />
+  <Card title="View your payments" href="/account/payments" icon="credit-card" cta="Open payments" />
+</Columns>

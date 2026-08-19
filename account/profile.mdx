@@ -1,0 +1,194 @@
+---
+title: Account profile
+description: Manage your Nomadfiling profile, view account statistics, and access account settings from the account page.
+---
+
+## Manage your account from one page
+
+Your account page brings together the profile details you can update, the account details you can review, and shortcuts to the areas you are likely to need next.
+
+If you are signed in, open `/account` to view your profile, filing and payment counts, API key access, and logout controls. If you are not signed in, Nomadfiling redirects you to `/login` before showing the page.
+
+<Callout kind="info">
+
+The account page is available only after authentication. If Nomadfiling sends you to the login page, sign in first and then return to `/account`.
+
+</Callout>
+
+## What you can do on the account page
+
+The account page is organized around a few core account tasks:
+
+- Review your saved profile information
+- Update your full name inline
+- Check how many filings you have created
+- Check how many paid payments are on your account
+- Open your MCP API keys page
+- Sign out of your account
+
+Behind the scenes, the page loads your profile details and account statistics in parallel so the profile card and stat cards appear together.
+
+## Update your profile details
+
+Your profile card shows three fields:
+
+- **Full Name** — editable
+- **Email** — read-only
+- **Member Since** — read-only
+
+Nomadfiling reads these values from your account profile, including your email address, your saved full name, and your account creation date.
+
+<Steps>
+  <Step title="Open the profile card" icon="users">
+
+  Go to `/account` after signing in. The profile card appears near the top of the page and shows your current account details.
+
+  </Step>
+  <Step title="Edit your full name" icon="edit">
+
+  Select the pencil icon next to **Full Name** to enter edit mode. Nomadfiling replaces the text with an input field and shows **Save** and **Cancel** actions.
+
+  </Step>
+  <Step title="Save or discard the change" icon="check-circle">
+
+  Enter your updated name, then select **Save** to keep it. If you change your mind, select **Cancel** to leave your current name unchanged.
+
+  A successful update returns the profile card to its normal view with the new full name displayed.
+
+  </Step>
+</Steps>
+
+<Callout kind="tip">
+
+Use your real name if you want your account details to stay consistent across support, billing, and filing activity.
+
+</Callout>
+
+## Understand the fields you see
+
+The account page keeps editable and read-only fields separate so you can quickly see what can change.
+
+<ParamField body="full_name" param-type="string" required="false" show-location="false">
+Your display name on the account page. You can update this field inline from the profile card.
+</ParamField>
+
+<ParamField body="email" param-type="string" required="true" show-location="false">
+The email address tied to your signed-in account. The account page shows this value as read-only.
+</ParamField>
+
+<ParamField body="created_at" param-type="datetime" required="true" show-location="false">
+The date your account was created. The account page displays this as **Member Since** and does not allow editing.
+</ParamField>
+
+## View your account statistics
+
+The account page includes quick stats so you can confirm recent activity without opening multiple sections.
+
+### Filings count
+
+The filings stat shows how many filings belong to your account. Select the filings card to go to the [Dashboard](/dashboard), where you can review saved filings in more detail.
+
+### Paid payments count
+
+The paid payments stat shows the number of payments on your account with a paid status. Select the payments card to open [Payments](/account/payments).
+
+<Callout kind="info">
+
+The payments count includes paid payments only. Unpaid or incomplete payment records do not increase this number.
+
+</Callout>
+
+## Open MCP API keys
+
+The account page includes a separate card for **MCP API Keys**. Use it to open your API key management page at [API Keys](/account/api-keys).
+
+This shortcut is useful if you work with external tools or automations and need to create, review, or manage account-level keys.
+
+## Sign out safely
+
+Use the logout action in the account page or main navigation when you are done working in Nomadfiling.
+
+<Steps>
+  <Step title="Select Logout" icon="x-circle">
+
+  Click **Logout** from the account page navigation or the mobile navigation menu.
+
+  </Step>
+  <Step title="Clear local session state" icon="trash">
+
+  During logout, Nomadfiling clears the local `tax_tool_paid` browser value before ending your session.
+
+  </Step>
+  <Step title="End the authenticated session" icon="lock">
+
+  Nomadfiling signs you out and redirects you to `/`.
+
+  Success looks like a return to the public home page, where account-only pages are no longer accessible until you sign in again.
+
+  </Step>
+</Steps>
+
+## Use account navigation
+
+The signed-in account navigation helps you move between the main areas of Nomadfiling without returning to the home page.
+
+You can access these items from the main navigation:
+
+- **Dashboard**
+- **Fax Outbox**
+- **Payments**
+- **Account**
+- **Language** switcher
+- **Logout**
+
+On smaller screens, the same navigation is available from the mobile hamburger menu. When you are on the account page, **Account** appears as the active section.
+
+## Password and sign-in access
+
+Your account page focuses on profile details, account activity, and access to related account settings.
+
+If you need help with billing before continuing, review [Pricing](/getting-started/pricing). If you cannot reach the account page because you are not signed in, start from the login screen and complete your sign-in flow first.
+
+<Callout kind="alert">
+
+The account page does not expose every authentication action directly in the profile card. If you are troubleshooting account access, sign in again first and confirm that `/account` loads successfully before changing anything else.
+
+</Callout>
+
+## Frequently asked questions
+
+<ExpandableGroup>
+  <Expandable title="Why can I edit my full name but not my email?" default-open="true">
+
+  Nomadfiling allows inline editing for your full name only. The email field is shown for reference and remains read-only on the account page.
+
+  </Expandable>
+  <Expandable title="Why does the payments count look lower than expected?">
+
+  The payments card counts only payments with a paid status. Pending, failed, or incomplete payments are not included in that number.
+
+  </Expandable>
+  <Expandable title="Why did Nomadfiling send me to the login page when I opened /account?">
+
+  The account page is protected. If your session has expired or you were not signed in, Nomadfiling redirects you to `/login` before loading account data.
+
+  </Expandable>
+  <Expandable title="What happens when I log out?">
+
+  Nomadfiling clears the local `tax_tool_paid` browser value, signs you out, and redirects you to the home page. After that, protected account pages require a new sign-in.
+
+  </Expandable>
+  <Expandable title="Where do I manage API keys?">
+
+  Open the **MCP API Keys** card on the account page, or go directly to [API Keys](/account/api-keys).
+
+  </Expandable>
+</ExpandableGroup>
+
+## Go to related account pages
+
+<Columns cols={3}>
+  <Card title="View your filings" href="/dashboard" icon="folder" cta="Open dashboard" />
+  <Card title="Review payments" href="/account/payments" icon="bar-chart" cta="Open payments" />
+  <Card title="Manage API keys" href="/account/api-keys" icon="key" cta="Open API keys" />
+</Columns>

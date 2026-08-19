@@ -1,0 +1,189 @@
+---
+title: AI compliance scanner and supporting statement generation
+description: Use AI to scan generated tax form PDFs for IRS compliance issues and draft supporting statement text for your filing.
+---
+
+## Catch potential filing issues before you submit
+
+Nomadfiling includes two AI-assisted features in the Form 5472 workflow: an **AI Compliance Scanner** for generated PDFs and **AI Supporting Statement Generation** for draft statement text. Use the scanner after you generate your Form 5472 and Form 1120 PDFs, then use supporting statement generation earlier in the wizard when you need draft language for Part V or Part VI disclosures.
+
+<Callout kind="info">
+
+The AI Compliance Scanner is available in the PDF preview step of the Form 5472 wizard, and AI Supporting Statement Generation is available in the Supporting Statements step. Both features help you review your filing, but neither replaces your final review before submission.
+
+</Callout>
+
+## What each AI feature does
+
+The two AI features solve different problems in the filing flow. One checks completed PDFs for potential issues, while the other helps you draft supporting narrative text before the PDFs are finalized.
+
+### AI Compliance Scanner
+
+The AI Compliance Scanner analyzes the generated **Form 5472** and **Form 1120** PDFs in Step 8 of the filing wizard. Nomadfiling sends the generated PDF bytes to the `analyze-pdf` Supabase Edge Function, which calls an AI API to look for potential IRS compliance errors and returns findings for your review.
+
+The scanner is designed for the final review stage, when your filing data is already entered and the PDFs have been generated. That makes it useful for spotting issues that only become visible in the finished documents, such as missing information, inconsistencies, or fields that may need another look.
+
+### AI Supporting Statement Generation
+
+AI Supporting Statement Generation helps you create draft text for IRS supporting statements in Step 6 of the Form 5472 wizard. Nomadfiling sends your statement context to the `generate-statement` Supabase Edge Function, which generates AI draft language that you review and edit before including it in the filing.
+
+Unlike the scanner, this feature is not checking PDFs. It helps you move from blank text areas to a usable first draft, especially for Part V and Part VI supporting statements that often need custom explanations.
+
+## Use the AI Compliance Scanner
+
+Run the scanner after you reach the PDF preview step and confirm that your generated forms look complete. This is the best point to catch issues before download or submission.
+
+<Steps>
+  <Step title="Open the PDF preview step" icon="file-text">
+
+  Complete the Form 5472 wizard until you reach **Step 8**, the PDF preview stage. This step generates the filing PDFs, including Form 5472 and Form 1120.
+
+  Success looks like a live preview of your generated PDFs and the download options for your filing bundle.
+
+  </Step>
+
+  <Step title="Start a compliance scan" icon="play-circle">
+
+  Use the AI Compliance Scanner in the PDF preview area to start the review. Nomadfiling sends the generated PDF bytes to the `analyze-pdf` edge function for analysis.
+
+  The scan checks the generated Form 5472 and Form 1120 PDFs for potential compliance issues and returns findings for review.
+
+  </Step>
+
+  <Step title="Review the findings" icon="check-circle">
+
+  Read the findings carefully and compare them against the information in your filing. Treat each finding as a prompt to verify the affected section, not as an automatic rejection or approval.
+
+  Success looks like a list of potential issues or a clean result with no major findings returned by the scanner.
+
+  </Step>
+
+  <Step title="Fix data and regenerate PDFs if needed" icon="edit">
+
+  If the scan highlights an issue, go back to the relevant step in the wizard, update the underlying form data, and regenerate the PDFs. Then run the scanner again on the updated documents.
+
+  This matters because the scanner analyzes the generated PDFs, not partially completed draft fields in earlier steps.
+
+  </Step>
+</Steps>
+
+## What to expect from scan results
+
+The scanner returns **findings about potential compliance issues** in your generated tax form PDFs. These findings help you focus your review on areas that may need correction before submission.
+
+A finding does not guarantee that a form is wrong, and a clean scan does not guarantee that the filing is complete in every legal or tax sense. Use the results as a review aid alongside your own checks and any professional advice you rely on.
+
+<Callout kind="alert">
+
+The `analyze-pdf` edge function does not require JWT authentication. That means the scan endpoint is public, even though you access the feature from inside the Nomadfiling workflow.
+
+</Callout>
+
+### What the scanner analyzes
+
+The scanner works on the **generated PDF output**, not raw form fields. In the current Form 5472 flow, that includes:
+
+- **Form 5472** generated from your reporting corporation, owner, related party, transaction, and supporting statement data
+- **Form 1120** generated from the same filing workflow
+- The specific PDF versions produced in **StepPdfPreview**, which is Step 8 of the wizard
+
+That distinction matters because PDF review can catch issues that are easier to notice after the forms are rendered, not while you are still entering data.
+
+## Use AI Supporting Statement Generation
+
+Generate draft text when you are working on supporting statements in Step 6. This feature is meant to speed up drafting, not to finalize the language for you.
+
+<Steps>
+  <Step title="Open the Supporting Statements step" icon="paperclip">
+
+  Move to **Step 6** in the Form 5472 wizard, the Supporting Statements step. This is where Nomadfiling handles statement text and related optional filing documents.
+
+  Success looks like editable supporting statement fields and options related to statements included with the filing.
+
+  </Step>
+
+  <Step title="Generate draft text" icon="zap">
+
+  Use the AI statement generation option to create draft language for your IRS supporting statements. Nomadfiling sends the request to the `generate-statement` Supabase Edge Function.
+
+  This feature requires JWT authentication and is intended for authenticated filing activity.
+
+  </Step>
+
+  <Step title="Review and edit the draft" icon="edit">
+
+  Read the generated draft line by line and revise it to match your actual filing facts. You remain responsible for the final statement content included in the filing.
+
+  Success looks like statement text that accurately reflects your transactions, disclosures, and supporting details before you continue to review and PDF generation.
+
+  </Step>
+</Steps>
+
+## AI compliance scanner compared with statement generation
+
+The easiest way to choose the right feature is to match it to your current step in the filing process.
+
+| Feature | Where you use it | What it works on | Auth requirement | Output |
+|---|---|---|---|---|
+| AI Compliance Scanner | Step 8, PDF preview | Generated Form 5472 and Form 1120 PDFs | No JWT required on edge function | Findings about potential compliance issues |
+| AI Supporting Statement Generation | Step 6, Supporting Statements | Statement context used to draft IRS supporting text | JWT required | Draft statement text for review and editing |
+
+## When to use each feature
+
+Use **AI Supporting Statement Generation** when you are still building the filing and need help drafting statement language. Use the **AI Compliance Scanner** when the filing PDFs already exist and you want another review pass before submission.
+
+That sequence usually works best:
+
+- Draft and refine supporting statements in Step 6
+- Complete the rest of the wizard
+- Generate PDFs in Step 8
+- Run the AI Compliance Scanner on the finished documents
+- Correct any issues and regenerate if necessary
+
+## Frequently asked questions
+
+<ExpandableGroup>
+  <Expandable title="Does the AI Compliance Scanner file or submit anything for me?" default-open="true">
+
+  No. The scanner reviews generated PDFs and returns findings about potential issues. You still decide whether to update the filing, regenerate the PDFs, download them, or submit them through your own process.
+
+  </Expandable>
+
+  <Expandable title="Which forms does the AI Compliance Scanner review?">
+
+  The scanner analyzes the generated **Form 5472** and **Form 1120** PDFs available in the PDF preview step of the Form 5472 wizard.
+
+  </Expandable>
+
+  <Expandable title="Do I need to be signed in to use AI Supporting Statement Generation?">
+
+  Yes. AI Supporting Statement Generation uses the `generate-statement` edge function, which requires JWT authentication.
+
+  </Expandable>
+
+  <Expandable title="Do I need to edit AI-generated supporting statements?">
+
+  Yes. Treat the generated text as a draft. Review every statement for accuracy, completeness, and fit with your filing before including it in the final PDF set.
+
+  </Expandable>
+
+  <Expandable title="Does a clean scan mean my filing is definitely compliant?">
+
+  No. A clean scan means the AI did not return notable findings from the generated PDFs. You should still perform your own review and use professional judgment where needed.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Related pages
+
+<Columns cols={3}>
+  <Card title="Form 5472 and 1120" href="/form-5472-1120" icon="file-text" cta="Open guide">
+    Review the core filing workflow for Form 5472 and Form 1120.
+  </Card>
+  <Card title="Features" href="/features" icon="zap" cta="Browse features">
+    Explore other Nomadfiling features available across the filing workflow.
+  </Card>
+  <Card title="Partnership filing" href="/partnership-filing" icon="folder" cta="View filing guide">
+    See the separate filing flow for partnership-related forms and workflows.
+  </Card>
+</Columns>
