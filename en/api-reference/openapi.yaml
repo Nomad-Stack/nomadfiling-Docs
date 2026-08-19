@@ -477,8 +477,7 @@ paths:
             text/event-stream:
               schema:
                 type: string
-                example: event: message
-                  data: {"jsonrpc":"2.0","id":"req_1","result":{"content":[{"type":"text","text":"streaming response"}]}}
+                example: "event: message\ndata: {\"jsonrpc\":\"2.0\",\"id\":\"req_1\",\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"streaming response\"}]}}"
         '202':
           description: Notification accepted with no response body
         '400':
