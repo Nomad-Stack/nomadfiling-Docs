@@ -1,0 +1,173 @@
+---
+title: Preise
+description: Vergleiche die Einmal-Einreichungspläne von Nomadfiling — von einer einzelnen Einreichung bis zum unbegrenzten Zugang — und verstehe, wie Guthaben und Zahlungen funktionieren.
+---
+
+## Wähle den Einreichungsplan, der zu der Anzahl der Erklärungen passt, die du erzeugen musst.
+
+Nomadfiling verwendet Einmalzahlungen, keine Abonnements. Du kaufst Einreichungsguthaben einmal, nutzt sie über dein Konto und verfolgst den Restbestand in deinem Dashboard.
+
+<Callout kind="info">
+
+Alle Pläne werden über Stripe Checkout bezahlt. Aktionscodes werden beim Checkout unterstützt, und dein Zahlungsverlauf bleibt auf der Seite [Zahlungen](/de/account/payments) verfügbar.
+
+</Callout>
+
+### Planübersicht
+
+<Columns cols={2}>
+  <Card
+    title="Starter"
+    href="/de/quickstart"
+    icon="file-text"
+    cta="Mit 1 Einreichung starten"
+  >
+
+  Am besten, wenn du nur eine einzelne Einreichung vorbereiten musst.
+
+  - **Preis:** $147
+  - **Enthaltenes Guthaben:** 1 Einreichung
+  - **Stripe-Preis-ID:** `price_1TEqcrHIvgNhIHYGBJnafSgN`
+
+  </Card>
+  <Card
+    title="Business"
+    href="/de/quickstart"
+    icon="check-circle"
+    cta="2 Einreichungen wählen"
+  >
+
+  Bestes Preis-Leistungs-Verhältnis, wenn du mehr als einmal einreichen möchtest.
+
+  - **Preis:** $197
+  - **Enthaltenes Guthaben:** 2 Einreichungen
+  - **In der App gekennzeichnet als:** Best Value
+  - **Stripe-Preis-ID:** `price_1TGeBDHIvgNhIHYGOwTTydsM`
+
+  </Card>
+  <Card
+    title="Enterprise"
+    href="/de/quickstart"
+    icon="building"
+    cta="5 Einreichungen wählen"
+  >
+
+  Am besten, wenn du mehrere Einreichungen verwaltest und von Anfang an ein größeres Guthaben möchtest.
+
+  - **Preis:** $297
+  - **Enthaltenes Guthaben:** 5 Einreichungen
+  - **Stripe-Preis-ID:** `price_1TGeBZHIvgNhIHYGQ1MaHS0B`
+
+  </Card>
+  <Card
+    title="Unlimited Forever"
+    href="/de/quickstart"
+    icon="rocket"
+    cta="Unbegrenzten Zugang erhalten"
+  >
+
+  Am besten, wenn du Einreichungsguthaben gar nicht verwalten möchtest.
+
+  - **Preis:** $497
+  - **Enthaltenes Guthaben:** Unbegrenzt
+  - **Stripe-Preis-ID:** `price_1TGeBwHIvgNhIHYGAwrU7wnL`
+
+  </Card>
+</Columns>
+
+### Pläne vergleichen
+
+| Plan | Einmalpreis | Enthaltene Einreichungen | Am besten für | Stripe-Preis-ID |
+| --- | ---: | ---: | --- | --- |
+| Starter | $147 | 1 | Eine Einreichung | `price_1TEqcrHIvgNhIHYGBJnafSgN` |
+| Business | $197 | 2 | Wiederholte Einreicher, die das beste Preis-Leistungs-Verhältnis wollen | `price_1TGeBDHIvgNhIHYGOwTTydsM` |
+| Enterprise | $297 | 5 | Höheres Einreichungsvolumen | `price_1TGeBZHIvgNhIHYGQ1MaHS0B` |
+| Unlimited Forever | $497 | Unbegrenzt | Laufender Einreichungszugang ohne Guthabengrenzen | `price_1TGeBwHIvgNhIHYGAwrU7wnL` |
+
+### Was dein Kauf enthält
+
+Dein Plan fügt deinem Konto nach der Zahlungsprüfung Einreichungskapazität hinzu. Das Dashboard zeigt dann, wie viele Einreichungen du gekauft hast, wie viele du verwendet hast und wie viele übrig sind.
+
+- **Starter** fügt 1 Einreichungsguthaben hinzu.
+- **Business** fügt 2 Einreichungsguthaben hinzu.
+- **Enterprise** fügt 5 Einreichungsguthaben hinzu.
+- **Unlimited Forever** entfernt das Einreichungslimit und zeigt im Dashboard **Unlimited** an.
+
+Wenn du dein Guthaben nach dem Kauf prüfen möchtest, öffne das [Dashboard](/account/dashboard).
+
+<Callout kind="tip">
+
+Wenn du unsicher bist, welchen Plan du wählen sollst, ist Business die sicherste Standardwahl für Nutzerinnen und Nutzer, die mehr als eine Einreichung erwarten. Er enthält 2 Einreichungen und ist in der App als Option mit dem besten Preis-Leistungs-Verhältnis gekennzeichnet.
+
+</Callout>
+
+### So funktioniert die Zahlung
+
+Du wählst einen Plan, nachdem du das Einreichungsquiz abgeschlossen hast. Nomadfiling leitet dich dann zu Stripe Checkout, um den Kauf sicher abzuschließen.
+
+Nachdem Stripe dich zur App zurückführt, wird die Zahlung geprüft und in deinem Konto gespeichert. Der Prüfablauf erfasst den Kauf in der Zahlungstabelle mit der Anzahl der gekauften Einreichungen und aktualisiert anschließend, was du im Dashboard und im Zahlungsverlauf siehst.
+
+Zahlungsdatensätze können mit diesen Status erscheinen:
+
+- **paid** — der Kauf wurde erfolgreich abgeschlossen und Guthaben sind verfügbar
+- **pending** — die Checkout-Sitzung existiert, die Prüfung ist aber noch nicht abgeschlossen
+- **failed** — die Zahlung wurde nicht erfolgreich abgeschlossen
+
+### Wo du Belege und den Zahlungsverlauf findest
+
+Jeder abgeschlossene Kauf erscheint auf der Seite [Zahlungen](/de/account/payments). Diese Seite zeigt deinen Zahlungsverlauf und Beleglinks, sodass du frühere Käufe prüfen kannst, ohne erneut durch den Checkout zu gehen.
+
+### Getrennter Checkout für Form-7004-Verlängerungen
+
+Steuerverlängerungen mit Form 7004 verwenden einen eigenen Checkout-Ablauf, der von den Einreichungsplänen getrennt ist. Wenn du eine Verlängerung kaufst, erstellt Nomadfiling diese Zahlung über einen eigenen Verlängerungs-Checkout, statt dein Einreichungsguthaben zu verwenden.
+
+### Affiliate- und Empfehlungs-Tracking
+
+Wenn du über einen Partner- oder Empfehlungslink gekommen bist, kann Nomadfiling Tracking-Daten zur Empfehlung durch den Checkout übergeben. Die Affiliate-Zuordnung wird während des Stripe-Zahlungsablaufs unterstützt.
+
+### FAQ zur Abrechnung
+
+<ExpandableGroup>
+  <Expandable title="Ist Nomadfiling ein Abonnement?" default-open="true">
+
+  Nein. Nomadfiling verwendet ausschließlich Einmalzahlungen. Du kaufst Einreichungsguthaben einmal, und das Guthaben bleibt in deinem Konto, bis du es verwendest. Unlimited Forever ist ebenfalls ein einmaliger Kauf, kein wiederkehrender Plan.
+
+  </Expandable>
+  <Expandable title="Verlängern sich Pläne automatisch?">
+
+  Kein Plan verlängert sich automatisch. Nomadfiling belastet dich nicht erneut, es sei denn, du startest einen neuen Checkout und schließt einen weiteren Kauf ab.
+
+  </Expandable>
+  <Expandable title="Kann ich Aktionscodes verwenden?">
+
+  Ja. Stripe Checkout unterstützt Aktionscodes für berechtigte Käufe.
+
+  </Expandable>
+  <Expandable title="Wie erkenne ich, wie viele Einreichungen ich noch habe?">
+
+  Öffne das [Dashboard](/account/dashboard). Das Dashboard zeigt dein gekauftes Guthaben, verwendete Einreichungen und den Restbestand. Wenn dein Konto unbegrenzten Zugang hat, wird der Restbestand als **Unlimited** angezeigt.
+
+  </Expandable>
+  <Expandable title="Wo finde ich Belege für frühere Käufe?">
+
+  Öffne die Seite [Zahlungen](/de/account/payments), um den Zahlungsverlauf und Beleglinks zu sehen.
+
+  </Expandable>
+  <Expandable title="Was passiert, nachdem ich bezahlt habe?">
+
+  Nach dem Checkout führt Stripe dich mit Zahlungsbestätigungsdetails in der URL zur App zurück. Nomadfiling prüft die Stripe-Sitzung, speichert den Zahlungsdatensatz und bucht das Einreichungsguthaben auf dein Konto.
+
+  </Expandable>
+  <Expandable title="Verwendet Form 7004 dasselbe Guthaben wie die Einreichungspläne?">
+
+  Nein. Form-7004-Verlängerungen verwenden einen eigenen Checkout-Ablauf.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Nächste Schritte
+
+<Columns cols={2}>
+  <Card title="Starte deine Einreichung" href="/de/quickstart" icon="arrow-right" cta="Schnellstart öffnen" />
+  <Card title="Deine Zahlungen ansehen" href="/de/account/payments" icon="credit-card" cta="Zahlungen öffnen" />
+</Columns>

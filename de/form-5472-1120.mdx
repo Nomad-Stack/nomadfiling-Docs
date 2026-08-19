@@ -1,0 +1,318 @@
+---
+title: Einreichungsassistent für Form 5472 und Form 1120
+description: Durchlaufen Sie jeden Schritt des Nomadfiling-Assistenten für Form 5472 und Form 1120 – von Gesellschaftsangaben über verbundene Parteien, Transaktionen und Unterschriften bis zur PDF-Erstellung.
+---
+
+## Form 5472 und Form 1120 in einem Workflow erstellen
+
+Der Einreichungsassistent von Nomadfiling erfasst die für eine US-amerikanische Single-Member LLC in ausländischem Eigentum benötigten Informationen und erstellt daraus ein vollständiges Einreichungspaket. Sie können die Schritte der Reihe nach durchlaufen, jederzeit zu einem beliebigen Schritt springen, vor der PDF-Erstellung alles prüfen und die Einreichung speichern, um sie später abzuschließen.
+
+<Callout kind="info">
+
+Wenn Sie mehr als eine verbundene Partei hinzufügen, erstellt der Assistent für jede verbundene Partei ein separates Form 5472. Form 1120 wird einmal pro Einreichung erstellt.
+
+</Callout>
+
+### Was der Assistent erstellt
+
+Der abschließende Download ist eine ZIP-Datei, die aus den von Ihnen im Assistenten eingegebenen Daten erstellt wird. Abhängig von Ihrer Auswahl kann die ZIP-Datei Folgendes enthalten:
+
+- Form 5472 für jede verbundene Partei
+- Form 1120 für das ausgewählte Steuerjahr
+- Ergänzende Erklärungen
+- Faxdeckblatt
+- Schreiben bei verspäteter Einreichung
+- Form 7004
+
+Vorlagen für Form 1120 sind für die Steuerjahre 2020 bis 2025 verfügbar. Die PDF-Erstellung erfolgt im Browser aus IRS-PDF-Vorlagen, und das ZIP-Paket wird vor dem Download zusammengestellt.
+
+### Bevor Sie beginnen
+
+Halten Sie diese Angaben bereit, damit Sie den Assistenten ohne Unterbrechung durchlaufen können:
+
+- Rechtlicher Name, EIN, Adresse und Gründungsangaben der LLC
+- Anfangs- und Enddatum des Steuerjahres
+- Identifikations- und Steueransässigkeitsangaben des ausländischen Eigentümers
+- Angaben zu jeder meldepflichtigen verbundenen Partei
+- Dollarbeträge für Transaktionen in Part IV
+- Beträge von Kapitaleinlagen und Ausschüttungen
+- Unterschriftsbild oder ein Gerät, das das Zeichnen einer Unterschrift unterstützt
+
+## Durchlaufen Sie den 8-stufigen Assistenten
+
+<Steps>
+  <Step title="Gesellschaftsangaben eingeben" icon="building-2">
+
+  Im ersten Schritt werden die Angaben zur berichtenden Gesellschaft erfasst, die in Part I von Form 5472 und in Form 1120 verwendet werden. Hier legen Sie die LLC, das Steuerjahr und die Geschäftsklassifizierung fest, die für den Rest der Einreichung übernommen werden.
+
+  Geben Sie in diesem Schritt Folgendes ein:
+
+  - `llcName`
+  - `llcStreet`
+  - `llcCity`
+  - `ein`
+  - `totalAssets`
+  - `businessActivity`
+  - `businessActivityCode`
+  - `isInitialYear`
+  - `countryIncorporation`
+  - `dateIncorporation`
+  - `taxResidentCountry`
+  - `principalBusinessCountries`
+  - `taxYearBegin`
+  - `taxYearEnd`
+
+  `businessActivityCode` ist der NAICS-Code für die Geschäftstätigkeit. Ist dies das erste Einreichungsjahr der LLC, markieren Sie das Kennzeichen für das erste Jahr, damit die erstellten Formulare diesen Status korrekt wiedergeben.
+
+  **Erfolgskontrolle:** Der Gesellschaftsabschnitt zeigt LLC-Name, EIN, Steuerjahresdaten und Gründungsangaben genau so, wie sie in der Steuererklärung erscheinen sollen.
+
+  </Step>
+
+  <Step title="Angaben zum ausländischen Eigentümer hinzufügen" icon="users">
+
+  Im zweiten Schritt werden die Angaben zum ausländischen Eigentümer für Part II von Form 5472 erfasst. Geben Sie die Identifikationsdaten sorgfältig ein, besonders wenn der Eigentümer keine US-Steueridentifikationsnummer besitzt.
+
+  Geben Sie in diesem Schritt Folgendes ein:
+
+  - `ownerName`
+  - `ownerStreet`
+  - `ownerCity`
+  - `ownerUSId`
+  - `ownerRefId`
+  - `ownerFTIN`
+  - `ownerBusinessCountries`
+  - `ownerCitizenship`
+  - `ownerTaxResidentCountry`
+
+  Einige Einreichungen verwenden eine ausländische Steueridentifikationsnummer oder Referenz-ID anstelle einer US-ID. Stellen Sie sicher, dass die Identifikationsfelder des Eigentümers mit den einzureichenden Unterlagen übereinstimmen.
+
+  **Erfolgskontrolle:** Der Eigentümerabschnitt identifiziert den ausländischen Anteilseigner eindeutig mit Name, Adresse und mindestens den für die Einreichung geltenden Identifikationsangaben.
+
+  </Step>
+
+  <Step title="Eine oder mehrere verbundene Parteien hinzufügen" icon="users">
+
+  Der Schritt für verbundene Parteien unterstützt mehrere Einträge. Jede hinzugefügte verbundene Partei erhält im abschließenden ZIP-Paket ein eigenes Form 5472.
+
+  Geben Sie für jede verbundene Partei Folgendes ein:
+
+  - `isForeign`
+  - `name`
+  - `street`
+  - `city`
+  - `usId`
+  - `refId`
+  - `ftin`
+  - `businessActivity`
+  - `businessCode`
+  - `relationship`
+  - `businessCountries`
+  - `taxResidentCountry`
+
+  Das Feld `relationship` unterstützt diese Werte:
+
+  - `related_to_corp`
+  - `related_to_shareholder`
+  - `25pct_shareholder`
+
+  Dieser Schritt ist wichtig, weil Part III für jede meldepflichtige Partei separat ausgefüllt wird. Hatte Ihre LLC im Steuerjahr Transaktionen mit mehreren verbundenen Parteien, fügen Sie jede hier hinzu, statt sie in einem Datensatz zusammenzufassen.
+
+  **Erfolgskontrolle:** Jede meldepflichtige verbundene Partei erscheint in der Liste, und jeder Eintrag enthält den richtigen Beziehungstyp und die richtigen Angaben zur Steueransässigkeit.
+
+  </Step>
+
+  <Step title="Transaktionen und Antworten für Part VII eingeben" icon="bar-chart">
+
+  Dieser Schritt erfasst die meldepflichtigen Transaktionsbeträge aus Part IV und die Ja-oder-Nein-Antworten aus Part VII. Geben Sie die Beträge zeilenweise ein, damit das erstellte Form 5472 dem IRS-Layout entspricht.
+
+  Verwenden Sie diesen Schritt für:
+
+  - Beträge in Part IV in den Zeilen `9` bis `21` für erhaltene Beträge
+  - Beträge in Part IV in den Zeilen `23` bis `35` für gezahlte Beträge
+  - `capitalContribution`
+  - `capitalDistribution`
+  - Antworten `q37` bis `q43a` in Part VII
+
+  Die Transaktionszeilen werden pro verbundener Partei gespeichert. Somit bildet jedes Form 5472 nur die Aktivitäten dieser Partei ab. Trennen Sie die Beträge genauso, wie Sie es bei mehreren Papierformularen tun würden.
+
+  **Erfolgskontrolle:** Die insgesamt erhaltenen und gezahlten Beträge stimmen für jede verbundene Partei mit Ihren Unterlagen überein, und jede erforderliche Ja-oder-Nein-Antwort hat einen Wert.
+
+  </Step>
+
+  <Step title="Unterschrift hinzufügen" icon="edit">
+
+  Der Unterschriftsschritt bereitet den Unterschriftsbereich für Form 1120 vor. Sie können die Unterschrift im Browser zeichnen oder ein Bild hochladen und anschließend Unterschriftsdatum und Funktion des Unterzeichners ergänzen.
+
+  Geben Sie Folgendes an:
+
+  - `signatureDataUrl`
+  - `signatureDate`
+  - `signerTitle`
+
+  Bei neueren Vorlagen für Form 1120 wird die Unterschrift direkt in das erstellte PDF eingebettet. Prüfen Sie vor dem Fortfahren, ob das Bild lesbar und angemessen skaliert ist.
+
+  **Erfolgskontrolle:** Die Unterschriftsvorschau ist sichtbar, das Datum ist korrekt und die Funktion des Unterzeichners entspricht der Person, die die Steuererklärung unterzeichnet.
+
+  </Step>
+
+  <Step title="Ergänzende Erklärungen und optionale Dokumente hinzufügen" icon="paperclip">
+
+  Dieser Schritt behandelt Text- und Dokumentoptionen, die nicht direkt auf die Hauptformularseiten passen. Verwenden Sie ihn für erläuternde Inhalte zu Part V und Part VI, Angaben zu Kapitalbewegungen und optionale Anlagen.
+
+  Geben Sie Folgendes ein oder aktivieren Sie:
+
+  - `statement5xText`
+  - `statement6xText`
+  - `capitalContribution`
+  - `capitalDistribution`
+  - `generateLateFilingLetter`
+  - `generateForm7004`
+  - `generateFaxCover`
+  - `faxFromName`
+  - `faxNumberOfPages`
+  - `faxDate`
+
+  Wenn Sie das Faxdeckblatt aktivieren, nimmt der Assistent es zusammen mit den Formular-PDFs in das ZIP-Paket auf. Ergänzende Erklärungen können außerdem pro verbundener Partei erstellt werden, wenn die Einreichung zusätzliche Erläuterungen für Part V oder Part VI erfordert.
+
+  **Erfolgskontrolle:** Die Schalter für optionale Dokumente entsprechen dem gewünschten Paket, und alle erläuternden Texte sind vollständig und einreichungsbereit.
+
+  </Step>
+
+  <Step title="Einreichung prüfen" icon="check-circle">
+
+  Der Prüfschritt zeigt Ihre Einreichungsdaten vor der PDF-Erstellung schreibgeschützt an. Hier erkennen Sie am besten nicht übereinstimmende Steuerjahresdaten, fehlende verbundene Parteien oder bei der falschen Partei eingetragene Transaktionsbeträge.
+
+  Prüfen Sie:
+
+  - Gesellschaftsangaben
+  - Eigentümerangaben
+  - Verbundene Parteien
+  - Transaktionsbeträge
+  - Unterschriftsangaben
+  - Optionen für ergänzende Erklärungen
+
+  Da der Assistent freie Navigation erlaubt, können Sie zu jedem früheren Schritt zurückspringen, Korrekturen vornehmen und ohne Verlust Ihrer Position zur Prüfung zurückkehren.
+
+  **Erfolgskontrolle:** Der Prüfbildschirm entspricht den einzureichenden Unterlagen, und nichts fehlt oder ist der falschen Partei zugeordnet.
+
+  </Step>
+
+  <Step title="PDFs ansehen, ZIP herunterladen und Einreichung speichern" icon="file-text">
+
+  Der letzte Schritt erstellt eine Live-PDF-Vorschau und stellt das Einreichungspaket zum Download zusammen. Er speichert die Einreichung außerdem, damit Sie sie später weiterbearbeiten können.
+
+  In diesem Schritt können Sie:
+
+  - Die erstellte PDF-Ausgabe in der Vorschau ansehen
+  - Eine ZIP-Datei mit allen erstellten Dokumenten herunterladen
+  - Die Einreichung in der Datenbank speichern
+  - Den KI-Compliance-Scanner auf die erstellten PDFs anwenden
+
+  Die ZIP-Datei kann ein Form 5472 pro verbundener Partei, ein jahresspezifisches Form 1120 und alle zuvor aktivierten optionalen Dokumente enthalten. Form 1120 unterstützt die Jahre 2020, 2021, 2022, 2023, 2024 und 2025.
+
+  **Erfolgskontrolle:** Die Vorschau wird korrekt dargestellt, die ZIP-Datei erfolgreich heruntergeladen und die gespeicherte Einreichung ist später zur Bearbeitung verfügbar.
+
+  </Step>
+</Steps>
+
+## Funktionsweise von Einreichungen mit mehreren Parteien
+
+Mehrere verbundene Parteien gehören zu den wichtigsten Funktionen des Assistenten. Statt alle meldepflichtigen Beziehungen in ein Formular zu zwingen, erstellt Nomadfiling für jeden Datensatz einer verbundenen Partei ein separates Form 5472.
+
+Dies betrifft drei Teile des Prozesses:
+
+- **Eingabe verbundener Parteien:** Sie fügen jede Partei im entsprechenden Schritt separat hinzu.
+- **Transaktionsmeldung:** Beträge in Part IV und Antworten in Part VII werden für jede Partei verfolgt.
+- **PDF-Erstellung:** Die ZIP-Datei enthält ein Form 5472 pro Partei, während Form 1120 ein einzelnes Formular für die Einreichung bleibt.
+
+<Callout kind="tip">
+
+Hatte Ihre LLC Transaktionen mit mehr als einer verbundenen Partei, prüfen Sie vor der ZIP-Erstellung die Beträge in Part IV für jede Partei separat. Hier werden am häufigsten Daten entdeckt, die bei der falschen Partei eingegeben wurden.
+
+</Callout>
+
+## Was bei der PDF-Erstellung geschieht
+
+Der Assistent erstellt PDFs clientseitig aus IRS-PDF-Vorlagen. Ihr Browser bereitet also die Formulare vor, bettet die Unterschrift ein und stellt vor dem Download das endgültige ZIP-Paket zusammen.
+
+Dieser Ablauf umfasst:
+
+- Erstellung der Form-5472-PDFs aus den Daten jeder verbundenen Partei
+- Auswahl eines Form-1120-PDFs nach Steuerjahr
+- Optionale ergänzende Dokumente, wenn aktiviert
+- Bündelung als ZIP für einen einzigen Download
+- Speicherfunktion, damit die Einreichung später erneut geöffnet und bearbeitet werden kann
+
+<Callout kind="info">
+
+Vorlagen für Form 1120 werden für die Steuerjahre 2020 bis 2025 unterstützt. Wenn Sie eine Einreichung außerhalb dieses Zeitraums vorbereiten, prüfen Sie vor Beginn das verfügbare Jahr.
+
+</Callout>
+
+## Häufig gestellte Fragen
+
+<ExpandableGroup>
+  <Expandable title="Benötige ich für jede verbundene Partei ein separates Form 5472?" default-open="true">
+
+  Ja. Der Assistent unterstützt mehrere verbundene Parteien und erstellt für jede verbundene Partei ein Form 5472 in der abschließenden ZIP-Datei.
+
+  </Expandable>
+
+  <Expandable title="Kann ich zu einem späteren Schritt springen?" default-open="false">
+
+  Ja. Der Assistent erzwingt keine strikt schrittweise Bearbeitung. Sie können zu jedem Schritt springen, frühere Angaben bearbeiten und jederzeit zur Prüfung oder PDF-Erstellung zurückkehren.
+
+  </Expandable>
+
+  <Expandable title="Welche Jahre werden für Form 1120 unterstützt?" default-open="false">
+
+  Die Erstellung von Form 1120 unterstützt die Steuerjahre 2020 bis 2025.
+
+  </Expandable>
+
+  <Expandable title="Kann ich ein Faxdeckblatt beifügen?" default-open="false">
+
+  Ja. Aktivieren Sie die Faxdeckblattoption im Schritt für ergänzende Erklärungen und geben Sie dann `faxFromName`, `faxNumberOfPages` und `faxDate` ein. Das Faxdeckblatt wird bei der Erstellung zum ZIP-Paket hinzugefügt.
+
+  </Expandable>
+
+  <Expandable title="Kann ich eine Einreichung speichern und später zurückkehren?" default-open="false">
+
+  Ja. Im PDF-Vorschauschritt kann die Einreichung auch in der Datenbank gespeichert werden, damit Sie sie später erneut öffnen und bearbeiten können.
+
+  </Expandable>
+
+  <Expandable title="Was leistet der KI-Compliance-Scanner?" default-open="false">
+
+  Der KI-Compliance-Scanner kann auf die erstellten PDFs angewendet werden, um das Einreichungspaket vor der Übermittlung zu prüfen.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Mehr erfahren
+
+<Columns cols={3}>
+  <Card title="Schnellstart" href="/de/quickstart" icon="rocket" cta="Anleitung öffnen">
+    Beginnen Sie mit dem schnellsten Weg zu Ihrer ersten Einreichung.
+  </Card>
+
+  <Card title="Funktionen" href="/de/features" icon="settings" cta="Funktionen durchsuchen">
+    Erfahren Sie, was Nomadfiling bei Einreichung, Prüfung und Zustellung unterstützt.
+  </Card>
+
+  <Card title="KI-Compliance-Scanner" href="/de/ai-compliance-scanner" icon="shield" cta="Mehr erfahren">
+    Prüfen Sie erstellte PDFs vor der Übermittlung.
+  </Card>
+
+  <Card title="Faxservice" href="/de/fax-service" icon="upload" cta="Faxoptionen anzeigen">
+    Senden Sie Ihr Einreichungspaket mit einem optionalen Faxdeckblatt.
+  </Card>
+
+  <Card title="Schreiben bei verspäteter Einreichung" href="/de/late-filing-letter" icon="file-text" cta="Anleitung lesen">
+    Fügen Sie bei Bedarf ein Erklärungsschreiben zur verspäteten Einreichung hinzu.
+  </Card>
+
+  <Card title="Einreichung für Personengesellschaften" href="/de/partnership-filing" icon="folder" cta="Workflows vergleichen">
+    Verwenden Sie für Einreichungen mit mehreren Partnern den Personengesellschafts-Workflow statt des Workflows für Single-Member LLCs.
+  </Card>
+</Columns>

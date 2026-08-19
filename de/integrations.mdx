@@ -1,0 +1,370 @@
+---
+title: Integrationen
+description: Erfahre, mit welchen externen Diensten Nomadfiling verbunden ist — Zahlungen, Faxzustellung, KI-Tools, E-Mail, Analysen und PDF-Erstellung.
+---
+
+## Nomadfiling verbindet Zahlungen, Einreichungszustellung, Dokumenterstellung und Kontodaten über eine kleine Zahl von Drittanbieterdiensten
+
+Die meisten Integrationen in Nomadfiling unterstützen einen bestimmten Einreichungsablauf: Einreichungsdaten speichern, Zahlungen einziehen, PDFs erstellen, Formulare per Fax senden und das Ergebnis verfolgen. Einige Integrationen unterstützen ergänzende Aufgaben wie E-Mail-Zustellung, Affiliate-Zuordnung und Analysen.
+
+Auf dieser Seite erfährst du, was jede Integration tut, wo sie im Produkt erscheint und welche Daten oder Aktionen von ihr abhängen.
+
+<Callout kind="info">
+
+Nomadfiling ist eine Einreichungsplattform für LLCs in ausländischem Besitz. Die folgenden Integrationen sind die Produktionsdienste, mit denen US-Steuereinreichungsdokumente in der App erstellt, bezahlt, zugestellt und verfolgt werden.
+
+</Callout>
+
+<Columns cols={2}>
+  <Card title="Supabase" icon="database" href="#supabase-backend-und-authentifizierung">
+    Speichert Benutzerkonten, Einreichungsdatensätze, Zahlungen, Faxprotokolle, API-Zugangsdaten und hochgeladene Dokumente.
+  </Card>
+  <Card title="Stripe" icon="credit-card" href="#stripe-zahlungen">
+    Erstellt Checkout-Sitzungen für Einreichungskäufe, Verlängerungszahlungen, Belege und Aktionscodes.
+  </Card>
+  <Card title="Telnyx" icon="upload" href="#telnyx-faxzustellung">
+    Sendet fertige Steuer-PDFs per Fax und meldet den Zustellstatus an Nomadfiling zurück.
+  </Card>
+  <Card title="KI-API" icon="zap" href="#ki-api-für-compliance-und-erklärungserstellung">
+    Analysiert PDFs auf Einreichungsprobleme und entwirft Text für unterstützende Erklärungen.
+  </Card>
+  <Card title="Brevo" icon="mail" href="#brevo-e-mail-und-ereignisverfolgung">
+    Sendet Registrierungs-E-Mails und erfasst E-Mail-Interaktionsereignisse.
+  </Card>
+  <Card title="Tolt.io" icon="bar-chart" href="#toltio-affiliate-tracking">
+    Verfolgt Affiliate-Empfehlungen über Checkout-Metadaten und Zahlungsdatensätze.
+  </Card>
+  <Card title="Meta und Google" icon="external-link" href="#meta--und-google-analytics">
+    Verfolgt Checkout- und Kaufkonversionen für die Marketingzuordnung.
+  </Card>
+  <Card title="pdf-lib und JSZip" icon="file-text" href="#pdf-erstellung-und-zip-bündelung">
+    Füllt IRS-PDF-Vorlagen aus und bündelt erstellte Formulare in herunterladbaren ZIP-Dateien.
+  </Card>
+</Columns>
+
+## Supabase-Backend und Authentifizierung
+
+Supabase ist das zentrale Backend für Nomadfiling. Es stellt die Anwendungsdatenbank, Authentifizierung, Edge-Function-Laufzeit und Storage-Buckets für hochgeladene und erstellte Einreichungsdateien bereit.
+
+Nomadfiling verwendet Supabase für Benutzerkonten, Einreichungsdaten, Faxuploads, Zahlungsdatensätze, API-Zugangsdaten und serverseitige Abläufe, die nicht direkt im Browser ausgeführt werden sollten.
+
+### Was Supabase verarbeitet
+
+- **PostgreSQL-Datenbank** für Anwendungsdaten
+- **Authentifizierung** für die Anmeldung mit E-Mail und Passwort mit JWT-basierten Sitzungen
+- **Edge Functions** für serverseitige Abläufe
+- **Storage-Buckets** für PDF-Uploads und zugehörige Dateispeicherung
+
+### Zentrale Tabellen
+
+- `profiles`
+- `filings`
+- `partnership_filings`
+- `payments`
+- `feature_requests`
+- `feature_votes`
+- `fax_logs`
+- `api_keys`
+- `oauth_clients`
+- `oauth_tokens`
+- `oauth_auth_codes`
+
+<Callout kind="tip">
+
+Wenn deine Einreichungs-, Zahlungs- oder Faxaktivität in der App erscheint, eine nachgelagerte Aktion aber nicht abgeschlossen wurde, existiert der Quelldatensatz normalerweise zuerst in Supabase. Damit ist Supabase das führende System für die meisten betrieblichen Fehleranalysen.
+
+</Callout>
+
+## Stripe-Zahlungen
+
+Stripe verarbeitet einmalige Checkouts für Nomadfiling-Käufe. Es wird für die wichtigsten Einreichungsstufen, den Checkout für Form-7004-Verlängerungen, Beleg-URLs, Aktionscodes und an Zahlungsdatensätze übergebene Metadaten verwendet.
+
+Nomadfiling bietet über Stripe-gestützte Checkout-Abläufe vier Preisstufen von `$147` bis `$497` an.
+
+### Stripe-Abläufe in Nomadfiling
+
+- **Haupteinreichungs-Checkout** für Produktstufen unter [Preise](/de/getting-started/pricing)
+- **Verlängerungs-Checkout** für Käufe von Form 7004
+- **Zahlungsprüfung** nach Abschluss des Checkouts
+- **Speicherung der Beleg-URL** für bezahlte Bestellungen
+- **Unterstützung von Aktionscodes** beim Checkout
+- **Unterstützung von Affiliate-Metadaten** für die Empfehlungszuordnung
+
+### Stripe Edge Functions
+
+- `create-checkout`
+- `create-extension-checkout`
+- `verify-payment`
+
+### Was Stripe im Ablauf speichert
+
+Stripe-Checkout-Metadaten können Empfehlungsinformationen enthalten, die Nomadfiling später in der Tabelle `payments` speichert. Diese Metadaten verbinden die Affiliate-Zuordnung mit einem erfolgreichen Kauf, ohne den Einreichungsablauf selbst zu verändern.
+
+## Telnyx-Faxzustellung
+
+Telnyx sendet Steuerformular-PDFs an IRS-Faxnummern. Wenn du den Faxablauf von Nomadfiling verwendest, bereitet die App das PDF-Paket vor, übermittelt es an die Telnyx Fax API und erfasst den Sendeversuch für spätere Statusaktualisierungen.
+
+Diese Integration betreibt den unter [Faxdienst](/de/fax-service) beschriebenen Faxzustellablauf des Produkts.
+
+### Fax-API-Konfiguration
+
+<ParamField body="endpoint" param-type="string" required="true" show-location="false">
+`https://api.telnyx.com/v2/faxes`
+</ParamField>
+
+<ParamField body="fromNumber" param-type="string" required="true" show-location="false">
+`+17869848552`
+</ParamField>
+
+<ParamField body="connectionId" param-type="string" required="true" show-location="false">
+`2935264480004671439`
+</ParamField>
+
+<ParamField body="quality" param-type="string" required="true" show-location="false">
+`high`
+</ParamField>
+
+### Edge Functions
+
+- `send-fax` sendet das Fax und schreibt einen Datensatz in `fax_logs`
+- `telnyx-fax-webhook` empfängt nach der Übermittlung Statusaktualisierungen von Telnyx
+
+<Request>
+```bash
+curl -X POST "https://api.telnyx.com/v2/faxes" \
+  -H "Authorization: Bearer txai_example_8k2m4q7p" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "connection_id": "2935264480004671439",
+    "from": "+17869848552",
+    "to": "+13051234567",
+    "media_url": "https://app.nomadfiling.com/storage/faxes/fil_9a2c7b1d.pdf",
+    "quality": "high"
+  }'
+```
+</Request>
+
+<Response tabs="202">
+```json
+{
+  "data": {
+    "id": "fax_01hv8s4n2p9x6m",
+    "status": "queued",
+    "from": "+17869848552",
+    "to": "+13051234567",
+    "connection_id": "2935264480004671439",
+    "quality": "high"
+  }
+}
+```
+</Response>
+
+Ein Erfolg zeigt sich normalerweise als Faxdatensatz in der Warteschlange oder als akzeptierter Datensatz, gefolgt von späteren Webhook-Aktualisierungen. Nomadfiling hält den Faxstatus mithilfe dieser Webhook-Ereignisse synchron.
+
+## KI-API für Compliance und Erklärungserstellung
+
+Nomadfiling verwendet eine KI-API für zwei gezielte Aufgaben: erstellte PDFs auf wahrscheinliche IRS-Einreichungsprobleme prüfen und Text für unterstützende Erklärungen entwerfen. Die KI-Ebene unterstützt Prüfung und Entwurf, nicht die eigentliche Erstellung der Steuerformulare.
+
+Diese Funktionen erscheinen in Produktabläufen wie dem [KI-Compliance-Scanner](/de/ai-compliance-scanner).
+
+### Edge Functions
+
+- `analyze-pdf` prüft PDFs auf Einreichungs- oder Formatierungsprobleme
+- `generate-statement` entwirft Text für unterstützende IRS-Erklärungen
+
+<Tabs>
+  <Tab title="Compliance-Prüfung" icon="shield">
+
+  Der Compliance-Scanner prüft eine erstellte PDF und sucht nach Problemen, die eine Einreichung verhindern oder schwächen könnten, etwa fehlende Felder oder inkonsistente Formularinhalte.
+
+  `analyze-pdf` erfordert keine Authentifizierung.
+
+  </Tab>
+  <Tab title="Erklärungserstellung" icon="edit">
+
+  Die Erklärungserstellung entwirft Text für unterstützende IRS-Erklärungen. Der erstellte Text ist ein Ausgangspunkt, den du vor der Einreichung prüfen solltest.
+
+  `generate-statement` erfordert ein gültiges JWT.
+
+  </Tab>
+</Tabs>
+
+<Callout kind="alert">
+
+KI-generierte Ausgaben sollten vor der Übermittlung geprüft werden. Nomadfiling nutzt KI zur Unterstützung bei Analyse und Entwurf, nicht als Ersatz für die Einreichungsprüfung.
+
+</Callout>
+
+## Brevo-E-Mail und Ereignisverfolgung
+
+Brevo, früher als Sendinblue bekannt, verarbeitet die Zustellung von Registrierungs-E-Mails und E-Mail-Tracking-Ereignisse. Nomadfiling verwendet es für Willkommens-E-Mails und zum Erfassen nachgelagerter Interaktionssignale aus gesendeten Nachrichten.
+
+Dieselbe Integration unterstützt außerdem Abläufe zur Verfolgung kaufbezogener E-Mail-Ereignisse.
+
+### Edge Functions
+
+- `send-registration-email` sendet die Willkommens-E-Mail
+- `brevo-track` empfängt E-Mail-Tracking-Ereignisse
+
+### Was diese Integration abdeckt
+
+- **Willkommens- und Registrierungs-E-Mails**
+- **E-Mail-Zustellung und Interaktionsverfolgung**
+- **Mit E-Mail-Abläufen verknüpfte kaufbezogene Ereignisverfolgung**
+
+## Tolt.io-Affiliate-Tracking
+
+Tolt.io verfolgt mit Käufen verknüpfte Affiliate-Empfehlungen. Wenn ein Besucher über einen Affiliate-Link kommt, liest Nomadfiling die Empfehlungskennung im Browser und übergibt sie an die Stripe-Checkout-Metadaten.
+
+Nach erfolgreicher Zahlung speichert Nomadfiling diesen Empfehlungswert in der Tabelle `payments`, damit die Affiliate-Zuordnung mit der Bestellung verbunden bleibt.
+
+### So funktioniert die Empfehlungsverfolgung
+
+```mermaid
+sequenceDiagram
+  participant V as Besucher
+  participant N as Nomadfiling
+  participant S as Stripe
+  participant D as Zahlungstabelle
+
+  V->>N: Kommt mit Affiliate-Empfehlung
+  N->>N: tolt_referral lesen
+  N->>S: Checkout mit Metadaten erstellen
+  S-->>N: Zahlung erfolgreich
+  N->>D: Empfehlung mit Zahlungsdatensatz speichern
+```
+
+Die Browser-Hilfsfunktion, die den Empfehlungswert liest, befindet sich in `src/lib/tolt.ts`.
+
+## Meta- und Google-Analytics
+
+Nomadfiling verwendet Meta- und Google-Dienste zur Konversionsverfolgung rund um Checkout und Zahlungsabschluss. Diese Integrationen unterstützen Zuordnung und Kampagnenmessung, nicht die Einreichungslogik.
+
+Google Tag Manager wird in der App-Shell geladen, und die Routenwechselverfolgung sendet während der Navigation Analyseereignisse.
+
+### Verfolgte Ereignisse
+
+- **Meta Conversions API**
+  - `InitiateCheckout`, wenn der Checkout beginnt
+  - `Purchase`, wenn die Zahlung erfolgreich ist
+  - Personenbezogene Felder werden vor der Übertragung mit SHA-256 gehasht
+
+- **Google Ads**
+  - Conversion-ID: `AW-18054761191`
+  - Conversion-Label: `dm54CP6SopMcEOeVl6FD`
+
+- **Google Tag Manager**
+  - Wird in `index.html` geladen
+
+- **RouteChangeTracker**
+  - Löst bei Navigation Analyseereignisse aus
+
+<Callout kind="info">
+
+Diese Integrationen sind Marketing- und Zuordnungstools. Sie beeinflussen weder PDF-Erstellung noch Speicherung von Einreichungsdatensätzen oder Faxzustellung.
+
+</Callout>
+
+## PDF-Erstellung und ZIP-Bündelung
+
+Nomadfiling erstellt Einreichungsdokumente im Browser mit `pdf-lib`. Anschließend kann es mehrere PDFs mit `JSZip` zum Download in einem ZIP-Archiv bündeln.
+
+Diese Integrationsschicht wandelt Einreichungsdaten in fertige IRS-Formulare, Deckblätter, unterstützende Erklärungen und gepackte Dokumentensätze um.
+
+### PDF-Erstellung mit pdf-lib
+
+`pdf-lib` füllt unter `/public/templates/` gespeicherte IRS-Formularvorlagen aus. Die erstellte Ausgabe enthält sowohl Kernerklärungen als auch unterstützende Dokumente.
+
+Die unterstützte Dokumenterstellung umfasst:
+
+- Form 5472
+- Form 1120
+- Form 1065
+- Schedule K-1
+- Schedule K-2
+- Schedule K-3
+- Form 8804
+- Form 8805
+- Form 1040-NR
+- Form 7004
+- Faxdeckblätter
+- Schreiben zu verspäteter Einreichung
+- Unterstützende Erklärungen
+
+### ZIP-Bündelung mit JSZip
+
+Wenn eine Einreichung mehrere erstellte Dokumente enthält, packt Nomadfiling diese PDFs in einen einzigen ZIP-Download. Dies ist besonders für Einreichungsabläufe mit mehreren Dokumenten oder Parteien nützlich.
+
+Ein erfolgreicher ZIP-Ablauf endet mit einem Browserdownload, der alle erstellten PDFs gemeinsam enthält, statt mit separaten Dateidownloads.
+
+## UI-Komponentenbibliotheken
+
+Nomadfiling verwendet `shadcn/ui` und Radix UI für Komponenten der Anwendungsoberfläche. Diese Bibliotheken sind nicht im selben Sinne externe Workflow-Integrationen wie Zahlungen oder Faxzustellung, gehören aber zum Plattform-Stack, nach dem Leser häufig fragen.
+
+Die Codebasis enthält 46 generierte UI-Komponenten für gängige Oberflächenmuster wie Schaltflächen, Dialoge, Auswahlfelder und Tabellen.
+
+## Zusammenspiel der Integrationen
+
+Die meisten benutzerorientierten Einreichungsabläufe folgen derselben Reihenfolge: Einreichungsdaten erstellen oder aktualisieren, bei Bedarf bezahlen, Dokumente erstellen und das Ergebnis anschließend zustellen oder herunterladen.
+
+```mermaid
+graph TD
+  A[Benutzer meldet sich an] --> B[Supabase speichert Einreichungsdaten]
+  B --> C[Stripe erstellt Checkout]
+  C --> D[Zahlung geprüft]
+  D --> E[pdf-lib erstellt IRS-Formulare]
+  E --> F[JSZip bündelt PDFs]
+  E --> G[Telnyx sendet Fax]
+  D --> H[Brevo sendet E-Mail]
+  C --> I[Meta und Google verfolgen Konversion]
+  B --> J[KI-Funktionen analysieren oder entwerfen Text]
+```
+
+Deshalb kann der Zustand eines Dienstes verschiedene Produktbereiche unterschiedlich beeinflussen. Ein Zahlungsproblem verhindert nicht die Anmeldung und ein Analyseproblem nicht die PDF-Erstellung, aber ein Speicher- oder Faxproblem kann die Zustellung beeinträchtigen.
+
+## Verwandte Produktbereiche
+
+<Columns cols={2}>
+  <Card title="Funktionen" href="/de/features" icon="rocket">
+    Erfahre, wie diese Integrationen die wichtigsten Einreichungsabläufe in Nomadfiling unterstützen.
+  </Card>
+  <Card title="Preise" href="/de/getting-started/pricing" icon="bar-chart">
+    Prüfe die von Stripe betriebenen Einreichungsstufen und Checkout-Pfade.
+  </Card>
+  <Card title="Faxdienst" href="/de/fax-service" icon="upload">
+    Erfahre, wie die Faxzustellung einschließlich Statusaktualisierungen und Übermittlungsablauf funktioniert.
+  </Card>
+  <Card title="MCP-Übersicht" href="/de/api/mcp-overview" icon="code">
+    Prüfe die breitere API- und Automatisierungsoberfläche von Nomadfiling.
+  </Card>
+</Columns>
+
+## Häufige Fragen
+
+<ExpandableGroup>
+  <Expandable title="Speichert Nomadfiling Einreichungsdaten selbst oder nur in Drittanbieterdiensten?" default-open="false">
+
+  Nomadfiling speichert seine Anwendungsdaten in Supabase. Drittanbieterdienste übernehmen spezialisierte Aufgaben wie Zahlungen, Faxtransport, E-Mail-Zustellung, Analysen und KI-gestützte Analyse.
+
+  </Expandable>
+  <Expandable title="Welche Integrationen sind für den Abschluss einer Einreichung erforderlich?" default-open="false">
+
+  Supabase ist grundlegend, da es Konten und Einreichungsdatensätze speichert. Stripe ist erforderlich, wenn der Ablauf eine Zahlung umfasst, `pdf-lib` zur Dokumenterstellung und Telnyx nur, wenn du die Einreichung per Fax sendest, statt die PDFs herunterzuladen.
+
+  </Expandable>
+  <Expandable title="Sendet Nomadfiling Steuerformulare direkt an den IRS?" default-open="false">
+
+  Nomadfiling kann fertige PDF-Pakete über die Telnyx-Faxintegration senden, wenn der Einreichungsablauf die IRS-Faxzustellung verwendet. Die App nutzt keine E-Mail-Zustellung zur Übermittlung von Steuerformularen.
+
+  </Expandable>
+  <Expandable title="Ist KI erforderlich, um Nomadfiling zu verwenden?" default-open="false">
+
+  Nein. KI-Funktionen unterstützen Compliance-Prüfung und Erklärungsentwürfe, die zentralen Einreichungsabläufe hängen jedoch von Diensten für Formularerstellung, Zahlung, Speicherung und Zustellung statt von KI ab.
+
+  </Expandable>
+  <Expandable title="Wo erfolgt die Affiliate-Zuordnung?" default-open="false">
+
+  Die Affiliate-Zuordnung beginnt im Browser, wenn Nomadfiling `tolt_referral` liest. Dieser Wert wird an Stripe-Checkout-Metadaten übergeben und später mit dem Zahlungsdatensatz gespeichert.
+
+  </Expandable>
+</ExpandableGroup>

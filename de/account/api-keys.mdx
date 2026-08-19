@@ -1,0 +1,332 @@
+---
+title: API-Schlüsselverwaltung
+description: Erstelle und verwalte API-Schlüssel, um Claude Desktop, ChatGPT und andere KI-Agenten über den MCP-Server mit deinem Nomadfiling-Konto zu verbinden.
+---
+
+## API-Schlüssel für den MCP-Zugriff erstellen und verwalten
+
+Mit API-Schlüsseln kannst du Nomadfiling mit Claude Desktop und anderen MCP-Clients verbinden, ohne dein Kontopasswort weiterzugeben. Du erstellst Schlüssel auf der Seite „API-Schlüssel“, kopierst den Klartextwert einmal und verwendest ihn anschließend als Bearer-Token, wenn sich ein Client mit dem MCP-Server verbindet.
+
+<Callout kind="info">
+
+Die Seite „API-Schlüssel“ befindet sich unter `/api-keys` und erfordert eine Anmeldung. Wenn deine Sitzung abgelaufen ist, leitet Nomadfiling dich zu `/login` weiter.
+
+</Callout>
+
+### Bevor du beginnst
+
+Du benötigst:
+
+- Ein Nomadfiling-Konto mit Zugriff auf das Dashboard
+- Eine aktive Sitzung in der Web-App
+- Die MCP-Server-URL für deine Umgebung
+- Einen Client, der je nach Integrationspfad entweder API-Schlüssel-Authentifizierung oder OAuth unterstützt
+
+Der MCP-Endpunkt lautet:
+
+```text
+{VITE_SUPABASE_URL}/functions/v1/mcp-server
+```
+
+Wenn du eine lokale Clientdatei konfigurierst, bewahre Endpunkt und Schlüssel gemeinsam auf, damit du die Verbindung unmittelbar nach der Schlüsselerstellung testen kannst.
+
+### Einen API-Schlüssel erstellen
+
+Erstelle den Schlüssel zuerst im Dashboard und kopiere ihn anschließend in deine MCP-Clientkonfiguration.
+
+<Steps>
+  <Step title="Seite „API-Schlüssel“ öffnen" icon="key">
+
+  Melde dich bei Nomadfiling an und öffne `/api-keys`. Wenn du nicht angemeldet bist, leitet dich die App zu `/login` weiter, bevor sie die Seite anzeigt.
+
+  Du solltest ein Formular zum Erstellen eines neuen Schlüssels und darunter eine Liste vorhandener Schlüssel sehen.
+
+  </Step>
+  <Step title="Namen für den Schlüssel eingeben" icon="edit">
+
+  Füge einen aussagekräftigen Namen wie `Claude Desktop on MacBook Pro` oder `Internal agent staging` hinzu. Nomadfiling verlangt einen Namen und zeigt eine Warnung, wenn du das Feld leer lässt.
+
+  Ein guter Name erleichtert es, später den richtigen Schlüssel zu widerrufen, ohne andere Clients zu unterbrechen.
+
+  </Step>
+  <Step title="Schlüssel generieren" icon="plus">
+
+  Klicke auf die Schaltfläche zum Generieren. Nomadfiling erstellt 32 kryptografisch zufällige Bytes, formatiert sie als Hex-Token mit dem Präfix `nf_` und erzeugt einen 67 Zeichen langen Schlüssel.
+
+  Die App hasht das Token vor dem Speichern mit SHA-256 und speichert nur den Hash, den Schlüsselnamen und ein kurzes Präfix zur Identifikation.
+
+  </Step>
+  <Step title="Klartextschlüssel sofort kopieren" icon="copy">
+
+  Nach der Generierung zeigt Nomadfiling das vollständige Klartext-Token einmalig in einem Banner mit Kopierschaltfläche an. Das Banner weist darauf hin, dass der Schlüssel nicht erneut angezeigt wird.
+
+  Kopiere den Schlüssel in deinen Passwortmanager, Secret Store oder deine MCP-Clientkonfiguration, bevor du das Banner schließt.
+
+  </Step>
+  <Step title="Banner nach dem Speichern schließen" icon="check-circle">
+
+  Klicke auf **Verstanden**, nachdem du den Schlüssel gespeichert hast. Nomadfiling löscht dann den Klartextwert; du kannst ihn später nicht wiederherstellen.
+
+  Wenn du den Schlüssel verlierst, erstelle einen neuen und aktualisiere alle Clients, die den alten Wert verwendet haben.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+
+Nomadfiling zeigt den Klartext-API-Schlüssel nur einmal an. Nachdem du das Banner geschlossen hast, enthält der gespeicherte Datensatz nur einen SHA-256-Hash und ein kurzes Präfix wie `nf_a3f2b1c4d…`.
+
+</Callout>
+
+### Was Nomadfiling für jeden Schlüssel speichert
+
+Nomadfiling speichert genügend Metadaten, um den Schlüssel zu identifizieren und zu verwalten, ohne das Secret selbst aufzubewahren.
+
+<ParamField body="name" param-type="string" required="true" show-location="false">
+
+Die Bezeichnung, die du dem Schlüssel im Dashboard zuweist. Verwende einen Namen, der einem Gerät, einer Umgebung oder einem Client entspricht.
+
+</ParamField>
+
+<ParamField body="key_prefix" param-type="string" required="true" show-location="false">
+
+Ein kurzes Anzeigepräfix, das aus den ersten Zeichen des Tokens und Auslassungspunkten gebildet wird. Nomadfiling verwendet dieses Präfix in der Schlüsselliste, damit du erkennst, welchen Schlüssel du widerrufen möchtest.
+
+</ParamField>
+
+<ParamField body="key_hash" param-type="string" required="true" show-location="false">
+
+Ein SHA-256-Hash des Klartext-Tokens. Nomadfiling speichert den Hash statt des Secrets.
+
+</ParamField>
+
+<ParamField body="user_id" param-type="string" required="true" show-location="false">
+
+Das Konto, dem der Schlüssel gehört.
+
+</ParamField>
+
+<ParamField body="created_at" param-type="string" required="true" show-location="false">
+
+Der in der Schlüsselliste angezeigte Erstellungszeitpunkt.
+
+</ParamField>
+
+<ParamField body="last_used_at" param-type="string" required="false" show-location="false">
+
+Der Zeitpunkt der letzten Verwendung des Schlüssels. Nutze dieses Feld, um veraltete Schlüssel vor dem Widerruf zu finden.
+
+</ParamField>
+
+### Schlüssel prüfen und widerrufen
+
+Die Seite „API-Schlüssel“ listet jeden Schlüssel deines Kontos mit folgenden Angaben auf:
+
+- **Name**
+- **Schlüsselpräfix**
+- **Erstellungsdatum**
+- **Datum der letzten Verwendung**
+
+Jede Zeile enthält außerdem ein rotes Papierkorbsymbol zum Löschen. Wenn du einen Schlüssel löschst, bittet Nomadfiling mit der Meldung `Diesen API-Schlüssel löschen? Jeder MCP-Client, der ihn verwendet, funktioniert dann nicht mehr.` um Bestätigung.
+
+<Callout kind="tip">
+
+Widerrufe ungenutzte Schlüssel regelmäßig. Das **Datum der letzten Verwendung** ist der schnellste Weg, alte lokale Konfigurationen, ausgemusterte Laptops oder Testagenten zu erkennen, die keinen Zugriff mehr benötigen.
+
+</Callout>
+
+### Claude Desktop mit einem API-Schlüssel konfigurieren
+
+Claude Desktop verbindet sich mit dem MCP-Server von Nomadfiling, indem dein API-Schlüssel im Header `Authorization` als Bearer-Token gesendet wird.
+
+<CodeGroup tabs="macOS- oder Windows-JSON-Konfiguration,Entsprechende MCP-Serverdefinition">
+```json
+{
+  "mcpServers": {
+    "nomadfiling": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "{VITE_SUPABASE_URL}/functions/v1/mcp-server"
+      ],
+      "env": {
+        "MCP_REMOTE_HEADERS": "{\"Authorization\":\"Bearer nf_example_9a7c4d2e1f6b8c3d5a9e7f4b2c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6\"}"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "name": "nomadfiling",
+  "transport": {
+    "type": "http",
+    "url": "{VITE_SUPABASE_URL}/functions/v1/mcp-server",
+    "headers": {
+      "Authorization": "Bearer nf_example_9a7c4d2e1f6b8c3d5a9e7f4b2c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6"
+    }
+  }
+}
+```
+</CodeGroup>
+
+Starte Claude Desktop nach dem Speichern der Konfiguration neu. Bei erfolgreicher Verbindung stehen die Nomadfiling-Tools im Client zur Verfügung.
+
+### ChatGPT mit OAuth konfigurieren
+
+ChatGPT verwendet OAuth statt eines manuell eingefügten API-Schlüssels. Füge Nomadfiling in der ChatGPT-Einstellungsoberfläche als benutzerdefinierten Connector hinzu und lasse ChatGPT die OAuth-Metadaten automatisch erkennen.
+
+<Steps>
+  <Step title="Connectors in ChatGPT öffnen" icon="settings">
+
+  Gehe in ChatGPT zu **Einstellungen**, dann zu **Connectors** und anschließend zu **Benutzerdefinierten Connector hinzufügen**.
+
+  </Step>
+  <Step title="MCP-Server-URL eingeben" icon="external-link">
+
+  Verwende die Nomadfiling-MCP-Basis-URL als Connector-Ziel. ChatGPT liest OAuth-Metadaten aus den vom Server bereitgestellten Well-known-Discovery-Endpunkten.
+
+  </Step>
+  <Step title="OAuth-Autorisierung abschließen" icon="lock">
+
+  Schließe den Anmelde- und Einwilligungsablauf im von ChatGPT geöffneten Browserfenster ab. Der Server unterstützt OAuth-Discovery für Autorisierungs- und Protected-Resource-Metadaten.
+
+  Nach Abschluss kann ChatGPT Nomadfiling-Tools ohne manuell erstellten API-Schlüssel aufrufen.
+
+  </Step>
+</Steps>
+
+Die OAuth-Discovery-Endpunkte lauten:
+
+```text
+/.well-known/oauth-authorization-server
+/.well-known/oauth-protected-resource
+```
+
+### Einen benutzerdefinierten OAuth-Client konfigurieren
+
+Wenn du einen eigenen MCP-kompatiblen Client entwickelst, verwende die OAuth-Endpunkte des Servers direkt.
+
+<ParamField body="authorization endpoint" param-type="URL" required="true" show-location="false">
+
+Der Endpunkt, an den dein Client Benutzer für den Authorization-Code-Ablauf sendet.
+
+</ParamField>
+
+<ParamField body="token endpoint" param-type="URL" required="true" show-location="false">
+
+Der Endpunkt, an dem dein Client den Autorisierungscode gegen Access- und Refresh-Tokens austauscht.
+
+</ParamField>
+
+<ParamField body="registration endpoint" param-type="URL" required="true" show-location="false">
+
+Der Endpunkt für dynamische Clientregistrierung, wenn dein Client sie unterstützt.
+
+</ParamField>
+
+<ParamField body="scope" param-type="string" required="true" show-location="false">
+
+Verwende den Scope `mcp`.
+
+</ParamField>
+
+<ParamField body="code challenge method" param-type="string" required="true" show-location="false">
+
+Verwende `S256`. PKCE ist erforderlich.
+
+</ParamField>
+
+<ParamField body="grant types" param-type="string" required="true" show-location="false">
+
+Verwende `authorization_code` und `refresh_token`.
+
+</ParamField>
+
+<Expandable title="Details zur OAuth-Integration" default-open="false">
+
+Verwende OAuth, wenn dein Client browserbasierte Anmeldung, Token-Aktualisierung und Connector-artige Kontoverknüpfung verwaltet. Dies ist die richtige Wahl für ChatGPT-ähnliche Integrationen und benutzerdefinierte Clients, die Benutzer nicht zum Einfügen roher API-Schlüssel auffordern sollen.
+
+Nomadfiling stellt Authorize-, Token- und Register-Endpunkte bereit und unterstützt den Scope `mcp` mit PKCE `S256`. Dein Client sollte Refresh-Tokens als langlebige Secrets behandeln und am selben sicheren Ort wie Access-Tokens speichern.
+
+</Expandable>
+
+### Verfügbare MCP-Tools
+
+Nach der Verbindung kann dein Client die folgenden vom Nomadfiling-MCP-Server bereitgestellten Tools aufrufen.
+
+- `list_filings`
+- `create_filing`
+- `get_filing`
+- `update_filing`
+- `delete_filing`
+- `list_partnership_filings`
+- `get_partnership_filing`
+- `create_partnership_filing`
+- `update_partnership_filing`
+- `delete_partnership_filing`
+- `list_payments`
+- `list_fax_logs`
+- `get_form_schema`
+- `get_pdf_url`
+
+Nutze die MCP-Toolreferenz für Details zu Eingaben, Ausgaben und Verhalten der Tools.
+
+### Sicherheitspraktiken
+
+Einige Gewohnheiten verhindern die meisten schlüsselbezogenen Ausfälle und Datenlecks.
+
+<ExpandableGroup>
+  <Expandable title="Schlüssel möglichst außerhalb lokaler Konfigurationsdateien speichern" default-open="false">
+
+  Bevorzuge einen Passwortmanager, den Anmeldedatenspeicher des Betriebssystems oder einen Secrets Manager gegenüber einer Klartextdatei. Wenn dein MCP-Client eine lokale JSON-Konfiguration benötigt, beschränke den Dateizugriff auf dein Benutzerkonto und vermeide die Synchronisierung in freigegebene Ordner.
+
+  </Expandable>
+  <Expandable title="Separate Schlüssel pro Client oder Umgebung erstellen" default-open="false">
+
+  Verwende unterschiedliche Schlüssel für Claude Desktop, interne Tools, Staging-Agenten und Produktionsautomatisierungen. Separate Schlüssel ermöglichen einen präzisen Widerruf und reduzieren Ausfallzeiten, wenn ein einzelner Rechner verloren geht oder ausgetauscht wird.
+
+  </Expandable>
+  <Expandable title="Schlüssel nach Gerätewechseln oder vermuteter Offenlegung rotieren" default-open="false">
+
+  Wenn ein Laptop ersetzt, eine Konfigurationsdatei versehentlich geteilt oder ein Secret in Protokollen angezeigt wird, erstelle zuerst einen neuen Schlüssel, aktualisiere den Client, prüfe die Verbindung und widerrufe dann den alten Schlüssel.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Häufig gestellte Fragen
+
+<ExpandableGroup>
+  <Expandable title="Kann ich einen API-Schlüssel nach dem Schließen des Banners erneut sehen?" default-open="false">
+
+  Nein. Nomadfiling zeigt den Klartextschlüssel einmal an und speichert nur einen SHA-256-Hash sowie ein kurzes Präfix. Wenn du den Schlüssel nicht gespeichert hast, erstelle einen Ersatz und aktualisiere den benötigenden Client.
+
+  </Expandable>
+  <Expandable title="Was passiert, wenn ich einen Schlüssel lösche?" default-open="false">
+
+  Jeder MCP-Client, der diesen Schlüssel verwendet, funktioniert sofort nicht mehr. Lösche ihn erst, wenn du bestätigt hast, dass er nicht mehr verwendet wird, oder nachdem du einen Ersatzschlüssel bereitgestellt hast.
+
+  </Expandable>
+  <Expandable title="Sollte ich einen API-Schlüssel oder OAuth verwenden?" default-open="false">
+
+  Verwende einen API-Schlüssel für lokale Clients wie Claude Desktop oder einfache benutzerdefinierte Agenten, die ein statisches Bearer-Token senden. Verwende OAuth für Connector-artige Integrationen wie ChatGPT oder Clients, die browserbasierte Kontoverknüpfung und Token-Aktualisierung benötigen.
+
+  </Expandable>
+  <Expandable title="Wie erkenne ich den richtigen zu widerrufenden Schlüssel?" default-open="false">
+
+  Gleiche Schlüsselname und sichtbares Präfix im Dashboard mit der bereitgestellten Clientkonfiguration ab. Das Datum der letzten Verwendung hilft außerdem, aktive von veralteten Schlüsseln zu unterscheiden.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Verwandte Seiten
+
+<Columns cols={2}>
+  <Card title="MCP-Übersicht" href="/de/api/mcp-overview" icon="book-open" cta="Leitfaden öffnen" />
+  <Card title="Authentifizierung" href="/de/api/authentication" icon="lock" cta="Authentifizierungsoptionen ansehen" />
+  <Card title="MCP-Tools" href="/de/api/mcp-tools" icon="terminal" cta="Tools durchsuchen" />
+  <Card title="Profileinstellungen" href="/de/account/profile" icon="users" cta="Konto verwalten" />
+</Columns>
+
+Wenn du die Verbindung nach der Einrichtung testen möchtest, kehre zum [Dashboard](/de/dashboard) zurück und erstelle oder prüfe eine Einreichung, bevor du Nomadfiling über deinen MCP-Client aufrufst.

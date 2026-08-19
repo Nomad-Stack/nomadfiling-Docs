@@ -1,0 +1,325 @@
+---
+title: Einreichungsassistent für Personengesellschaften (Form 1065)
+description: Durchlaufen Sie jeden Schritt des Nomadfiling-Assistenten für Personengesellschaften – von Gesellschaftsangaben über Partner, Einkünfte, Schedule K, Quellensteuer und internationale Meldungen bis zur PDF-Erstellung.
+---
+
+## Reichen Sie die Steuererklärung einer Personengesellschaft in einem geführten Workflow ein
+
+Nomadfiling führt Sie durch einen 8-stufigen Einreichungsprozess für Form 1065 sowie die zugehörigen Schedules und Quellensteuerformulare, die Multi-Member LLCs häufig benötigen. Sie geben die Kerndaten der Personengesellschaft ein, fügen jeden Partner hinzu, bearbeiten die finanziellen und internationalen Abschnitte, prüfen alles und erstellen anschließend das PDF-Paket.
+
+<Callout kind="info">
+
+Der Assistent startet standardmäßig mit **2 Partnern**, und jeder Partner kann eine eigene Unterschrift haben. Das Steuerjahr ist standardmäßig auf **01/01/2025** bis **12/31/2025** eingestellt.
+
+</Callout>
+
+## Was der Assistent für Personengesellschaften erstellt
+
+Schließen Sie den gesamten Workflow ab, um die mit Ihren eingegebenen Daten verknüpften Formulare zu erstellen.
+
+- **Form 1065** für die Steuererklärung der Personengesellschaft
+- **Schedule K-1** für jeden Partner
+- **Schedule K-2**
+- **Schedule K-3**
+- **Form 8804**
+- **Form 8805**
+- **Form 1040-NR** für Partner
+
+<Callout kind="tip">
+
+Wenn Sie auch für eine Single-Member LLC in ausländischem Eigentum einreichen, lesen Sie den [Workflow für Form 5472 und 1120](/de/form-5472-1120).
+
+</Callout>
+
+## Folgen Sie den 8 Schritten des Assistenten
+
+<Steps>
+  <Step title="Angaben zur Personengesellschaft eingeben" icon="building-2">
+
+  Beginnen Sie mit den Gesellschaftsangaben, die in Form 1065 erscheinen. Dieser Schritt legt Einreichungszeitraum, Rechnungslegungsmethode und Geschäftsidentität fest, die im gesamten weiteren Workflow verwendet werden.
+
+  Geben Sie die grundlegenden Angaben zur Personengesellschaft ein:
+
+  <ParamField body="partnershipName" param-type="string" required="true" show-location="false">Rechtlicher Name der Personengesellschaft.</ParamField>
+  <ParamField body="ein" param-type="string" required="true" show-location="false">Employer Identification Number der Personengesellschaft.</ParamField>
+  <ParamField body="street" param-type="string" show-location="false">Straßenanschrift des Unternehmens.</ParamField>
+  <ParamField body="city" param-type="string" show-location="false">Stadt der Geschäftsadresse.</ParamField>
+  <ParamField body="state" param-type="string" show-location="false">Bundesstaat der Geschäftsadresse.</ParamField>
+  <ParamField body="zip" param-type="string" show-location="false">ZIP-Code der Geschäftsadresse.</ParamField>
+  <ParamField body="businessActivity" param-type="string" show-location="false">Beschreibung der Geschäftstätigkeit der Personengesellschaft.</ParamField>
+  <ParamField body="businessProduct" param-type="string" show-location="false">Primäres Produkt oder primäre Dienstleistung der Personengesellschaft.</ParamField>
+  <ParamField body="businessActivityCode" param-type="string" show-location="false">Für die Steuererklärung verwendeter Geschäftstätigkeitscode.</ParamField>
+  <ParamField body="dateBusinessStarted" param-type="string" show-location="false">Datum, an dem die Personengesellschaft ihre Geschäftstätigkeit aufgenommen hat.</ParamField>
+  <ParamField body="accountingMethod" param-type="string" enum="cash,accrual,other" show-location="false">Für die Steuererklärung verwendete Rechnungslegungsmethode.</ParamField>
+  <ParamField body="totalAssets" param-type="string" show-location="false">Gesamtvermögen der Personengesellschaft.</ParamField>
+  <ParamField body="taxYearBegin" param-type="string" show-location="false">Anfangsdatum des Steuerjahres. Standardmäßig `01/01/2025`.</ParamField>
+  <ParamField body="taxYearEnd" param-type="string" show-location="false">Enddatum des Steuerjahres. Standardmäßig `12/31/2025`.</ParamField>
+
+  Nach diesem Schritt sollten die Einreichungsidentität und das Steuerjahr feststehen, bevor Sie mit Zuweisungen auf Partnerebene fortfahren.
+
+  </Step>
+
+  <Step title="Partner hinzufügen" icon="users">
+
+  Fügen Sie jeden Partner hinzu, der in der Steuererklärung und in Schedule K-1 erscheinen muss. Der Assistent beginnt mit zwei Partnern; Sie sollten jedoch alle Partner des Einreichungsjahres aufnehmen.
+
+  Jeder Partnerdatensatz erfasst Eigentums-, Zuweisungs-, Kapital-, Haftungs- und internationale Steuerangaben:
+
+  <ParamField body="name" param-type="string" required="true" show-location="false">Name des Partners.</ParamField>
+  <ParamField body="street" param-type="string" show-location="false">Straßenanschrift des Partners.</ParamField>
+  <ParamField body="city" param-type="string" show-location="false">Stadt des Partners.</ParamField>
+  <ParamField body="country" param-type="string" show-location="false">Land des Partners.</ParamField>
+  <ParamField body="tin" param-type="string" show-location="false">Steueridentifikationsnummer des Partners.</ParamField>
+  <ParamField body="type" param-type="string" enum="general,limited" show-location="false">Partnerklassifizierung für die Steuererklärung.</ParamField>
+  <ParamField body="isForeign" param-type="boolean" show-location="false">Kennzeichnet, ob der Partner ausländisch ist.</ParamField>
+  <ParamField body="entityType" param-type="string" enum="individual,corporation,llc,trust,other" show-location="false">Gesellschaftsform des Partners.</ParamField>
+  <ParamField body="dateOfEntry" param-type="string" show-location="false">Datum des Eintritts des Partners.</ParamField>
+  <ParamField body="profitBegin" param-type="string" show-location="false">Gewinnanteil des Partners zu Jahresbeginn.</ParamField>
+  <ParamField body="profitEnd" param-type="string" show-location="false">Gewinnanteil des Partners zum Jahresende.</ParamField>
+  <ParamField body="lossBegin" param-type="string" show-location="false">Verlustanteil des Partners zu Jahresbeginn.</ParamField>
+  <ParamField body="lossEnd" param-type="string" show-location="false">Verlustanteil des Partners zum Jahresende.</ParamField>
+  <ParamField body="capitalBegin" param-type="string" show-location="false">Kapitalanteil des Partners zu Jahresbeginn.</ParamField>
+  <ParamField body="capitalEnd" param-type="string" show-location="false">Kapitalanteil des Partners zum Jahresende.</ParamField>
+  <ParamField body="liabilities.nonrecourse" param-type="string" show-location="false">Anteil des Partners an Verbindlichkeiten ohne Rückgriff.</ParamField>
+  <ParamField body="liabilities.qualifiedNonrecourse" param-type="string" show-location="false">Anteil des Partners an qualifizierter Finanzierung ohne Rückgriff.</ParamField>
+  <ParamField body="liabilities.recourse" param-type="string" show-location="false">Anteil des Partners an Verbindlichkeiten mit Rückgriff.</ParamField>
+  <ParamField body="capitalAccount.beginning" param-type="string" show-location="false">Anfangssaldo des Kapitalkontos.</ParamField>
+  <ParamField body="capitalAccount.contributions" param-type="string" show-location="false">Im Jahr eingezahltes Kapital.</ParamField>
+  <ParamField body="capitalAccount.currentYearIncome" param-type="string" show-location="false">Dem Partner zugewiesene Einkünfte des laufenden Jahres.</ParamField>
+  <ParamField body="capitalAccount.withdrawals" param-type="string" show-location="false">Kapitalbeeinflussende Entnahmen und Ausschüttungen.</ParamField>
+  <ParamField body="capitalAccount.ending" param-type="string" show-location="false">Endsaldo des Kapitalkontos.</ParamField>
+  <ParamField body="capitalAccount.method" param-type="string" enum="tax_basis,gaap,section_704b,other" show-location="false">Methode zur Führung des Kapitalkontos.</ParamField>
+  <ParamField body="ectiShare" param-type="string" show-location="false">Anteil des Partners am effektiv verbundenen steuerpflichtigen Einkommen.</ParamField>
+  <ParamField body="withholdingRate" param-type="string" show-location="false">Für den Partner verwendeter Quellensteuersatz. Standardmäßig `37`.</ParamField>
+  <ParamField body="filingStatus" param-type="string" enum="single,married_separate,qualifying_surviving" show-location="false">Einreichungsstatus für Formulare auf Partnerebene.</ParamField>
+  <ParamField body="signatureDataUrl" param-type="string" show-location="false">Bilddaten der Partnerunterschrift für erstellte Formulare.</ParamField>
+  <ParamField body="scheduleOI.citizenshipCountries" param-type="string" show-location="false">Staatsangehörigkeitsländer für die Meldung in Schedule O-I.</ParamField>
+  <ParamField body="scheduleOI.visaType" param-type="string" show-location="false">Visumtyp des Partners, falls zutreffend.</ParamField>
+  <ParamField body="scheduleOI.treatyCountry" param-type="string" show-location="false">Für den Partner relevantes Abkommensland.</ParamField>
+  <ParamField body="scheduleOI.treatyArticle" param-type="string" show-location="false">Für die Meldung verwendeter Abkommensartikel.</ParamField>
+  <ParamField body="scheduleOI.treatyRate" param-type="string" show-location="false">Mit dem Partner verbundener Abkommenssatz.</ParamField>
+
+  Dieser Schritt steuert Partnerliste sowie nachgelagerte K-1-, 8805-, K-3- und partnerspezifische Ausgaben; Genauigkeit ist hier wichtiger als Geschwindigkeit.
+
+  </Step>
+
+  <Step title="Einkünfte und Abzüge eingeben" icon="bar-chart">
+
+  Tragen Sie die Finanzbeträge von Seite 1 der Steuererklärung ein. Der Assistent trennt Einkünfte und Abzüge, damit Sie die Summen vor der Verteilungsmeldung prüfen können.
+
+  Zu den Einkunftsfeldern gehören:
+
+  <ParamField body="income.grossReceipts" param-type="string" show-location="false">Bruttoeinnahmen oder Umsätze.</ParamField>
+  <ParamField body="income.returnsAllowances" param-type="string" show-location="false">Retouren und Nachlässe.</ParamField>
+  <ParamField body="income.costOfGoodsSold" param-type="string" show-location="false">Herstellungskosten der verkauften Waren.</ParamField>
+  <ParamField body="income.grossProfit" param-type="string" show-location="false">Bruttogewinn.</ParamField>
+  <ParamField body="income.ordinaryIncomeFromOther" param-type="string" show-location="false">Ordentliche Einkünfte aus anderen Personengesellschaften, Nachlässen und Trusts.</ParamField>
+  <ParamField body="income.netFarmProfit" param-type="string" show-location="false">Nettogewinn oder -verlust aus Landwirtschaft.</ParamField>
+  <ParamField body="income.netGainLoss" param-type="string" show-location="false">Nettogewinn oder -verlust aus Form 4797 oder ähnlichen Posten.</ParamField>
+  <ParamField body="income.otherIncome" param-type="string" show-location="false">Sonstige, nicht anderweitig erfasste Einkünfte.</ParamField>
+  <ParamField body="income.totalIncome" param-type="string" show-location="false">Gesamteinkünfte der Steuererklärung.</ParamField>
+
+  Zu den Abzugsfeldern gehören:
+
+  <ParamField body="deductions.salaries" param-type="string" show-location="false">Gehälter und Löhne.</ParamField>
+  <ParamField body="deductions.guaranteedPayments" param-type="string" show-location="false">Garantierte Zahlungen.</ParamField>
+  <ParamField body="deductions.repairsAndMaintenance" param-type="string" show-location="false">Reparatur- und Instandhaltungskosten.</ParamField>
+  <ParamField body="deductions.badDebts" param-type="string" show-location="false">Uneinbringliche Forderungen.</ParamField>
+  <ParamField body="deductions.rent" param-type="string" show-location="false">Mietaufwand.</ParamField>
+  <ParamField body="deductions.taxesAndLicenses" param-type="string" show-location="false">Steuern und Lizenzen.</ParamField>
+  <ParamField body="deductions.interestExpense" param-type="string" show-location="false">Zinsaufwand.</ParamField>
+  <ParamField body="deductions.depreciation" param-type="string" show-location="false">Abschreibungsaufwand.</ParamField>
+  <ParamField body="deductions.depletion" param-type="string" show-location="false">Substanzverringerung.</ParamField>
+  <ParamField body="deductions.retirement" param-type="string" show-location="false">Beiträge zu Altersvorsorgeplänen.</ParamField>
+  <ParamField body="deductions.employeeBenefits" param-type="string" show-location="false">Programme für Arbeitnehmerleistungen.</ParamField>
+  <ParamField body="deductions.otherDeductions" param-type="string" show-location="false">Sonstige Abzüge.</ParamField>
+  <ParamField body="deductions.totalDeductions" param-type="string" show-location="false">Gesamtabzüge.</ParamField>
+  <ParamField body="deductions.ordinaryBusinessIncome" param-type="string" show-location="false">Ordentlicher Geschäftsgewinn oder -verlust.</ParamField>
+
+  Danach sollten Sie das Betriebsergebnis der Personengesellschaft abstimmen können, bevor Sie Verteilungsposten in Schedule K zuweisen.
+
+  </Step>
+
+  <Step title="Schedule K ausfüllen" icon="book-open">
+
+  Verwenden Sie Schedule K, um die Verteilungsposten auf Gesellschaftsebene zu melden. Diese Beträge fließen in das Partnerberichtspaket ein und sollten mit Büchern und Anlagen übereinstimmen.
+
+  <ParamField body="scheduleK.ordinaryIncome" param-type="string" show-location="false">Ordentlicher Geschäftsgewinn oder -verlust.</ParamField>
+  <ParamField body="scheduleK.rentalRealEstate" param-type="string" show-location="false">Nettoeinkünfte oder -verluste aus Immobilienvermietung.</ParamField>
+  <ParamField body="scheduleK.otherRental" param-type="string" show-location="false">Sonstige Nettomieteinkünfte oder -verluste.</ParamField>
+  <ParamField body="scheduleK.guaranteedPaymentsServices" param-type="string" show-location="false">Garantierte Zahlungen für Dienstleistungen.</ParamField>
+  <ParamField body="scheduleK.guaranteedPaymentsCapital" param-type="string" show-location="false">Garantierte Zahlungen für die Kapitalnutzung.</ParamField>
+  <ParamField body="scheduleK.interestIncome" param-type="string" show-location="false">Zinserträge.</ParamField>
+  <ParamField body="scheduleK.ordinaryDividends" param-type="string" show-location="false">Ordentliche Dividenden.</ParamField>
+  <ParamField body="scheduleK.qualifiedDividends" param-type="string" show-location="false">Qualifizierte Dividenden.</ParamField>
+  <ParamField body="scheduleK.royalties" param-type="string" show-location="false">Lizenzeinnahmen.</ParamField>
+  <ParamField body="scheduleK.netSTCapitalGain" param-type="string" show-location="false">Kurzfristiger Nettokapitalgewinn oder -verlust.</ParamField>
+  <ParamField body="scheduleK.netLTCapitalGain" param-type="string" show-location="false">Langfristiger Nettokapitalgewinn oder -verlust.</ParamField>
+  <ParamField body="scheduleK.section1231Gain" param-type="string" show-location="false">Gewinn oder Verlust nach Section 1231.</ParamField>
+  <ParamField body="scheduleK.otherIncome" param-type="string" show-location="false">Sonstige Einkunfts- oder Verlustposten.</ParamField>
+  <ParamField body="scheduleK.section179" param-type="string" show-location="false">Abzug nach Section 179.</ParamField>
+  <ParamField body="scheduleK.otherDeductions" param-type="string" show-location="false">Sonstige Abzüge.</ParamField>
+  <ParamField body="scheduleK.selfEmploymentA" param-type="string" show-location="false">Einkünfte aus selbstständiger Tätigkeit, Kategorie A.</ParamField>
+  <ParamField body="scheduleK.selfEmploymentB" param-type="string" show-location="false">Einkünfte aus selbstständiger Tätigkeit, Kategorie B.</ParamField>
+  <ParamField body="scheduleK.selfEmploymentC" param-type="string" show-location="false">Einkünfte aus selbstständiger Tätigkeit, Kategorie C.</ParamField>
+  <ParamField body="scheduleK.foreignTaxesPaid" param-type="string" show-location="false">Gezahlte oder angefallene ausländische Steuern.</ParamField>
+  <ParamField body="scheduleK.taxExemptIncome" param-type="string" show-location="false">Steuerfreie Einkünfte.</ParamField>
+  <ParamField body="scheduleK.distributions" param-type="string" show-location="false">Ausschüttungen an Partner.</ParamField>
+
+  Verwenden Sie diesen Schritt nach Abschluss von Seite 1, damit die Verteilungsposten dieselben zugrunde liegenden Zahlen widerspiegeln.
+
+  </Step>
+
+  <Step title="Quellensteuerdaten eingeben" icon="shield">
+
+  Geben Sie die Beträge für Forms 8804 und 8805 ein. Dieser Schritt betrifft effektiv verbundenes steuerpflichtiges Einkommen und vierteljährliche Zahlungen aus Quellensteuerpflichten.
+
+  <ParamField body="withholding.totalECTI" param-type="string" show-location="false">Gesamtes effektiv verbundenes steuerpflichtiges Einkommen für Quellensteuerberechnungen.</ParamField>
+  <ParamField body="withholding.payments.q1" param-type="string" show-location="false">Quellensteuerzahlung des ersten Quartals.</ParamField>
+  <ParamField body="withholding.payments.q2" param-type="string" show-location="false">Quellensteuerzahlung des zweiten Quartals.</ParamField>
+  <ParamField body="withholding.payments.q3" param-type="string" show-location="false">Quellensteuerzahlung des dritten Quartals.</ParamField>
+  <ParamField body="withholding.payments.q4" param-type="string" show-location="false">Quellensteuerzahlung des vierten Quartals.</ParamField>
+
+  Hat die Personengesellschaft ausländische Partner, prüfen Sie, ob `ectiShare` und Quellensteuersatz jedes Partners mit den hier eingegebenen Summen übereinstimmen.
+
+  </Step>
+
+  <Step title="Internationale Meldungen ausfüllen" icon="globe">
+
+  Verwenden Sie den internationalen Schritt für Meldungen in Schedule K-2 und Schedule K-3. Der Assistent speichert diese Werte in den Zeilengruppen von Part X für Einkünfte und Abzüge.
+
+  Jede Zeile in K-2 Part X erfasst dieselben Zuweisungskategorien:
+
+  <ParamField body="k2PartX.incomeLines.*.total" param-type="string" show-location="false">Gesamtbetrag der Zeile.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.partnerDetermination" param-type="string" show-location="false">Auf Partnerebene bestimmter Betrag.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.usSourceECI" param-type="string" show-location="false">Effektiv verbundenes Einkommen aus US-Quellen.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.foreignSourceECI" param-type="string" show-location="false">Effektiv verbundenes Einkommen aus ausländischen Quellen.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.usNonEciFDAP" param-type="string" show-location="false">Feste, bestimmbare, jährliche oder periodische US-Einkünfte ohne ECI.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.usNonEciOther" param-type="string" show-location="false">Sonstige US-Beträge ohne ECI.</ParamField>
+  <ParamField body="k2PartX.incomeLines.*.foreignNonECI" param-type="string" show-location="false">Beträge ohne ECI aus ausländischen Quellen.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.total" param-type="string" show-location="false">Gesamtabzugsbetrag der Zeile.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.partnerDetermination" param-type="string" show-location="false">Auf Partnerebene bestimmter Abzugsbetrag.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.usSourceECI" param-type="string" show-location="false">Abzug im Zusammenhang mit ECI aus US-Quellen.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.foreignSourceECI" param-type="string" show-location="false">Abzug im Zusammenhang mit ECI aus ausländischen Quellen.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.usNonEciFDAP" param-type="string" show-location="false">Abzug im Zusammenhang mit festen, bestimmbaren, jährlichen oder periodischen US-Einkünften ohne ECI.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.usNonEciOther" param-type="string" show-location="false">Abzug im Zusammenhang mit sonstigen US-Beträgen ohne ECI.</ParamField>
+  <ParamField body="k2PartX.deductionLines.*.foreignNonECI" param-type="string" show-location="false">Abzug im Zusammenhang mit Beträgen ohne ECI aus ausländischen Quellen.</ParamField>
+
+  <Callout kind="info">
+
+  Sie müssen nicht jedes internationale Detail in frühere Schritte zwingen. Der Assistent trennt Partneridentitätsdaten von K-2- und K-3-Zuweisungsdaten, damit Sie zuerst Gesellschaft und Partner einrichten können.
+
+  </Callout>
+
+  </Step>
+
+  <Step title="Steuererklärung prüfen" icon="check-circle">
+
+  Prüfen Sie vor der Formularerstellung alle eingegebenen Daten. Dieser Schritt dient der Validierung, nicht der Eingabe neuer Daten.
+
+  Bestätigen Sie vor dem Fortfahren:
+
+  - Name, EIN und Steuerjahr der Personengesellschaft
+  - Anzahl und Klassifizierungen der Partner
+  - Kapitalkontensalden und Haftungszuweisungen
+  - Einkünfte, Abzüge und ordentlicher Geschäftsgewinn
+  - Summen in Schedule K
+  - Quellensteuersummen und vierteljährliche Zahlungen
+  - Internationale Zuweisungen für K-2 und K-3
+
+  Wenn etwas nicht stimmt, springen Sie zum relevanten Schritt zurück, korrigieren die Daten und kehren zur Prüfung zurück.
+
+  </Step>
+
+  <Step title="PDFs erstellen" icon="file-text">
+
+  Erstellen Sie nach Abschluss der Prüfung das Einreichungspaket. Dieser letzte Schritt erzeugt die PDFs anhand der Daten aus den vorherigen Schritten.
+
+  Das Ausgabepaket sollte enthalten:
+
+  - Form 1065
+  - Ein Schedule K-1 für jeden Partner
+  - Schedule K-2
+  - Schedule K-3
+  - Form 8804
+  - Form 8805
+  - Form 1040-NR für Partner
+
+  Erfolg bedeutet einen herunterladbaren PDF-Satz, der der Partneranzahl und den zuvor ausgefüllten Meldeabschnitten entspricht.
+
+  </Step>
+</Steps>
+
+## Wie die Daten durch die Steuererklärung fließen
+
+Der Assistent beginnt mit Fakten auf Gesellschaftsebene, führt dann zu Eigentums- und Kapitaldaten auf Partnerebene, anschließend zur Finanzberichterstattung und zuletzt zu Quellensteuer und internationalen Zuweisungen. Diese Reihenfolge reduziert Nacharbeit, da spätere Abschnitte von den zuerst eingegebenen Gesellschafts- und Partnerdaten abhängen.
+
+Sammeln Sie die Eingaben zweckmäßigerweise in dieser Reihenfolge:
+
+- Rechtliche und steuerjahresbezogene Angaben der Personengesellschaft
+- Vollständige Partnerliste und Eigentumsangaben
+- Buch- und Steuerfinanzdaten für Seite 1
+- Beträge für Schedule K
+- Quellensteuerdaten ausländischer Partner
+- Zuweisungsangaben für K-2 und K-3
+
+<Callout kind="alert">
+
+Ist ein Partner ausländisch, prüfen Sie dessen `isForeign`, `ectiShare`, Quellensteuersatz und Angaben in Schedule O-I gemeinsam. Inkonsistente Partnerdaten können Forms 8805, 1040-NR und internationale Schedules beeinflussen.
+
+</Callout>
+
+## Häufige Fragen
+
+<ExpandableGroup>
+  <Expandable title="Muss ich jeden Partner hinzufügen, bevor ich die Steuererklärung abschließen kann?" default-open="true">
+
+  Ja. Das erstellte Einreichungspaket hängt von der vollständigen Partnerliste ab, da Nomadfiling Ausgaben auf Partnerebene wie Schedule K-1, Form 8805 und Form 1040-NR erstellt. Fügen Sie vor der abschließenden Prüfung alle Partner hinzu.
+
+  </Expandable>
+
+  <Expandable title="Kann jeder Partner separat unterschreiben?">
+
+  Ja. Jeder Partnerdatensatz enthält eine eigene `signatureDataUrl`, sodass der Assistent für jeden Partner eine separate Unterschrift unterstützt.
+
+  </Expandable>
+
+  <Expandable title="Was ist, wenn die Personengesellschaft mehr als zwei Partner hat?">
+
+  Der Assistent startet standardmäßig mit zwei Partnern; dies ist nur der Ausgangszustand. Fügen Sie die übrigen Partner hinzu, damit Steuererklärung und erstellte Schedules der tatsächlichen Eigentümerstruktur des Jahres entsprechen.
+
+  </Expandable>
+
+  <Expandable title="Wann sollte ich den Quellensteuerschritt ausfüllen?">
+
+  Füllen Sie die Quellensteuer nach Partnereinrichtung, Einkünften und Abzügen sowie Schedule K aus. Dann haben Sie die Zahlen, um Gesamt-ECTI und Quartalszahlungen mit weniger Anpassungen einzugeben.
+
+  </Expandable>
+
+  <Expandable title="Wofür wird der internationale Schritt verwendet?">
+
+  Der internationale Schritt erfasst Einkunfts- und Abzugszuweisungen in Part X von K-2 und K-3. Hier teilen Sie Zeilenposten in ECI aus US-Quellen, ECI aus ausländischen Quellen, US-Kategorien ohne ECI und ausländische Kategorien ohne ECI auf.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Zugehörige Seiten
+
+<Columns cols={2}>
+  <Card title="Schnellstart" href="/de/quickstart" icon="rocket" cta="Anleitung öffnen">
+    Beginnen Sie mit dem zentralen Nomadfiling-Workflow, bevor Sie eine Steuererklärung für eine Personengesellschaft erstellen.
+  </Card>
+  <Card title="Alle Funktionen" href="/de/features" icon="settings" cta="Funktionen anzeigen">
+    Sehen Sie die in Nomadfiling verfügbaren Einreichungsworkflows, Automatisierungstools und Ausgabeoptionen.
+  </Card>
+  <Card title="Form 5472 und 1120" href="/de/form-5472-1120" icon="file-text" cta="Workflow anzeigen">
+    Vergleichen Sie den Personengesellschafts-Workflow mit dem Einreichungsablauf für Single-Member LLCs in ausländischem Eigentum.
+  </Card>
+  <Card title="Faxservice" href="/de/fax-service" icon="upload" cta="Mehr erfahren">
+    Senden Sie ausgefüllte Formulare und zugehörige Einreichungsdokumente über den integrierten Faxworkflow.
+  </Card>
+</Columns>
+
+## Nächste Schritte
+
+Sobald Sie die Struktur des Assistenten verstanden haben, bereiten Sie vor Beginn der Einreichung Ihre Quelldaten vor. Preise, Tarifdetails und Onboarding-Informationen finden Sie auf der [Preisseite](/de/getting-started/pricing).

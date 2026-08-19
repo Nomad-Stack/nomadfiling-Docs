@@ -1,0 +1,137 @@
+---
+title: Zahlungen und Abrechnung
+description: Überprüfe deinen Nomadfiling-Zahlungsverlauf, lade Belege herunter und prüfe Einreichungsguthaben auf der Zahlungsseite.
+---
+
+## Zahlungen, Belege und Abrechnungsdetails überprüfen
+
+Die Seite „Zahlungen“ zeigt jede Zahlung in deinem Konto in umgekehrt chronologischer Reihenfolge, sodass deine neuesten Belastungen zuerst erscheinen. Nutze sie, um einen Zahlungsstatus zu bestätigen, den Stripe-Beleg zu öffnen oder eine Belastung abzugleichen, bevor du den Support kontaktierst.
+
+<Callout kind="info">
+
+Wenn du nicht angemeldet bist, leitet Nomadfiling dich von `/payments` zu `/login` weiter. Melde dich zuerst an und öffne dann die Seite „Zahlungen“ über die Hauptnavigation.
+
+</Callout>
+
+### Die Seite „Zahlungen“ öffnen
+
+<Steps>
+  <Step title="Bei deinem Konto anmelden" icon="lock">
+
+  Öffne Nomadfiling und melde dich mit dem Konto an, über das die Zahlung erfolgt ist.
+
+  </Step>
+  <Step title="Zahlungen in der Navigation auswählen" icon="credit-card">
+
+  Nutze die Hauptnavigation und wähle **Zahlungen**. Die Navigation enthält **Dashboard**, **Fax-Postausgang**, **Zahlungen**, **Konto**, **Sprache** und **Abmelden**.
+
+  Wenn die Seite geladen wird, ist **Zahlungen** der aktive Bereich.
+
+  </Step>
+  <Step title="Deine neuesten Belastungen zuerst überprüfen" icon="check-circle">
+
+  Nomadfiling lädt alle Zahlungsdatensätze und sortiert sie absteigend nach `created_at`. Deine neueste Zahlung erscheint oben in der Liste.
+
+  Wenn dein Konto noch keine Zahlungsdatensätze hat, zeigt die Seite ein Kreditkartensymbol und die Meldung **Noch keine Zahlungen**.
+
+  </Step>
+</Steps>
+
+### Was jede Zahlung anzeigt
+
+Jede Zahlung wird als Karte mit Zahlungsstatus, formatiertem Betrag, Zahlungsdatum und weiterführenden Links angezeigt. Dieses Layout ist für eine schnelle Übersicht ausgelegt, damit du erkennen kannst, ob eine Belastung erfolgreich war, ohne den Beleg zu öffnen.
+
+Die Seite liest jeden Zahlungsdatensatz aus der Tabelle `payments` und zeigt die folgenden Felder an:
+
+- `id`
+- `stripe_session_id`
+- `stripe_payment_intent_id`
+- `amount`
+- `currency`
+- `status`
+- `customer_email`
+- `created_at`
+- `receipt_url`
+
+### Status und Beträge verstehen
+
+Eine Zahlungskarte kombiniert ein Symbol, eine Statusbezeichnung und den formatierten Betrag, damit du die Liste schnell überblicken kannst.
+
+| Status | Symbolfarbe | Bedeutung |
+| --- | --- | --- |
+| `paid` | Grün | Die Zahlung wurde erfolgreich abgeschlossen. |
+| `failed` | Rot | Stripe konnte die Zahlung nicht abschließen. |
+| `pending` | Bernsteinfarben | Die Zahlung wird noch verarbeitet oder wartet auf Bestätigung. |
+| Jeder andere Status | Bernsteinfarben | Die Zahlung befindet sich noch nicht in einem endgültigen erfolgreichen oder fehlgeschlagenen Zustand. |
+
+Nomadfiling formatiert Beträge aus Cent mithilfe des deutschen Gebietsschemas als Währungswert. Beispielsweise wird ein `amount` von `19700` mit der Währung `USD` als `197,00 $` angezeigt.
+
+<Callout kind="tip">
+
+Wenn das Betragsformat ungewöhnlich aussieht, ist das beabsichtigt. Die Seite verwendet die deutsche Zahlenformatierung, bei der bei unterstützten Währungen das Dezimalkomma vor dem Währungssymbol steht.
+
+</Callout>
+
+### Einen Beleg oder Stripe-Zahlungsdatensatz öffnen
+
+Jede Zahlungskarte enthält direkte Links für weitere Aktionen, sodass du deine E-Mails nicht nach Belegen durchsuchen musst.
+
+- **Beleglink** — öffnet die in `receipt_url` gespeicherte Stripe-Beleg-URL
+- **Stripe-Link** — öffnet die Stripe-Zahlungsseite unter `https://dashboard.stripe.com/payments/{stripe_payment_intent_id}`
+- **Kunden-E-Mail** — zeigt die mit der Zahlung verknüpfte E-Mail-Adresse
+
+Auf Mobilgeräten werden die Beleg- und Stripe-Links in einen separaten unteren Bereich der Karte mit oberem Rand verschoben. Die Informationen bleiben gleich, aber das Layout wird an kleinere Bildschirme angepasst.
+
+### Wann du die Zahlungsseite verwenden solltest
+
+Nutze die Zahlungsseite, wenn du schnell eine Antwort zu einer Belastung brauchst, ohne dein Konto zu verlassen.
+
+- Bestätigen, ob eine Zahlung erfolgreich war
+- Einen Stripe-Beleg herunterladen oder erneut öffnen
+- Eine Belastung der beim Checkout verwendeten E-Mail-Adresse zuordnen
+- Die Reihenfolge der letzten Zahlungen prüfen
+- Abrechnungsaktivitäten überprüfen, bevor du den Support kontaktierst
+
+### Fehlende oder unerwartete Zahlungen beheben
+
+Die meisten Zahlungsfragen betreffen Kontozugriff, Zeitpunkt oder Status.
+
+<ExpandableGroup>
+  <Expandable title="Ich kann die Zahlungsseite nicht öffnen" default-open="true">
+
+  Nomadfiling beschränkt die Zahlungsseite auf angemeldete Benutzer. Wenn du `/payments` abgemeldet öffnest, leitet dich die App zu `/login` weiter.
+
+  Melde dich an und versuche es dann erneut über die Hauptnavigation.
+
+  </Expandable>
+  <Expandable title="Ich sehe eine erwartete Zahlung nicht">
+
+  Die Liste zeigt alle Zahlungen des aktuellen Kontos, wobei die neuesten zuerst sortiert sind. Wenn eine Zahlung fehlt, bestätige zunächst, dass du mit demselben Konto und derselben E-Mail-Identität angemeldet bist, die beim Checkout verwendet wurden.
+
+  Wenn die Zahlung erst kürzlich erfolgt ist, aktualisiere die Seite und prüfe erneut. Achte auch auf den Status `pending`, der erscheinen kann, bevor Stripe die Verarbeitung der Belastung abgeschlossen hat.
+
+  </Expandable>
+  <Expandable title="Meine Zahlung wird als fehlgeschlagen angezeigt">
+
+  Der Status `failed` bedeutet, dass Stripe die Transaktion nicht abgeschlossen hat. Die Belastungskarte bleibt in deinem Verlauf sichtbar, damit du nachvollziehen kannst, was passiert ist.
+
+  Wenn du die Einreichung oder Dienstleistung weiterhin benötigst, kehre zum entsprechenden Checkout-Ablauf zurück und versuche die Zahlung erneut. Wenn der Fehler unzutreffend erscheint, halte Zahlungsdatum und Betrag bereit, bevor du den Support kontaktierst.
+
+  </Expandable>
+  <Expandable title="Ich benötige den offiziellen Beleg für eine Erstattung oder Buchhaltung">
+
+  Öffne den Link **Beleg** auf der Zahlungskarte. Dieser Link verweist auf die bei Stripe gehostete Beleg-URL, die mit der Zahlung gespeichert wurde.
+
+  Wenn die Zahlung keinen Beleglink enthält, stelle Zahlungsdatum, Betrag und Kunden-E-Mail zusammen, bevor du den Support kontaktierst.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Verwandte Seiten
+
+<Columns cols={2}>
+  <Card title="Preise ansehen" href="/de/getting-started/pricing" icon="bar-chart" cta="Preise öffnen" />
+  <Card title="Zum Dashboard" href="/de/dashboard" icon="home" cta="Dashboard öffnen" />
+  <Card title="Dein Profil verwalten" href="/de/account/profile" icon="settings" cta="Profil öffnen" />
+  <Card title="API-Schlüssel verwalten" href="/de/account/api-keys" icon="key" cta="API-Schlüssel öffnen" />
+</Columns>

@@ -1,0 +1,157 @@
+---
+title: Generator für Schreiben bei verspäteter Einreichung
+description: Erstellen Sie für verspätete Einreichungen von Form 5472 eine PDF-Erklärung zu einem triftigen Grund, die Sie Ihrem verspäteten Einreichungspaket beifügen können.
+---
+
+## Erstellen Sie eine Erklärung zu einem triftigen Grund für eine versäumte Einreichung von Form 5472
+
+Verwenden Sie den Generator für Schreiben bei verspäteter Einreichung unter `/late-filing-letter`, um ein PDF-Schreiben zu erstellen, das Sie einem verspäteten Einreichungspaket für Form 5472 und Form 1120 beifügen können. Das Tool wurde für US-amerikanische Disregarded Entities in ausländischem Eigentum entwickelt, die die Einreichungsfrist versäumt haben und eine Erklärung zu einem triftigen Grund benötigen, um die IRS-Strafe für verspätete Einreichung zu vermeiden, die `25,000` Dollar pro Jahr erreichen kann.
+
+<Callout kind="info">
+
+Sie benötigen kein Konto, um dieses Tool zu verwenden. Der Generator für Schreiben bei verspäteter Einreichung ist ohne Authentifizierung verfügbar.
+
+</Callout>
+
+Die Benutzeroberfläche ist auf Englisch und Deutsch verfügbar, das erstellte Schreiben wird jedoch immer auf Englisch verfasst, da es für den IRS bestimmt ist. Das Schreiben verweist als Teil seiner Begründung außerdem auf den Fall *Farhy v. Commissioner*.
+
+## Was der Generator leistet
+
+Der Generator erfasst einige wenige Angaben zu Ihrer LLC, dem versäumten Steuerjahr und der Person, die die Erklärung unterzeichnet. Anschließend erstellt er ein PDF-Schreiben zu einem triftigen Grund, das Sie im Browser in der Vorschau ansehen und zum Drucken oder Einreichen herunterladen können.
+
+<Callout kind="alert">
+
+Der Generator hilft Ihnen bei der Erstellung einer Erklärung zu einem triftigen Grund, reicht jedoch nichts für Sie ein. Sie müssen das Schreiben weiterhin Ihrer verspäteten Einreichung von Form 5472 und Form 1120 beifügen und das vollständige Paket an den IRS senden.
+
+</Callout>
+
+## Welche Informationen Sie benötigen
+
+Halten Sie diese Angaben bereit, bevor Sie beginnen.
+
+<ParamField body="llcName" param-type="string" required="true" show-location="false">
+
+Der rechtliche Name der LLC oder der berichtenden Gesellschaft.
+
+</ParamField>
+
+<ParamField body="ein" param-type="string" required="true" show-location="false">
+
+Ihre Employer Identification Number im Format `XX-XXXXXXX`.
+
+</ParamField>
+
+<ParamField body="missedYear" param-type="string" required="true" show-location="false">
+
+Das Steuerjahr, das Sie versäumt haben. Das Dropdown-Menü enthält Jahre vom vorherigen Kalenderjahr zurück bis `2018`.
+
+</ParamField>
+
+<ParamField body="ownerName" param-type="string" required="true" show-location="false">
+
+Der Name des ausländischen Eigentümers, der das Schreiben unterzeichnet oder darin genannt wird.
+
+</ParamField>
+
+<ParamField body="signature" param-type="image" required="false" show-location="false">
+
+Eine Unterschrift, die entweder durch Zeichnen auf der Unterschriftsfläche oder durch Hochladen einer `PNG`-, `JPG`- oder `SVG`-Datei hinzugefügt wird.
+
+</ParamField>
+
+<ParamField body="signatureDate" param-type="string" required="false" show-location="false">
+
+Das Unterschriftsdatum. Das Formular füllt dieses automatisch mit dem heutigen Datum im Format `MM/DD/YYYY` aus, und Sie können es vor der PDF-Erstellung überprüfen.
+
+</ParamField>
+
+## Durchlaufen Sie den zweistufigen Workflow
+
+Der Generator hat einen kurzen zweistufigen Ablauf: Geben Sie Ihre Angaben ein, prüfen Sie anschließend das PDF und laden Sie es herunter.
+
+<Steps>
+  <Step title="Angaben für das Schreiben eingeben" icon="edit">
+
+  Beginnen Sie auf dem Formularbildschirm und füllen Sie die Pflichtfelder aus: LLC-Name, EIN, versäumtes Steuerjahr und Name des Eigentümers. Die Aktion zum Erstellen wird verfügbar, sobald `llcName`, `ein`, `missedYear` und `ownerName` jeweils einen Wert enthalten.
+
+  Fügen Sie eine Unterschrift auf die für Sie passende Weise hinzu. Sie können entweder direkt im Browser auf einer `200` Pixel hohen Unterschriftsfläche zeichnen oder den Modus wechseln und eine vorhandene Bilddatei Ihrer Unterschrift hochladen.
+
+  Überprüfen Sie das Unterschriftsdatum, bevor Sie fortfahren. Standardmäßig trägt das Tool automatisch das heutige Datum ein, was Zeit spart und Formatierungsfehler reduziert.
+
+  </Step>
+  <Step title="PDF in der Vorschau ansehen und herunterladen" icon="download">
+
+  Nachdem Sie das Schreiben erstellt haben, erzeugt die App das PDF durch Aufruf von `generateLateFilingLetter(data)` und zeigt das Ergebnis in der integrierten PDF-Vorschau an. Die Vorschau verwendet die Komponente `PdfCanvasViewer`, damit Sie vor dem Herunterladen prüfen können, ob das Schreiben korrekt aussieht.
+
+  Laden Sie die fertige Datei mit einem Dateinamen in diesem Format herunter: `Reasonable-Cause-Letter-{llcName}-{missedYear}.pdf`. Nachdem die Datei gespeichert wurde, drucken Sie sie aus oder fügen Sie sie Ihrem Paket für die verspätete Einreichung bei.
+
+  Der Vorschauschritt enthält außerdem einen Hinweis zu den nächsten Schritten, der Sie daran erinnert, das Schreiben Ihrer verspäteten Einreichung von Form 5472 und Form 1120 beizufügen und das Paket per Post oder Fax an den IRS zu senden.
+
+  </Step>
+</Steps>
+
+## Was das erstellte PDF enthält
+
+Das PDF ist eine Erklärung zu einem triftigen Grund, die eine verspätete Einreichung von Form 5472 begleiten soll. Es verwendet die von Ihnen eingegebenen Informationen, um die Gesellschaft, das versäumte Jahr und den ausländischen Eigentümer zu identifizieren, und formatiert diese Informationen anschließend als an den IRS gerichtetes Schreiben.
+
+In der Praxis bedeutet dies, dass die Ausgabe keine leere Vorlage oder allgemeine Notiz ist. Der Generator erstellt ein fertiges PDF-Dokument, das heruntergeladen und Ihrem verspäteten Einreichungspaket beigefügt werden kann.
+
+## Woran Sie den Erfolg erkennen
+
+Sie wissen, dass der Generator funktioniert hat, wenn der Vorschaubildschirm ein lesbares PDF anzeigt und die Download-Schaltfläche eine Datei mit einem Namen wie `Reasonable-Cause-Letter-Nomad Ventures LLC-2023.pdf` anbietet. Zu diesem Zeitpunkt besteht Ihre nächste Aufgabe nicht mehr darin, das Schreiben zu erstellen, sondern das vollständige Einreichungspaket zusammenzustellen.
+
+<Callout kind="tip">
+
+Bevor Sie etwas an den IRS senden, vergewissern Sie sich, dass LLC-Name, EIN, versäumtes Jahr, Name des Eigentümers und Unterschriftsdatum im PDF mit den Formularen übereinstimmen, die Sie zusammen damit einreichen.
+
+</Callout>
+
+## Nächste Schritte nach dem Herunterladen
+
+Sobald Sie das PDF haben, fügen Sie es Ihren Unterlagen für die verspätete Einreichung von Form 5472 und Form 1120 bei. Der Vorschauschritt der App erinnert Sie ausdrücklich daran, das Schreiben auszudrucken und es zusammen mit dem Rest Ihres verspäteten Einreichungspakets per Post oder Fax zu senden.
+
+Wenn Sie die Formulare selbst noch erstellen müssen, wechseln Sie als Nächstes zum Hauptworkflow für Form 5472 und Form 1120. Wenn Sie das Paket faxen möchten, verwenden Sie vor dem Senden die faxbezogenen Tools und Anleitungen.
+
+## Häufige Fragen
+
+<ExpandableGroup>
+  <Expandable title="Muss ich mich anmelden, um den Generator für Schreiben bei verspäteter Einreichung zu verwenden?" default-open="false">
+
+  Nein. Der Generator ist unter `/late-filing-letter` ohne Authentifizierung verfügbar.
+
+  </Expandable>
+  <Expandable title="Ist das Schreiben auf Deutsch verfügbar?" default-open="false">
+
+  Die Benutzeroberfläche ist zweisprachig auf Englisch und Deutsch verfügbar, das erstellte Schreiben selbst ist jedoch immer auf Englisch, da es für den IRS bestimmt ist.
+
+  </Expandable>
+  <Expandable title="Was ist, wenn ich mehr als ein Steuerjahr versäumt habe?" default-open="false">
+
+  Das Formular erstellt jeweils ein Schreiben für ein versäumtes Steuerjahr. Wenn Sie Schreiben für mehrere Jahre benötigen, erstellen Sie für jedes versäumte Jahr ein separates PDF und stellen Sie sicher, dass jedes zum entsprechenden Einreichungspaket passt.
+
+  </Expandable>
+  <Expandable title="Kann ich eine Unterschrift hochladen, anstatt eine zu zeichnen?" default-open="false">
+
+  Ja. Sie können zwischen dem Zeichnen Ihrer Unterschrift im Browser und dem Hochladen eines Unterschriftsbildes im Format `PNG`, `JPG` oder `SVG` wechseln.
+
+  </Expandable>
+  <Expandable title="Reicht das Tool das Schreiben für mich beim IRS ein?" default-open="false">
+
+  Nein. Der Generator erstellt nur das PDF. Sie müssen es Ihrer verspäteten Einreichung von Form 5472 und Form 1120 beifügen und das Paket selbst versenden.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Zugehörige Tools
+
+<Columns cols={3}>
+  <Card title="Form 5472 und Form 1120 erstellen" href="/de/form-5472-1120" icon="file-text" cta="Formulargenerator öffnen">
+  Schließen Sie den Hauptworkflow für die Einreichung ab und erstellen Sie die Formulare, die zu Ihrer Erklärung zu einem triftigen Grund gehören.
+  </Card>
+  <Card title="Ihr Einreichungspaket faxen" href="/de/fax-service" icon="upload" cta="Faxoptionen anzeigen">
+  Prüfen Sie die faxbezogenen Optionen, wenn Sie Ihr verspätetes Einreichungspaket per Fax übermitteln möchten.
+  </Card>
+  <Card title="Alle Funktionen durchsuchen" href="/de/features" icon="grid-2x2" cta="Alle Tools anzeigen">
+  Entdecken Sie weitere in Nomadfiling verfügbare Einreichungstools.
+  </Card>
+</Columns>

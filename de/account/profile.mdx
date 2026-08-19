@@ -1,0 +1,194 @@
+---
+title: Kontoprofil
+description: Verwalte dein Nomadfiling-Profil, sieh Kontostatistiken ein und greife über die Kontoseite auf Kontoeinstellungen zu.
+---
+
+## Verwalte dein Konto auf einer Seite
+
+Deine Kontoseite bündelt die Profildaten, die du aktualisieren kannst, die Kontodetails, die du einsehen kannst, und Verknüpfungen zu den Bereichen, die du wahrscheinlich als Nächstes benötigst.
+
+Wenn du angemeldet bist, öffne `/account`, um dein Profil, die Anzahl deiner Einreichungen und Zahlungen, den Zugriff auf API-Schlüssel und die Abmeldefunktionen anzuzeigen. Wenn du nicht angemeldet bist, leitet Nomadfiling dich zu `/login` weiter, bevor die Seite angezeigt wird.
+
+<Callout kind="info">
+
+Die Kontoseite ist erst nach der Authentifizierung verfügbar. Wenn Nomadfiling dich zur Anmeldeseite weiterleitet, melde dich zuerst an und kehre dann zu `/account` zurück.
+
+</Callout>
+
+## Was du auf der Kontoseite tun kannst
+
+Die Kontoseite ist nach einigen zentralen Kontoaufgaben gegliedert:
+
+- Deine gespeicherten Profilinformationen überprüfen
+- Deinen vollständigen Namen direkt bearbeiten
+- Prüfen, wie viele Einreichungen du erstellt hast
+- Prüfen, wie viele bezahlte Zahlungen deinem Konto zugeordnet sind
+- Deine Seite für MCP-API-Schlüssel öffnen
+- Dich von deinem Konto abmelden
+
+Im Hintergrund lädt die Seite deine Profildetails und Kontostatistiken parallel, damit Profil- und Statistikkarten gemeinsam erscheinen.
+
+## Deine Profildaten aktualisieren
+
+Deine Profilkarte zeigt drei Felder:
+
+- **Vollständiger Name** — bearbeitbar
+- **E-Mail** — schreibgeschützt
+- **Mitglied seit** — schreibgeschützt
+
+Nomadfiling liest diese Werte aus deinem Kontoprofil, einschließlich deiner E-Mail-Adresse, deines gespeicherten vollständigen Namens und des Erstellungsdatums deines Kontos.
+
+<Steps>
+  <Step title="Profilkarte öffnen" icon="users">
+
+  Gehe nach der Anmeldung zu `/account`. Die Profilkarte erscheint oben auf der Seite und zeigt deine aktuellen Kontodaten.
+
+  </Step>
+  <Step title="Vollständigen Namen bearbeiten" icon="edit">
+
+  Wähle das Stiftsymbol neben **Vollständiger Name**, um den Bearbeitungsmodus zu öffnen. Nomadfiling ersetzt den Text durch ein Eingabefeld und zeigt die Aktionen **Speichern** und **Abbrechen**.
+
+  </Step>
+  <Step title="Änderung speichern oder verwerfen" icon="check-circle">
+
+  Gib deinen aktualisierten Namen ein und wähle **Speichern**, um ihn zu übernehmen. Wenn du es dir anders überlegst, wähle **Abbrechen**, damit dein aktueller Name unverändert bleibt.
+
+  Nach einer erfolgreichen Aktualisierung zeigt die Profilkarte wieder ihre normale Ansicht mit dem neuen vollständigen Namen.
+
+  </Step>
+</Steps>
+
+<Callout kind="tip">
+
+Verwende deinen echten Namen, wenn deine Kontodaten bei Support-, Abrechnungs- und Einreichungsaktivitäten konsistent bleiben sollen.
+
+</Callout>
+
+## Die angezeigten Felder verstehen
+
+Die Kontoseite trennt bearbeitbare und schreibgeschützte Felder, damit du schnell erkennst, was geändert werden kann.
+
+<ParamField body="full_name" param-type="string" required="false" show-location="false">
+Dein Anzeigename auf der Kontoseite. Du kannst dieses Feld direkt über die Profilkarte aktualisieren.
+</ParamField>
+
+<ParamField body="email" param-type="string" required="true" show-location="false">
+Die mit deinem angemeldeten Konto verknüpfte E-Mail-Adresse. Die Kontoseite zeigt diesen Wert schreibgeschützt an.
+</ParamField>
+
+<ParamField body="created_at" param-type="datetime" required="true" show-location="false">
+Das Datum, an dem dein Konto erstellt wurde. Die Kontoseite zeigt es als **Mitglied seit** an und erlaubt keine Bearbeitung.
+</ParamField>
+
+## Deine Kontostatistiken anzeigen
+
+Die Kontoseite enthält Schnellstatistiken, mit denen du aktuelle Aktivitäten bestätigen kannst, ohne mehrere Bereiche zu öffnen.
+
+### Anzahl der Einreichungen
+
+Die Einreichungsstatistik zeigt, wie viele Einreichungen zu deinem Konto gehören. Wähle die Einreichungskarte, um zum [Dashboard](/de/dashboard) zu gelangen, wo du gespeicherte Einreichungen genauer prüfen kannst.
+
+### Anzahl bezahlter Zahlungen
+
+Die Statistik für bezahlte Zahlungen zeigt die Anzahl der Zahlungen in deinem Konto mit bezahltem Status. Wähle die Zahlungskarte, um [Zahlungen](/de/account/payments) zu öffnen.
+
+<Callout kind="info">
+
+Die Zahlungsanzahl umfasst nur bezahlte Zahlungen. Unbezahlte oder unvollständige Zahlungsdatensätze erhöhen diese Zahl nicht.
+
+</Callout>
+
+## MCP-API-Schlüssel öffnen
+
+Die Kontoseite enthält eine separate Karte für **MCP-API-Schlüssel**. Öffne damit deine Seite zur API-Schlüsselverwaltung unter [API-Schlüssel](/de/account/api-keys).
+
+Diese Verknüpfung ist nützlich, wenn du mit externen Tools oder Automatisierungen arbeitest und Schlüssel auf Kontoebene erstellen, prüfen oder verwalten musst.
+
+## Sicher abmelden
+
+Nutze die Abmeldeaktion auf der Kontoseite oder in der Hauptnavigation, wenn du deine Arbeit in Nomadfiling beendet hast.
+
+<Steps>
+  <Step title="Abmelden auswählen" icon="x-circle">
+
+  Klicke in der Navigation der Kontoseite oder im mobilen Navigationsmenü auf **Abmelden**.
+
+  </Step>
+  <Step title="Lokalen Sitzungsstatus löschen" icon="trash">
+
+  Beim Abmelden löscht Nomadfiling den lokalen Browserwert `tax_tool_paid`, bevor deine Sitzung beendet wird.
+
+  </Step>
+  <Step title="Authentifizierte Sitzung beenden" icon="lock">
+
+  Nomadfiling meldet dich ab und leitet dich zu `/` weiter.
+
+  Bei Erfolg kehrst du zur öffentlichen Startseite zurück, auf der reine Kontoseiten erst nach erneuter Anmeldung wieder zugänglich sind.
+
+  </Step>
+</Steps>
+
+## Kontonavigation verwenden
+
+Die Navigation für angemeldete Benutzer hilft dir, zwischen den Hauptbereichen von Nomadfiling zu wechseln, ohne zur Startseite zurückzukehren.
+
+Du kannst diese Elemente über die Hauptnavigation aufrufen:
+
+- **Dashboard**
+- **Fax-Postausgang**
+- **Zahlungen**
+- **Konto**
+- **Sprachumschalter**
+- **Abmelden**
+
+Auf kleineren Bildschirmen ist dieselbe Navigation über das mobile Hamburger-Menü verfügbar. Auf der Kontoseite wird **Konto** als aktiver Bereich angezeigt.
+
+## Passwort und Anmeldezugriff
+
+Deine Kontoseite konzentriert sich auf Profildetails, Kontoaktivitäten und den Zugriff auf zugehörige Kontoeinstellungen.
+
+Wenn du vor dem Fortfahren Hilfe zur Abrechnung benötigst, lies [Preise](/de/getting-started/pricing). Wenn du die Kontoseite nicht erreichen kannst, weil du nicht angemeldet bist, beginne auf dem Anmeldebildschirm und schließe zuerst die Anmeldung ab.
+
+<Callout kind="alert">
+
+Die Kontoseite stellt nicht jede Authentifizierungsaktion direkt in der Profilkarte bereit. Wenn du Probleme mit dem Kontozugriff behebst, melde dich zuerst erneut an und bestätige, dass `/account` erfolgreich geladen wird, bevor du etwas anderes änderst.
+
+</Callout>
+
+## Häufig gestellte Fragen
+
+<ExpandableGroup>
+  <Expandable title="Warum kann ich meinen vollständigen Namen bearbeiten, aber nicht meine E-Mail-Adresse?" default-open="true">
+
+  Nomadfiling erlaubt die direkte Bearbeitung nur für deinen vollständigen Namen. Das E-Mail-Feld dient als Referenz und bleibt auf der Kontoseite schreibgeschützt.
+
+  </Expandable>
+  <Expandable title="Warum ist die Zahlungsanzahl niedriger als erwartet?">
+
+  Die Zahlungskarte zählt nur Zahlungen mit bezahltem Status. Ausstehende, fehlgeschlagene oder unvollständige Zahlungen sind in dieser Zahl nicht enthalten.
+
+  </Expandable>
+  <Expandable title="Warum hat Nomadfiling mich beim Öffnen von /account zur Anmeldeseite weitergeleitet?">
+
+  Die Kontoseite ist geschützt. Wenn deine Sitzung abgelaufen ist oder du nicht angemeldet warst, leitet Nomadfiling dich zu `/login` weiter, bevor Kontodaten geladen werden.
+
+  </Expandable>
+  <Expandable title="Was passiert, wenn ich mich abmelde?">
+
+  Nomadfiling löscht den lokalen Browserwert `tax_tool_paid`, meldet dich ab und leitet dich zur Startseite weiter. Danach erfordern geschützte Kontoseiten eine erneute Anmeldung.
+
+  </Expandable>
+  <Expandable title="Wo verwalte ich API-Schlüssel?">
+
+  Öffne auf der Kontoseite die Karte **MCP-API-Schlüssel** oder gehe direkt zu [API-Schlüssel](/de/account/api-keys).
+
+  </Expandable>
+</ExpandableGroup>
+
+## Zu verwandten Kontoseiten
+
+<Columns cols={3}>
+  <Card title="Deine Einreichungen ansehen" href="/de/dashboard" icon="folder" cta="Dashboard öffnen" />
+  <Card title="Zahlungen überprüfen" href="/de/account/payments" icon="bar-chart" cta="Zahlungen öffnen" />
+  <Card title="API-Schlüssel verwalten" href="/de/account/api-keys" icon="key" cta="API-Schlüssel öffnen" />
+</Columns>

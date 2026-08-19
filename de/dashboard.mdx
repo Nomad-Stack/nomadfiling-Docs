@@ -1,0 +1,213 @@
+---
+title: Dashboard und Einreichungsverwaltung
+description: Sehen, filtern, bearbeiten und löschen Sie Ihre gespeicherten Steuereinreichungen im Nomadfiling-Dashboard und verfolgen Sie Ihre Einreichungsguthaben.
+---
+
+## Verwalten Sie Ihre gespeicherten Einreichungen an einem Ort
+
+Das Dashboard unter `/dashboard` zeigt jede in Ihrem Konto gespeicherte Einreichung, beginnend mit der zuletzt erstellten. Von dieser Seite aus können Sie Einreichungsguthaben verfolgen, Einreichungen nach Steuerjahr filtern, eine Einreichung zur Prüfung öffnen, zur Bearbeitung zurückkehren oder sie löschen, wenn Sie sie nicht mehr benötigen.
+
+<Callout kind="info">
+
+Sie müssen angemeldet sein, um das Dashboard zu öffnen. Wenn Sie nicht angemeldet sind, leitet Nomadfiling Sie zu `/login` weiter.
+
+</Callout>
+
+## Was Sie im Dashboard tun können
+
+Das Dashboard ist für laufende Einreichungsverwaltung und nicht für die Ersteinrichtung konzipiert. Es kombiniert Ihre gespeicherten Einreichungen, Ihre verfügbaren Einreichungsguthaben und Kontonavigation auf einem Bildschirm.
+
+### Ihre Einreichungsliste prüfen
+
+Jede Einreichung erscheint als Karte mit den wichtigsten Details, die Sie zur schnellen Identifizierung benötigen:
+
+- **LLC-Name**
+- **EIN**
+- **Steuerjahreszeitraum**
+- **Erstellungsdatum**
+
+Nomadfiling lädt Einreichungen aus Ihren gespeicherten Datensätzen und sortiert sie nach Erstellungsdatum in absteigender Reihenfolge, sodass die neueste Einreichung zuerst erscheint.
+
+### Einreichungsguthaben verfolgen
+
+Die Guthabenübersicht oben im Dashboard zeigt, wie viele Einreichungen Sie gegen Ihre bezahlten Guthaben verwendet haben.
+
+Nomadfiling berechnet dies, indem der `filings_purchased`-Wert aus Ihren bezahlten Zahlungen summiert wird:
+
+- Wenn mindestens eine bezahlte Zahlung `-1` enthält, zeigt das Dashboard **Unbegrenzt**
+- Andernfalls zeigt es **X von Y Einreichungen verwendet**
+
+Das erleichtert die Einschätzung, ob Sie mehr Guthaben kaufen müssen, bevor Sie eine weitere Einreichung erstellen.
+
+<Callout kind="tip">
+
+Wenn Ihre Guthabenzählung nicht Ihren Erwartungen entspricht, prüfen Sie den Status Ihrer Käufe auf der [Zahlungen](/de/account/payments)-Seite. Nur bezahlte Zahlungen zählen zu Ihrer Einreichungssumme.
+
+</Callout>
+
+### Nach Steuerjahr filtern
+
+Verwenden Sie den Jahresfilter, um die Liste auf einen bestimmten Einreichungszeitraum einzugrenzen. Das Dashboard extrahiert eindeutige Jahre aus dem `tax_year_end`-Wert jeder Einreichung und zeigt sie als Pillen-Schaltflächen an.
+
+Der Filter enthält immer:
+
+- **Alle** für jede Einreichung
+- Eine Schaltfläche für jedes erkannte Jahr, wie **2024** oder **2023**
+
+Jahre werden vom neuesten zum ältesten sortiert, damit aktuelle Einreichungen am leichtesten erreichbar bleiben.
+
+### Die Kontonavigation nutzen
+
+Die Dashboard-Navigation gibt Ihnen Zugang zu den restlichen Kontotools, ohne den angemeldeten Bereich zu verlassen.
+
+Verfügbare Navigationselemente umfassen:
+
+- **Dashboard**
+- **Fax-Postausgang**
+- **Zahlungen**
+- **Konto**
+- **Sprache**-Umschalter
+- **Abmelden**
+
+Auf kleineren Bildschirmen ist dieselbe Navigation über das mobile Hamburger-Menü verfügbar.
+
+## Mit einer bestehenden Einreichung arbeiten
+
+Die meisten Dashboard-Aktionen beginnen von einer Einreichungskarte. Wählen Sie die Aktion, die zu dem passt, was Sie als Nächstes tun müssen.
+
+<Steps>
+  <Step title="Finden Sie die Einreichung, die Sie verwalten möchten" icon="folder">
+
+  Durchsuchen Sie die Einreichungskarten oder verwenden Sie zuerst den Jahresfilter, um die Liste zu reduzieren. Dies ist der schnellste Weg, die richtige Gesellschaft zu finden, wenn Sie Einreichungen über mehrere Steuerjahre haben.
+
+  Wenn Sie die richtige Karte gefunden haben, bestätigen Sie LLC-Name, EIN und Steuerjahr, bevor Sie eine Aktion ausführen.
+
+  </Step>
+  <Step title="Wählen Sie die richtige Aktion" icon="play-circle">
+
+  Jede Einreichungskarte enthält diese Aktionen:
+
+  - **Bearbeiten** öffnet `/edit/:filingId`, damit Sie die Einreichung weiter aktualisieren können
+  - **Ansehen** öffnet `/filing/:filingId`, um die gespeicherte Einreichung zu prüfen
+  - **Herunterladen** öffnet `/filing/:filingId`, damit Sie auf die generierte Einreichungsausgabe zugreifen können
+  - **Löschen** startet den Entfernungsablauf für diese Einreichung
+
+  Wenn Sie nur Details prüfen oder Dokumente abrufen müssen, verwenden Sie **Ansehen** oder **Herunterladen**. Verwenden Sie **Bearbeiten**, wenn Sie Einreichungsdaten ändern müssen.
+
+  </Step>
+  <Step title="Destruktive Änderungen vor dem Löschen bestätigen" icon="trash">
+
+  Wenn Sie **Löschen** wählen, zeigt Nomadfiling einen Bestätigungsdialog, bevor die Einreichung entfernt wird.
+
+  Nach Ihrer Bestätigung löscht Nomadfiling die PDF-Dateien der Einreichung aus dem `filing-pdfs`-Speicher-Bucket und löscht anschließend den Einreichungsdatensatz selbst. Sobald dieser Prozess abgeschlossen ist, erscheint die Einreichung nicht mehr in Ihrem Dashboard.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+
+Das Löschen einer Einreichung entfernt sowohl den gespeicherten Einreichungsdatensatz als auch die gespeicherten PDF-Dateien. Wenn Sie die Dokumente später benötigen könnten, laden Sie sie herunter, bevor Sie die Einreichung löschen.
+
+</Callout>
+
+## Jede Dashboard-Aktion verstehen
+
+### Bearbeiten
+
+Verwenden Sie **Bearbeiten**, um eine Einreichung im Editor unter `/edit/:filingId` wieder zu öffnen. Dies ist die richtige Wahl, wenn Sie Unternehmensdetails korrigieren, Transaktionsbeträge aktualisieren oder Dokumente nach Änderungen neu generieren müssen.
+
+Wenn die Einreichung erfolgreich geöffnet wird, kehren Sie zum Bearbeitungsablauf zurück, wobei diese Einreichung geladen ist, anstatt mit einem leeren Formular zu beginnen.
+
+### Ansehen
+
+Verwenden Sie **Ansehen**, um die Einreichungsdetailseite unter `/filing/:filingId` zu öffnen. Dies hilft, wenn Sie eine gespeicherte Einreichung prüfen möchten, ohne deren Daten zu ändern.
+
+Wählen Sie diese Option, wenn Sie Einreichungsdetails verifizieren, Steuerjahresinformationen prüfen oder bestätigen möchten, dass eine Einreichung korrekt gespeichert wurde.
+
+### Herunterladen
+
+Verwenden Sie **Herunterladen** von der Einreichungsseite, um auf die generierte Ausgabe zuzugreifen, die mit dieser Einreichung verbunden ist. Dies ist die beste Option, wenn Sie bereit sind, eine lokale Kopie für Ihre Aufzeichnungen zu behalten oder Dokumente über Ihren normalen Workflow einzureichen.
+
+Wenn für die Einreichung generierte Dokumente verfügbar sind, gibt Ihnen die Einreichungsseite Zugang zu diesen gespeicherten Ausgaben.
+
+### Löschen
+
+Verwenden Sie **Löschen** nur, wenn Sie sicher sind, dass Sie die Einreichung in Ihrem Konto nicht mehr benötigen. Das Löschen ist dauerhaft, weil zuerst die gespeicherten PDFs entfernt und anschließend der Einreichungsdatensatz gelöscht wird.
+
+Wenn Sie unsicher sind, öffnen Sie die Einreichung und laden Sie die Dokumente herunter, bevor Sie sie löschen.
+
+## Was passiert, wenn Sie noch keine Einreichungen haben
+
+Wenn Ihr Konto keine gespeicherten Einreichungen hat, zeigt das Dashboard einen **Noch keine Einreichungen**-Leerzustand anstelle der Einreichungsliste.
+
+Dieser Leerzustand enthält einen **Erste Einreichung erstellen**-Call-to-Action, der zu `/` verlinkt, damit Sie sofort eine neue Einreichung starten können.
+
+## Häufige Dashboard-Fragen beheben
+
+<ExpandableGroup>
+  <Expandable title="Warum leitet mich das Dashboard zur Anmeldeseite weiter?">
+
+  Das Dashboard ist nur für angemeldete Benutzer verfügbar. Wenn Ihre Sitzung abgelaufen ist oder Sie nicht angemeldet sind, leitet Nomadfiling Sie zu `/login` weiter.
+
+  Melden Sie sich erneut an und kehren Sie dann zu `/dashboard` zurück.
+
+  </Expandable>
+  <Expandable title="Warum sehe ich Unbegrenzt statt einer Guthabenzählung?">
+
+  Das Dashboard zeigt **Unbegrenzt**, wenn eine bezahlte Zahlung auf Ihrem Konto `filings_purchased` auf `-1` gesetzt hat.
+
+  Das bedeutet, dass Ihr Konto ein unbegrenztes Einreichungsrecht anstelle eines festen Einreichungskontingents hat.
+
+  </Expandable>
+  <Expandable title="Warum fehlt ein Jahr im Filter?">
+
+  Der Jahresfilter wird aus dem `tax_year_end`-Wert Ihrer gespeicherten Einreichungen erstellt. Wenn ein Jahr fehlt, prüfen Sie, ob die Einreichung mit dem erwarteten Steuerjahres-Enddatum gespeichert wurde.
+
+  Wenn keine gespeicherte Einreichung dieses Jahr verwendet, zeigt das Dashboard keine Filterschaltfläche dafür an.
+
+  </Expandable>
+  <Expandable title="Was genau wird gelöscht, wenn ich eine Einreichung entferne?">
+
+  Das Löschen einer Einreichung entfernt die generierten PDF-Dateien aus dem `filing-pdfs`-Speicher-Bucket und löscht anschließend den Einreichungsdatensatz aus der Datenbank.
+
+  Nach dem Löschen erscheint die Einreichung nicht mehr im Dashboard und ihre gespeicherten PDFs sind nicht mehr aus Ihrem Konto verfügbar.
+
+  </Expandable>
+  <Expandable title="Was ist der Unterschied zwischen Ansehen und Herunterladen?">
+
+  **Ansehen** öffnet die Einreichungsseite, damit Sie die gespeicherte Einreichung prüfen können. **Herunterladen** führt Sie zur gleichen Einreichungsroute, wo Sie auf die Einreichungsausgabe zugreifen können.
+
+  Wenn Sie zuerst prüfen möchten, wählen Sie **Ansehen**. Wenn Sie Dokumente abrufen, wählen Sie **Herunterladen**.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Verwandte Seiten
+
+<Columns cols={2}>
+  <Card title="Neue Einreichung erstellen" href="/de/quickstart" icon="rocket" cta="Schnellstart öffnen">
+  Starten Sie Ihre nächste Einreichung, wenn Ihr Dashboard leer ist oder Sie Guthaben verfügbar haben.
+  </Card>
+  <Card title="Zahlungen und Guthaben prüfen" href="/de/account/payments" icon="bar-chart" cta="Zahlungen öffnen">
+  Prüfen Sie bezahlte Käufe und bestätigen Sie, wie Ihre Einreichungsguthaben berechnet werden.
+  </Card>
+  <Card title="Konto verwalten" href="/de/account/profile" icon="settings" cta="Konto öffnen">
+  Aktualisieren Sie Kontodetails und prüfen Sie Ihre angemeldeten Profileinstellungen.
+  </Card>
+  <Card title="Form 5472 und 1120 verstehen" href="/de/form-5472-1120" icon="book-open" cta="Anleitung lesen">
+  Prüfen Sie den Einreichungsworkflow und den Dokumentensatz, bevor Sie eine Einreichung bearbeiten oder erstellen.
+  </Card>
+</Columns>
+
+## Nächste Schritte
+
+Jetzt, da Sie wissen, wie Sie gespeicherte Einreichungen verwalten, können Sie entweder eine weitere Erklärung erstellen oder Ihre verfügbaren Guthaben prüfen, bevor Sie beginnen.
+
+<Columns cols={2}>
+  <Card title="Einreichung starten" href="/de/quickstart" icon="arrow-right" cta="Zum Schnellstart">
+  Erstellen Sie eine neue Einreichung aus dem geführten Ablauf.
+  </Card>
+  <Card title="Preise prüfen" href="/de/getting-started/pricing" icon="check-circle" cta="Preise ansehen">
+  Vergleichen Sie Einreichungsoptionen und entscheiden Sie, ob Sie mehr Guthaben benötigen.
+  </Card>
+</Columns>

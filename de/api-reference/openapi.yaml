@@ -1,0 +1,1071 @@
+openapi: '3.0.3'
+info:
+  title: Nomadfiling MCP-Server-API
+  version: 1.1.0
+  description: |
+    OAuth-2.1- und HTTP-Endpunkte für den Nomadfiling-MCP-Server (Model Context Protocol).
+
+    Der MCP-Server stellt 14 Tools zur Verwaltung von US-LLC-Steuererklärungen bereit, einschließlich der Workflows für Form 5472/1120, Partnership Form 1065, K-1, 8804 und 8805.
+
+    Authentifizierung:
+    - API-Schlüssel mit dem Präfix `nf_`
+    - OAuth-2.1-Bearer-Access-Tokens mit dem Präfix `mcp_at_`
+
+    Öffentliche MCP-Methoden:
+    - `initialize`
+    - `tools/list`
+    - `ping`
+
+    Authentifizierte MCP-Methoden:
+    - `tools/call`
+
+    Weitere unterstützte MCP-Methoden:
+    - `notifications/initialized`
+    - `notifications/cancelled`
+    - `resources/list`
+    - `prompts/list`
+
+    Nutzungshinweise:
+    - OAuth-Metadaten werden unter den `/.well-known`-Endpunkten veröffentlicht.
+    - Der Token-Endpunkt akzeptiert `application/x-www-form-urlencoded`, `application/json` oder unformatierte form-kodierte Payloads.
+    - Der Haupt-MCP-Endpunkt unterstützt Standard-JSON-RPC-Anfragen, Batch-Anfragen und Server-Sent Events, wenn `Accept: text/event-stream` verwendet wird.
+  contact:
+    name: Nomadfiling Support
+    url: https://app.nomadfiling.com
+    email: support@nomadfiling.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://your-supabase-project.supabase.co/functions/v1/mcp-server
+tags:
+  - name: OAuth Metadata
+    description: Discovery-Endpunkte für OAuth Protected Resource und Authorization Server.
+  - name: OAuth Clients
+    description: Endpunkte für die dynamische Registrierung von OAuth-Clients.
+  - name: OAuth Authorization
+    description: Endpunkte für OAuth-Autorisierung und Consent-Freigabe.
+  - name: OAuth Tokens
+    description: Endpunkte für die Ausstellung und Aktualisierung von OAuth-Tokens.
+  - name: MCP
+    description: MCP-JSON-RPC-Transport-Endpunkt für Initialisierung, Discovery und Tool-Ausführung.
+paths:
+  /.well-known/oauth-protected-resource:
+    get:
+      tags:
+        - OAuth Metadata
+      summary: OAuth-Protected-Resource-Metadaten abrufen
+      description: Gibt OAuth-Protected-Resource-Metadaten gemäß RFC 9728 zurück.
+      operationId: getOAuthProtectedResource
+      security: []
+      responses:
+        '200':
+          description: OAuth-Protected-Resource-Metadaten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthProtectedResource'
+              example:
+                resource: https://your-supabase-project.supabase.co/functions/v1/mcp-server
+                authorization_servers:
+                  - https://your-supabase-project.supabase.co/functions/v1/mcp-server
+                bearer_methods_supported:
+                  - header
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /.well-known/oauth-authorization-server:
+    get:
+      tags:
+        - OAuth Metadata
+      summary: OAuth-Authorization-Server-Metadaten abrufen
+      description: Gibt OAuth-2.1-Authorization-Server-Metadaten zur Discovery durch OAuth-Clients zurück.
+      operationId: getOAuthAuthorizationServerMetadata
+      security: []
+      responses:
+        '200':
+          description: OAuth-Authorization-Server-Metadaten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthAuthorizationServer'
+              example:
+                issuer: https://your-supabase-project.supabase.co/functions/v1/mcp-server
+                authorization_endpoint: https://your-supabase-project.supabase.co/functions/v1/mcp-server/authorize
+                token_endpoint: https://your-supabase-project.supabase.co/functions/v1/mcp-server/token
+                registration_endpoint: https://your-supabase-project.supabase.co/functions/v1/mcp-server/register
+                response_types_supported:
+                  - code
+                grant_types_supported:
+                  - authorization_code
+                  - refresh_token
+                code_challenge_methods_supported:
+                  - S256
+                  - plain
+                token_endpoint_auth_methods_supported:
+                  - none
+                  - client_secret_post
+                scopes_supported:
+                  - mcp
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /.well-known/openid-configuration:
+    get:
+      tags:
+        - OAuth Metadata
+      summary: OpenID-kompatible Authorization-Server-Metadaten abrufen
+      description: Gibt dieselben OAuth-2.1-Authorization-Server-Metadaten unter dem OpenID-Configuration-Pfad zurück, um mit Discovery-Clients kompatibel zu sein.
+      operationId: getOpenIdConfiguration
+      security: []
+      responses:
+        '200':
+          description: OAuth-Authorization-Server-Metadaten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthAuthorizationServer'
+              example:
+                issuer: https://your-supabase-project.supabase.co/functions/v1/mcp-server
+                authorization_endpoint: https://your-supabase-project.supabase.co/functions/v1/mcp-server/authorize
+                token_endpoint: https://your-supabase-project.supabase.co/functions/v1/mcp-server/token
+                registration_endpoint: https://your-supabase-project.supabase.co/functions/v1/mcp-server/register
+                response_types_supported:
+                  - code
+                grant_types_supported:
+                  - authorization_code
+                  - refresh_token
+                code_challenge_methods_supported:
+                  - S256
+                  - plain
+                token_endpoint_auth_methods_supported:
+                  - none
+                  - client_secret_post
+                scopes_supported:
+                  - mcp
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /register:
+    post:
+      tags:
+        - OAuth Clients
+      summary: OAuth-Client registrieren
+      description: Registriert einen OAuth-Client dynamisch gemäß RFC 7591.
+      operationId: registerOAuthClient
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRegistrationRequest'
+            example:
+              redirect_uris:
+                - https://client.example.app/callback
+              client_name: Example MCP Client
+              grant_types:
+                - authorization_code
+                - refresh_token
+              token_endpoint_auth_method: none
+      responses:
+        '201':
+          description: Client registriert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientRegistrationResponse'
+              example:
+                client_id: mcp_client_1234567890abcdef
+                client_id_issued_at: 1735689600
+                redirect_uris:
+                  - https://client.example.app/callback
+                grant_types:
+                  - authorization_code
+                  - refresh_token
+                response_types:
+                  - code
+                token_endpoint_auth_method: none
+                client_name: Example MCP Client
+        '400':
+          description: Ungültige Registrierungsanfrage oder Redirect-URI
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              examples:
+                invalidRequest:
+                  value:
+                    error: invalid_request
+                    error_description: Missing required field redirect_uris.
+                invalidRedirectUri:
+                  value:
+                    error: invalid_redirect_uri
+                    error_description: One or more redirect URIs are invalid.
+        '500':
+          description: Registrierung fehlgeschlagen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              example:
+                error: server_error
+                error_description: An unexpected server error occurred.
+  /authorize:
+    get:
+      tags:
+        - OAuth Authorization
+      summary: OAuth-Autorisierungsflow starten
+      description: Startet den OAuth-2.1-Authorization-Code-Flow und leitet mit den weitergegebenen eingehenden Parametern zur Nomadfiling-Autorisierungsoberfläche weiter.
+      operationId: authorizeOAuthClient
+      security: []
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          description: Registrierte OAuth-Client-Kennung.
+          schema:
+            type: string
+        - name: redirect_uri
+          in: query
+          required: true
+          description: Für den Client registrierte Redirect-URI.
+          schema:
+            type: string
+            format: uri
+        - name: response_type
+          in: query
+          required: true
+          description: OAuth-Response-Typ. Muss `code` sein.
+          schema:
+            type: string
+            enum:
+              - code
+        - name: state
+          in: query
+          required: false
+          description: Undurchsichtiger Client-State-Wert, der bei der Weiterleitung zurückgegeben wird.
+          schema:
+            type: string
+        - name: code_challenge
+          in: query
+          required: false
+          description: PKCE-Code-Challenge-Wert.
+          schema:
+            type: string
+        - name: code_challenge_method
+          in: query
+          required: false
+          description: PKCE-Transformationsmethode. Standard ist `plain`.
+          schema:
+            type: string
+            enum:
+              - S256
+              - plain
+        - name: scope
+          in: query
+          required: false
+          description: Angeforderter OAuth-Scope. Standard ist `mcp`.
+          schema:
+            type: string
+            example: mcp
+      responses:
+        '302':
+          description: Weiterleitung zur Nomadfiling-Autorisierungsoberfläche
+          headers:
+            Location:
+              description: Weiterleitungsziel im Nomadfiling-Frontend.
+              schema:
+                type: string
+                format: uri
+        '400':
+          description: Ungültige Autorisierungsanfrage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              examples:
+                invalidRequest:
+                  value:
+                    error: invalid_request
+                    error_description: Required authorization parameters are missing.
+                invalidClient:
+                  value:
+                    error: invalid_client
+                    error_description: The specified client_id is invalid.
+                invalidRedirectUri:
+                  value:
+                    error: invalid_redirect_uri
+                    error_description: The redirect_uri does not match the registered client.
+  /approve:
+    post:
+      tags:
+        - OAuth Authorization
+      summary: OAuth-Consent genehmigen
+      description: Wird vom Nomadfiling-Frontend aufgerufen, nachdem ein Nutzer den Consent genehmigt hat, um einen kurzlebigen Authorization Code auszustellen.
+      operationId: approveOAuthConsent
+      security:
+        - SupabaseBearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveRequest'
+            example:
+              client_id: mcp_client_1234567890abcdef
+              redirect_uri: https://client.example.app/callback
+              scope: mcp
+              code_challenge: E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+              code_challenge_method: S256
+      responses:
+        '200':
+          description: Authorization Code ausgestellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApproveResponse'
+              example:
+                code: mcp_code_1234567890abcdef
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /token:
+    post:
+      tags:
+        - OAuth Tokens
+      summary: OAuth-Tokens tauschen oder aktualisieren
+      description: Tauscht einen Authorization Code gegen Tokens ein oder aktualisiert ein bestehendes Token-Paar. Der Endpunkt akzeptiert `application/x-www-form-urlencoded`, `application/json` oder unformatierte form-kodierte Payloads.
+      operationId: issueOAuthTokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+            examples:
+              authorizationCode:
+                value:
+                  grant_type: authorization_code
+                  code: mcp_code_1234567890abcdef
+                  redirect_uri: https://client.example.app/callback
+                  client_id: mcp_client_1234567890abcdef
+                  code_verifier: dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+              refreshToken:
+                value:
+                  grant_type: refresh_token
+                  refresh_token: mcp_rt_1234567890abcdef
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+          text/plain:
+            schema:
+              type: string
+              description: Unformatierte form-kodierte Payload der Token-Anfrage.
+              example: grant_type=refresh_token&refresh_token=mcp_rt_1234567890abcdef
+      responses:
+        '200':
+          description: Access Token und Refresh Token ausgestellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+              example:
+                access_token: mcp_at_1234567890abcdef
+                token_type: Bearer
+                expires_in: 3600
+                refresh_token: mcp_rt_abcdef1234567890
+                scope: mcp
+        '400':
+          description: Ungültige Token-Anfrage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              examples:
+                invalidGrant:
+                  value:
+                    error: invalid_grant
+                    error_description: The authorization code or refresh token is invalid or expired.
+                unsupportedGrantType:
+                  value:
+                    error: unsupported_grant_type
+                    error_description: The specified grant_type is not supported.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /:
+    post:
+      tags:
+        - MCP
+      summary: MCP-JSON-RPC-Endpunkt aufrufen
+      description: |
+        Haupt-MCP-JSON-RPC-Endpunkt.
+
+        Unterstützt:
+        - Einzelne JSON-RPC-Request-Objekte
+        - JSON-RPC-Batch-Request-Arrays
+        - Server-Sent Events, wenn `Accept: text/event-stream` gesendet wird
+
+        Authentifizierungsregeln:
+        - Keine Authentifizierung erforderlich für `initialize`, `tools/list` und `ping`
+        - Authentifizierung erforderlich für `tools/call`
+        - Bearer-Tokens können API-Schlüssel mit dem Präfix `nf_` oder OAuth-Access-Tokens mit dem Präfix `mcp_at_` sein
+      operationId: invokeMcpEndpoint
+      security:
+        - McpBearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/JsonRpcRequest'
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/JsonRpcRequest'
+            examples:
+              singleRequest:
+                value:
+                  jsonrpc: '2.0'
+                  id: req_1
+                  method: tools/list
+                  params: {}
+              batchRequest:
+                value:
+                  - jsonrpc: '2.0'
+                    id: req_1
+                    method: initialize
+                    params: {}
+                  - jsonrpc: '2.0'
+                    id: req_2
+                    method: ping
+                    params: {}
+      responses:
+        '200':
+          description: Erfolgreiche JSON-RPC-Antwort
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/JsonRpcResponse'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/JsonRpcResponse'
+              examples:
+                success:
+                  value:
+                    jsonrpc: '2.0'
+                    id: req_1
+                    result:
+                      content:
+                        - type: text
+                          text: Tool completed successfully.
+                      structuredContent:
+                        filingId: filing_123
+                        status: completed
+                toolError:
+                  value:
+                    jsonrpc: '2.0'
+                    id: req_1
+                    result:
+                      isError: true
+                      content:
+                        - type: text
+                          text: Missing required filing identifier.
+            text/event-stream:
+              schema:
+                type: string
+                example: "event: message\ndata: {\"jsonrpc\":\"2.0\",\"id\":\"req_1\",\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"streaming response\"}]}}"
+        '202':
+          description: Notification akzeptiert, ohne Antwortkörper
+        '400':
+          description: Parse-Fehler oder ungültige Anfrage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRpcError'
+              example:
+                jsonrpc: '2.0'
+                id: null
+                error:
+                  code: -32700
+                  message: Parse error
+        '401':
+          description: Nicht autorisierter Tool-Aufruf
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRpcError'
+              example:
+                jsonrpc: '2.0'
+                id: req_1
+                error:
+                  code: -32001
+                  message: Unauthorized
+        '404':
+          description: Methode nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRpcError'
+              example:
+                jsonrpc: '2.0'
+                id: req_1
+                error:
+                  code: -32601
+                  message: Method not found
+components:
+  schemas:
+    OAuthProtectedResource:
+      type: object
+      description: OAuth-Protected-Resource-Metadaten.
+      required:
+        - resource
+        - authorization_servers
+        - bearer_methods_supported
+      properties:
+        resource:
+          type: string
+          description: Kennung der geschützten Ressource.
+          example: https://your-supabase-project.supabase.co/functions/v1/mcp-server
+        authorization_servers:
+          type: array
+          description: Authorization Server, die Tokens für diese Ressource ausstellen können.
+          items:
+            type: string
+          example:
+            - https://your-supabase-project.supabase.co/functions/v1/mcp-server
+        bearer_methods_supported:
+          type: array
+          description: Unterstützte Übertragungsverfahren für Bearer-Tokens.
+          items:
+            type: string
+            enum:
+              - header
+          example:
+            - header
+    OAuthAuthorizationServer:
+      type: object
+      description: OAuth-2.1-Authorization-Server-Metadaten.
+      required:
+        - issuer
+        - authorization_endpoint
+        - token_endpoint
+        - registration_endpoint
+        - response_types_supported
+        - grant_types_supported
+        - code_challenge_methods_supported
+        - token_endpoint_auth_methods_supported
+        - scopes_supported
+      properties:
+        issuer:
+          type: string
+          example: https://your-supabase-project.supabase.co/functions/v1/mcp-server
+        authorization_endpoint:
+          type: string
+          example: https://your-supabase-project.supabase.co/functions/v1/mcp-server/authorize
+        token_endpoint:
+          type: string
+          example: https://your-supabase-project.supabase.co/functions/v1/mcp-server/token
+        registration_endpoint:
+          type: string
+          example: https://your-supabase-project.supabase.co/functions/v1/mcp-server/register
+        response_types_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - code
+          example:
+            - code
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - authorization_code
+              - refresh_token
+          example:
+            - authorization_code
+            - refresh_token
+        code_challenge_methods_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - S256
+              - plain
+          example:
+            - S256
+            - plain
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - none
+              - client_secret_post
+          example:
+            - none
+            - client_secret_post
+        scopes_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - mcp
+          example:
+            - mcp
+    ClientRegistrationRequest:
+      type: object
+      description: Anfrage zur dynamischen Client-Registrierung.
+      required:
+        - redirect_uris
+      properties:
+        redirect_uris:
+          type: array
+          description: Zulässige Redirect-URIs für den Client.
+          items:
+            type: string
+            format: uri
+          example:
+            - https://client.example.app/callback
+        client_name:
+          type: string
+          description: Menschenlesbarer Name des Clients.
+          example: Example MCP Client
+        grant_types:
+          type: array
+          description: Vom Client angeforderte OAuth-Grant-Typen.
+          items:
+            type: string
+            enum:
+              - authorization_code
+              - refresh_token
+          example:
+            - authorization_code
+            - refresh_token
+        token_endpoint_auth_method:
+          type: string
+          description: Client-Authentifizierungsmethode am Token-Endpunkt.
+          enum:
+            - none
+            - client_secret_post
+          default: none
+          example: none
+    ClientRegistrationResponse:
+      type: object
+      description: Antwort auf die dynamische Client-Registrierung.
+      required:
+        - client_id
+        - client_id_issued_at
+        - redirect_uris
+        - grant_types
+        - response_types
+        - token_endpoint_auth_method
+      properties:
+        client_id:
+          type: string
+          description: Registrierte Client-Kennung.
+          pattern: '^mcp_client_.+'
+          example: mcp_client_1234567890abcdef
+        client_secret:
+          type: string
+          description: Registriertes Client-Secret; wird nur zurückgegeben, wenn `token_endpoint_auth_method` nicht `none` ist.
+          pattern: '^mcp_secret_.+'
+          example: mcp_secret_1234567890abcdef
+        client_id_issued_at:
+          type: integer
+          format: int64
+          description: UNIX-Zeitstempel, zu dem die Client-ID ausgestellt wurde.
+          example: 1735689600
+        redirect_uris:
+          type: array
+          items:
+            type: string
+            format: uri
+          example:
+            - https://client.example.app/callback
+        grant_types:
+          type: array
+          items:
+            type: string
+            enum:
+              - authorization_code
+              - refresh_token
+          example:
+            - authorization_code
+            - refresh_token
+        response_types:
+          type: array
+          items:
+            type: string
+            enum:
+              - code
+          example:
+            - code
+        token_endpoint_auth_method:
+          type: string
+          enum:
+            - none
+            - client_secret_post
+          example: none
+        client_name:
+          type: string
+          example: Example MCP Client
+    AuthorizeRequest:
+      type: object
+      description: Autorisierungsanfrageparameter als Objekt.
+      required:
+        - client_id
+        - redirect_uri
+        - response_type
+      properties:
+        client_id:
+          type: string
+          example: mcp_client_1234567890abcdef
+        redirect_uri:
+          type: string
+          format: uri
+          example: https://client.example.app/callback
+        response_type:
+          type: string
+          enum:
+            - code
+          example: code
+        state:
+          type: string
+          example: xyz123
+        code_challenge:
+          type: string
+          example: E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+        code_challenge_method:
+          type: string
+          enum:
+            - S256
+            - plain
+          default: plain
+          example: S256
+        scope:
+          type: string
+          example: mcp
+    ApproveRequest:
+      type: object
+      description: Request-Body für die Consent-Genehmigung.
+      required:
+        - client_id
+        - redirect_uri
+      properties:
+        client_id:
+          type: string
+          description: Registrierte OAuth-Client-Kennung.
+          example: mcp_client_1234567890abcdef
+        redirect_uri:
+          type: string
+          format: uri
+          description: Vom Nutzer genehmigte Redirect-URI.
+          example: https://client.example.app/callback
+        scope:
+          type: string
+          description: Genehmigter Scope. Standard ist `mcp`.
+          example: mcp
+        code_challenge:
+          type: string
+          description: PKCE-Code-Challenge-Wert, der zur Autorisierungsanfrage gehört.
+          example: E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+        code_challenge_method:
+          type: string
+          description: PKCE-Code-Challenge-Methode.
+          enum:
+            - S256
+            - plain
+          example: S256
+    ApproveResponse:
+      type: object
+      description: Ausgestellter Authorization Code.
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: Kurzlebiger Authorization Code mit einer Gültigkeit von 5 Minuten.
+          pattern: '^mcp_code_.+'
+          example: mcp_code_1234567890abcdef
+    TokenRequest:
+      type: object
+      description: Token-Endpunkt-Anfrage für den Authorization-Code-Austausch oder die Refresh-Token-Rotation.
+      required:
+        - grant_type
+      properties:
+        grant_type:
+          type: string
+          description: OAuth-Grant-Typ.
+          enum:
+            - authorization_code
+            - refresh_token
+          example: authorization_code
+        code:
+          type: string
+          description: Authorization Code für den Authorization-Code-Grant.
+          example: mcp_code_1234567890abcdef
+        redirect_uri:
+          type: string
+          format: uri
+          description: Redirect-URI aus der ursprünglichen Autorisierungsanfrage.
+          example: https://client.example.app/callback
+        client_id:
+          type: string
+          description: Registrierte OAuth-Client-Kennung.
+          example: mcp_client_1234567890abcdef
+        code_verifier:
+          type: string
+          description: PKCE-Code-Verifier, erforderlich wenn eine Code-Challenge gesetzt wurde.
+          example: dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+        refresh_token:
+          type: string
+          description: Refresh Token für den Refresh-Token-Grant.
+          example: mcp_rt_1234567890abcdef
+    TokenResponse:
+      type: object
+      description: OAuth-Token-Antwort.
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - refresh_token
+        - scope
+      properties:
+        access_token:
+          type: string
+          description: OAuth-Access-Token mit einer Gültigkeit von 1 Stunde.
+          pattern: '^mcp_at_.+'
+          example: mcp_at_1234567890abcdef
+        token_type:
+          type: string
+          description: Bearer-Token-Typ.
+          enum:
+            - Bearer
+          example: Bearer
+        expires_in:
+          type: integer
+          format: int32
+          description: Lebensdauer des Access Tokens in Sekunden.
+          example: 3600
+        refresh_token:
+          type: string
+          description: Refresh Token mit einer Gültigkeit von 30 Tagen.
+          pattern: '^mcp_rt_.+'
+          example: mcp_rt_abcdef1234567890
+        scope:
+          type: string
+          description: Gewährter Scope.
+          example: mcp
+    JsonRpcRequest:
+      type: object
+      description: JSON-RPC-2.0-Request-Objekt, das vom MCP-Endpunkt akzeptiert wird.
+      required:
+        - jsonrpc
+        - method
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - '2.0'
+          example: '2.0'
+        id:
+          description: Request-Kennung zur Zuordnung von Antworten.
+          oneOf:
+            - type: string
+            - type: integer
+            - type: number
+        method:
+          type: string
+          description: MCP-Methodenname.
+          enum:
+            - initialize
+            - ping
+            - notifications/initialized
+            - notifications/cancelled
+            - tools/list
+            - tools/call
+            - resources/list
+            - prompts/list
+          example: tools/call
+        params:
+          type: object
+          description: Methodenspezifische Parameter.
+          additionalProperties: true
+          example:
+            name: create_5472_filing
+            arguments:
+              companyName: Example LLC
+    JsonRpcResponse:
+      type: object
+      description: JSON-RPC-2.0-Erfolgsantwort, die vom MCP-Endpunkt zurückgegeben wird.
+      required:
+        - jsonrpc
+        - id
+        - result
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - '2.0'
+          example: '2.0'
+        id:
+          description: Request-Kennung, übernommen aus der Anfrage.
+          oneOf:
+            - type: string
+            - type: integer
+            - type: number
+            - type: 'null'
+          example: req_1
+        result:
+          type: object
+          required:
+            - content
+          properties:
+            isError:
+              type: boolean
+              description: Zeigt an, dass das Tool einen Fehler auf Anwendungsebene zurückgegeben hat.
+              example: false
+            content:
+              type: array
+              description: Menschenlesbarer Antwortinhalt.
+              items:
+                type: object
+                required:
+                  - type
+                  - text
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - text
+                    example: text
+                  text:
+                    type: string
+                    example: Tool completed successfully.
+            structuredContent:
+              type: object
+              description: Optionale strukturierte Payload, die vom Tool zurückgegeben wird.
+              additionalProperties: true
+              example:
+                filingId: filing_123
+                status: completed
+    JsonRpcError:
+      type: object
+      description: JSON-RPC-2.0-Fehlerantwort.
+      required:
+        - jsonrpc
+        - id
+        - error
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - '2.0'
+          example: '2.0'
+        id:
+          description: Request-Kennung oder null, wenn nicht verfügbar.
+          oneOf:
+            - type: string
+            - type: integer
+            - type: number
+            - type: 'null'
+          example: req_1
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: integer
+              description: JSON-RPC-Fehlercode.
+              enum:
+                - -32700
+                - -32601
+                - -32001
+              example: -32601
+            message:
+              type: string
+              description: Menschenlesbare Fehlermeldung.
+              example: Method not found
+    OAuthError:
+      type: object
+      description: OAuth-Fehlerantwort.
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          enum:
+            - invalid_request
+            - invalid_redirect_uri
+            - invalid_client
+            - invalid_grant
+            - unsupported_grant_type
+            - server_error
+          example: invalid_request
+        error_description:
+          type: string
+          description: Zusätzliche Details zum Fehler.
+          example: Missing required parameter.
+    Error:
+      type: object
+      description: Generische API-Fehlerantwort.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Anwendungsspezifischer Fehlercode.
+          example: 400
+        message:
+          type: string
+          description: Menschenlesbare Fehlermeldung.
+          example: Bad request
+  responses:
+    BadRequestError:
+      description: Ungültige Eingabe oder fehlerhafte Anfrage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Bad request
+    UnauthorizedError:
+      description: Fehlende oder ungültige Authentifizierung
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Unauthorized
+    InternalServerError:
+      description: Unerwarteter Serverfehler
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 500
+            message: Internal server error
+  securitySchemes:
+    McpBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key or OAuth access token
+      description: Bearer-Authentifizierung mit Nomadfiling-API-Schlüsseln mit dem Präfix `nf_` oder OAuth-Access-Tokens mit dem Präfix `mcp_at_`.
+    SupabaseBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase-JWT-Bearer-Token, erforderlich für die Consent-Genehmigung im Frontend.

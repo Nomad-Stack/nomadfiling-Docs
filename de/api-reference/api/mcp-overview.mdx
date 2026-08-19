@@ -1,0 +1,653 @@
+---
+title: MCP-Server-Übersicht
+description: Verbinde KI-Agenten über den Model-Context-Protocol-Server mit Nomadfiling — erfahre mehr über Protokoll, Transport, Authentifizierung und verfügbare Endpunkte.
+---
+
+## Agenten mit dem Nomadfiling-MCP-Server verbinden
+
+Nomadfiling stellt einen Model-Context-Protocol-Server für KI-Agenten bereit, die Einreichungstools entdecken, Tool-Schemas lesen und Einreichungen über eine standardisierte JSON-RPC-Schnittstelle erstellen müssen. Der Server läuft als Deno-basierte Supabase Edge Function, verwendet streamable HTTP-Transport und bleibt zwischen Anfragen zustandslos.
+
+<Callout kind="info">
+
+Authentifiziere nur `tools/call`-Anfragen. Methoden wie `initialize`, `ping` und `tools/list` funktionieren ohne Authentifizierung, sodass Clients Fähigkeiten entdecken können, bevor sie einen Login- oder API-Schlüssel-Ablauf anzeigen.
+
+</Callout>
+
+### Serveridentität
+
+Verwende diese Werte, wenn du MCP-Clients konfigurierst oder die `initialize`-Antwort prüfst.
+
+<ParamField body="baseUrl" param-type="string" required="true" show-location="false">
+
+`{SUPABASE_URL}/functions/v1/mcp-server`
+
+</ParamField>
+
+<ParamField body="runtime" param-type="string" show-location="false">
+
+Deno auf Supabase Edge Functions.
+
+</ParamField>
+
+<ParamField body="transport" param-type="string" show-location="false">
+
+Streamable HTTP.
+
+</ParamField>
+
+<ParamField body="sessionModel" param-type="string" show-location="false">
+
+Zustandslos. Der Server stützt sich nicht auf persistente Sitzungen zwischen Anfragen.
+
+</ParamField>
+
+<ParamField body="protocolVersion" param-type="string" show-location="false">
+
+`2025-06-18`
+
+</ParamField>
+
+<ParamField body="serverName" param-type="string" show-location="false">
+
+`nomadfiling-mcp`
+
+</ParamField>
+
+<ParamField body="serverVersion" param-type="string" show-location="false">
+
+`1.1.0`
+
+</ParamField>
+
+<ParamField body="appUrl" param-type="string" show-location="false">
+
+`https://app.nomadfiling.com`
+
+</ParamField>
+
+<ParamField body="instructions" param-type="string" show-location="false">
+
+`NomadFiling MCP — manage US LLC filings (Form 5472/1120, Partnership, K-1, 8804/8805). Use get_form_schema first, then create_filing.`
+
+</ParamField>
+
+### Wofür der Server gedacht ist
+
+Der MCP-Server ist für agentengetriebene Einreichungs-Workflows ausgelegt. Ein Client verbindet sich typischerweise, liest die verfügbaren Tools, fordert das Schema für ein Formular an und sendet anschließend strukturierte Einreichungsdaten.
+
+Damit eignet sich der Server gut für:
+
+- KI-Desktop-Clients wie Claude Desktop
+- Chat-Integrationen, die MCP-Verbindungen unterstützen
+- Eigene Agenten-Runtimes, die JSON-RPC über HTTP senden können
+- Interne Automatisierungen, die vor der Ausführung eine Tool-Entdeckung benötigen
+
+### Typischer Anfrageablauf
+
+Die meisten Integrationen folgen derselben Sequenz, auch wenn der Client einen Teil davon für dich übernimmt.
+
+```mermaid
+sequenceDiagram
+  participant Client as MCP-Client
+  participant Server as Nomadfiling-MCP-Server
+  participant App as Nomadfiling-App
+
+  Client->>Server: initialize
+  Server-->>Client: protocolVersion, capabilities, serverInfo
+  Client->>Server: tools/list
+  Server-->>Client: Tool-Schemas
+  Client->>Server: tools/call get_form_schema
+  Server-->>Client: strukturiertes Schema
+  Client->>Server: tools/call create_filing
+  Server-->>Client: Einreichungsergebnis
+  Note over Client,App: OAuth-Clients können die App während der Autorisierung aufrufen
+```
+
+## Den MCP-Endpunkt verwenden
+
+Sende JSON-RPC-Anfragen an den MCP-Root-Endpunkt. Wenn dein Client Server-Sent Events mit dem Header `Accept` auf `text/event-stream` anfordert, gibt derselbe Endpunkt SSE-formatierte Antworten zurück.
+
+<Request tabs="cURL,JavaScript" default-tab="1">
+```bash
+curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "init_001",
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2025-06-18",
+      "clientInfo": {
+        "name": "acme-agent",
+        "version": "1.0.0"
+      }
+    }
+  }'
+```
+
+```javascript
+const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "init_001",
+    method: "initialize",
+    params: {
+      protocolVersion: "2025-06-18",
+      clientInfo: {
+        name: "acme-agent",
+        version: "1.0.0"
+      }
+    }
+  })
+})
+
+const data = await response.json()
+console.log(data)
+```
+</Request>
+
+<Response tabs="200" default-tab="1">
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "init_001",
+  "result": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {},
+    "serverInfo": {
+      "name": "nomadfiling-mcp",
+      "version": "1.1.0"
+    },
+    "instructions": "NomadFiling MCP — manage US LLC filings (Form 5472/1120, Partnership, K-1, 8804/8805). Use get_form_schema first, then create_filing."
+  }
+}
+```
+</Response>
+
+Ein erfolgreicher `initialize`-Aufruf bestätigt, dass Client und Server dieselbe Protokollversion sprechen können. Rufe danach `tools/list` auf, um Tool-Schemas zu entdecken, bevor du eine authentifizierte Tool-Ausführung versuchst.
+
+### Server-Sent Events anfordern
+
+Verwende SSE, wenn dein MCP-Client `event: message`-Frames statt eines einfachen JSON-Bodys erwartet.
+
+<CodeGroup tabs="cURL,JavaScript">
+```bash
+curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "ping_001",
+    "method": "ping",
+    "params": {}
+  }'
+```
+
+```javascript
+const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "text/event-stream"
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "ping_001",
+    method: "ping",
+    params: {}
+  })
+})
+
+const text = await response.text()
+console.log(text)
+```
+</CodeGroup>
+
+Die Event-Nutzlast ist als `event: message` formatiert, gefolgt von `data:` und dem JSON-RPC-Antwortkörper.
+
+## Tool-Aufrufe authentifizieren
+
+Authentifiziere `tools/call` entweder mit einem NomadFiling-API-Schlüssel oder einem OAuth-2.1-Zugriffstoken. Beide Authentifizierungsmethoden verwenden den Header `Authorization` mit dem Schema `Bearer`.
+
+### Unterstützte Authentifizierungsmethoden
+
+<Tabs>
+  <Tab title="API-Schlüssel" icon="key">
+
+Verwende einen API-Schlüssel, wenn du die Integration steuerst und keinen OAuth-Zustimmungsablauf für Endnutzer benötigst. API-Schlüssel verwenden das Präfix `nf_`, und der Server prüft einen SHA-256-Hash gegen gespeicherte Schlüsseldatensätze.
+
+<ParamField body="authorizationHeader" param-type="string" show-location="false">
+
+`Authorization: Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a`
+
+</ParamField>
+
+<ParamField body="verification" param-type="string" show-location="false">
+
+Der Server hasht das vorgelegte Token mit SHA-256 und vergleicht es mit `api_keys.key_hash`.
+
+</ParamField>
+
+<ParamField body="expiry" param-type="string" show-location="false">
+
+Pro Schlüssel konfigurierbar.
+
+</ParamField>
+
+<ParamField body="usageTracking" param-type="string" show-location="false">
+
+Eine erfolgreiche Authentifizierung aktualisiert `last_used_at`.
+
+</ParamField>
+
+  </Tab>
+  <Tab title="OAuth-Zugriffstoken" icon="lock">
+
+Verwende OAuth, wenn ein Agent im Namen eines Nutzers handelt oder wenn du dynamische Client-Registrierung und Refresh-Token benötigst. Zugriffstoken verwenden das Präfix `mcp_at_`, und der Server prüft einen SHA-256-Hash gegen gespeicherte OAuth-Token-Datensätze.
+
+<ParamField body="authorizationHeader" param-type="string" show-location="false">
+
+`Authorization: Bearer mcp_at_example_7jd3p4n8q2r6s1t5v9w0x3y6`
+
+</ParamField>
+
+<ParamField body="verification" param-type="string" show-location="false">
+
+Der Server hasht das vorgelegte Token mit SHA-256 und vergleicht es mit `oauth_tokens.access_token_hash`.
+
+</ParamField>
+
+<ParamField body="expiry" param-type="string" show-location="false">
+
+1 Stunde.
+
+</ParamField>
+
+<ParamField body="revocationCheck" param-type="string" show-location="false">
+
+Der Server lehnt widerrufene und abgelaufene Token ab.
+
+</ParamField>
+
+<ParamField body="usageTracking" param-type="string" show-location="false">
+
+Eine erfolgreiche Authentifizierung aktualisiert `last_used_at`.
+
+</ParamField>
+
+  </Tab>
+</Tabs>
+
+<Callout kind="alert">
+
+Wenn du `tools/call` ohne gültige Anmeldedaten sendest, gibt der Server HTTP `401` zurück und fügt einen Header `WWW-Authenticate` hinzu. Behandle diese Antwort als Authentifizierungsaufforderung, nicht als Fehler auf Tool-Ebene.
+
+</Callout>
+
+### Beispiel für einen authentifizierten Tool-Aufruf
+
+Dieses Beispiel zeigt das Muster zum Aufrufen eines Tools nach der Entdeckung. Ersetze Tool-Namen und Argumente durch ein echtes Tool aus [`/de/api-reference/api/mcp-tools`](/de/api-reference/api/mcp-tools).
+
+<Request tabs="cURL,JavaScript" default-tab="1">
+```bash
+curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "tool_001",
+    "method": "tools/call",
+    "params": {
+      "name": "get_form_schema",
+      "arguments": {
+        "formType": "form-5472-1120"
+      }
+    }
+  }'
+```
+
+```javascript
+const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a"
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "tool_001",
+    method: "tools/call",
+    params: {
+      name: "get_form_schema",
+      arguments: {
+        formType: "form-5472-1120"
+      }
+    }
+  })
+})
+
+const data = await response.json()
+console.log(data)
+```
+</Request>
+
+<Response tabs="200,401" default-tab="1">
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "tool_001",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"formType\":\"form-5472-1120\",\"schema\":{\"type\":\"object\"}}"
+      }
+    ],
+    "structuredContent": {
+      "formType": "form-5472-1120",
+      "schema": {
+        "type": "object"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "tool_001",
+  "error": {
+    "code": -32001,
+    "message": "Unauthorized"
+  }
+}
+```
+</Response>
+
+Ein erfolgreiches Tool-Ergebnis enthält sowohl eine Textnutzlast als auch `structuredContent`. Fehler auf Tool-Ebene verwenden eine fehlerförmige Tool-Nutzlast, während Fehler auf Protokollebene JSON-RPC-Fehler verwenden.
+
+## Die verfügbaren Endpunkte verstehen
+
+Der MCP-Server stellt sowohl den zentralen JSON-RPC-Kanal als auch OAuth-Discovery-Endpunkte bereit.
+
+### OAuth- und MCP-Endpunkte
+
+<ParamField path="/.well-known/oauth-protected-resource" param-type="GET" required="true">
+
+Gibt OAuth-Metadaten für geschützte Ressourcen gemäß RFC 9728 zurück.
+
+</ParamField>
+
+<ParamField path="/.well-known/oauth-authorization-server" param-type="GET" required="true">
+
+Gibt OAuth-2.1-Authorization-Server-Metadaten zurück.
+
+</ParamField>
+
+<ParamField path="/.well-known/openid-configuration" param-type="GET" required="true">
+
+Gibt dieselben Authorization-Server-Metadaten über einen OpenID-Configuration-Pfad zurück.
+
+</ParamField>
+
+<ParamField path="/register" param-type="POST" required="true">
+
+Registriert OAuth-Clients dynamisch gemäß RFC 7591.
+
+</ParamField>
+
+<ParamField path="/authorize" param-type="GET" required="true">
+
+Startet den Autorisierungsablauf und leitet zu `https://app.nomadfiling.com/oauth/authorize` weiter.
+
+</ParamField>
+
+<ParamField path="/approve" param-type="POST" required="true">
+
+Genehmigt die OAuth-Zustimmung in einem frontendseitigen Ablauf, der ein Supabase-JWT verwendet.
+
+</ParamField>
+
+<ParamField path="/token" param-type="POST" required="true">
+
+Stellt Token für die Grants `authorization_code` und `refresh_token` aus.
+
+</ParamField>
+
+<ParamField path="/" param-type="POST" required="true">
+
+Verarbeitet MCP-JSON-RPC-Anfragen und unterstützt SSE-Antworten.
+
+</ParamField>
+
+### CORS-Verhalten
+
+Browserbasierte Clients können den Server direkt aufrufen. Die Function gibt permissiv gesetzte CORS-Header zurück und beantwortet `OPTIONS`-Preflight-Anfragen mit Status `200` und nur Headern.
+
+<ParamField body="Access-Control-Allow-Origin" param-type="string" show-location="false">
+
+`*`
+
+</ParamField>
+
+<ParamField body="Access-Control-Allow-Methods" param-type="string" show-location="false">
+
+`GET, POST, OPTIONS, DELETE`
+
+</ParamField>
+
+<ParamField body="Access-Control-Allow-Headers" param-type="string" show-location="false">
+
+`authorization, x-client-info, apikey, content-type, mcp-session-id, mcp-protocol-version`
+
+</ParamField>
+
+<ParamField body="Access-Control-Expose-Headers" param-type="string" show-location="false">
+
+`mcp-session-id, www-authenticate`
+
+</ParamField>
+
+## JSON-RPC-Methoden und Verhalten
+
+Der Server implementiert eine fokussierte MCP-Methodenschnittstelle. Einige Methoden sind informativ, während `tools/call` authentifizierte Aktionen ausführt.
+
+### Unterstützte Methoden
+
+<ParamField body="initialize" param-type="method" show-location="false">
+
+Keine Authentifizierung erforderlich. Gibt `protocolVersion`, `capabilities`, `serverInfo` und `instructions` zurück.
+
+</ParamField>
+
+<ParamField body="ping" param-type="method" show-location="false">
+
+Keine Authentifizierung erforderlich. Gibt ein leeres Objekt zurück.
+
+</ParamField>
+
+<ParamField body="notifications/initialized" param-type="method" show-location="false">
+
+Keine Authentifizierung erforderlich. Gibt HTTP `202` zurück.
+
+</ParamField>
+
+<ParamField body="notifications/cancelled" param-type="method" show-location="false">
+
+Keine Authentifizierung erforderlich. Gibt HTTP `202` zurück.
+
+</ParamField>
+
+<ParamField body="tools/list" param-type="method" show-location="false">
+
+Keine Authentifizierung erforderlich. Gibt alle Tool-Schemas zurück.
+
+</ParamField>
+
+<ParamField body="tools/call" param-type="method" show-location="false">
+
+Authentifizierung erforderlich. Leitet die Ausführung an das benannte Tool weiter.
+
+</ParamField>
+
+<ParamField body="resources/list" param-type="method" show-location="false">
+
+Gibt ein leeres Ergebnis zurück.
+
+</ParamField>
+
+<ParamField body="prompts/list" param-type="method" show-location="false">
+
+Gibt ein leeres Ergebnis zurück.
+
+</ParamField>
+
+### Fehlerbehandlung
+
+Verwende HTTP-Status und JSON-RPC-Fehlercodes zusammen. Parse-Fehler treten vor der Methodenzuordnung auf, Autorisierungsfehler, wenn eine geschützte Tool-Anfrage den Server erreicht.
+
+| Bedingung | HTTP-Status | JSON-RPC-Code | Bedeutung |
+|---|---:|---:|---|
+| Ungültiger JSON-Body | 400 | -32700 | Parse-Fehler |
+| Unbekannte Methode | 200 | -32601 | Methode nicht gefunden |
+| Nicht authentifizierter geschützter Tool-Aufruf | 401 | -32001 | Unauthorized |
+
+### Form der Tool-Antwort
+
+Eine erfolgreiche Tool-Ausführung gibt MCP-Inhalt plus eine strukturierte Nutzlast zurück, die dein Client direkt parsen kann.
+
+<ResponseField name="content" field-type="array" required="true">
+
+Ein Array von Nachrichtenteilen. Erfolgreiche Tool-Antworten enthalten ein Textelement, dessen Feld `text` einen JSON-String enthält.
+
+</ResponseField>
+
+<ResponseField name="content[].type" field-type="string" required="true">
+
+Bei aktuellen Tool-Antworten ist der Wert `text`.
+
+</ResponseField>
+
+<ResponseField name="content[].text" field-type="string" required="true">
+
+Eine menschenlesbare oder serialisierte JSON-Nutzlast.
+
+</ResponseField>
+
+<ResponseField name="structuredContent" field-type="object" required="true">
+
+Eine maschinenlesbare Darstellung desselben Ergebnisses.
+
+</ResponseField>
+
+Wenn ein Tool auf Anwendungsebene fehlschlägt, gibt der Server eine MCP-Tool-Fehlernutzlast statt eines erfolgreichen `structuredContent`-Ergebnisses zurück.
+
+<ResponseField name="isError" field-type="boolean" required="true">
+
+Wird bei Fehlern auf Tool-Ebene auf `true` gesetzt.
+
+</ResponseField>
+
+<ResponseField name="content" field-type="array" required="true">
+
+Enthält mindestens eine Textnachricht, die den Fehler beschreibt.
+
+</ResponseField>
+
+## Token-Formate und Laufzeiten
+
+Token-Präfixe helfen Clients, den Anmeldedatentyp zu unterscheiden, bevor sie eine Anfrage senden. Der Server speichert sensibles Token-Material als SHA-256-Hashes statt als Rohgeheimnisse.
+
+### Bestandsübersicht der Anmeldedaten
+
+| Anmeldedaten | Präfix | Laufzeit |
+|---|---|---|
+| API-Schlüssel | `nf_` | Konfigurierbar |
+| OAuth-Client-ID | `mcp_client_` | Permanent |
+| OAuth-Client-Secret | `mcp_secret_` | Permanent |
+| Autorisierungscode | `mcp_code_` | 5 Minuten |
+| Zugriffstoken | `mcp_at_` | 1 Stunde |
+| Refresh-Token | `mcp_rt_` | 30 Tage |
+
+## Empfohlenes Integrationsmuster
+
+Rufe `get_form_schema` vor `create_filing` auf. Diese Reihenfolge entspricht den Serveranweisungen und reduziert Tool-Aufruffehler durch fehlende oder fehlerhafte Einreichungsfelder.
+
+<Steps>
+  <Step title="Verbindung initialisieren" icon="play-circle">
+
+Sende `initialize`, um die Protokollversion zu bestätigen und die zurückgegebenen Servermetadaten zu erfassen.
+
+Dein Client ist bereit für die Entdeckung, wenn die Antwort `protocolVersion` auf `2025-06-18` und `serverInfo.name` auf `nomadfiling-mcp` setzt.
+
+  </Step>
+  <Step title="Tools entdecken" icon="search">
+
+Rufe `tools/list` ohne Authentifizierung auf, wenn dein Client anonyme Entdeckung unterstützt, oder mit Authentifizierung, wenn deine Integration einen einzigen authentifizierten Kanal bevorzugt.
+
+Erfolg sieht aus wie ein JSON-RPC-Ergebnis mit den verfügbaren Tool-Definitionen.
+
+  </Step>
+  <Step title="Formularschema abrufen" icon="code">
+
+Rufe `tools/call` mit dem Tool `get_form_schema` auf, bevor du Daten sendest.
+
+Erfolg sieht aus wie ein Tool-Ergebnis mit `structuredContent`, das die erwartete Einreichungsform für das ausgewählte Formular beschreibt.
+
+  </Step>
+  <Step title="Einreichung erstellen" icon="check-circle">
+
+Rufe `tools/call` erneut mit `create_filing` und einer Nutzlast auf, die dem gerade abgerufenen Schema entspricht.
+
+Eine erfolgreiche Übermittlung gibt ein MCP-Tool-Ergebnis statt eines Protokollfehlers zurück.
+
+  </Step>
+</Steps>
+
+## Häufig gestellte Fragen
+
+<ExpandableGroup>
+  <Expandable title="Brauche ich für jede MCP-Methode Authentifizierung?" default-open="false">
+
+Nein. `initialize`, `ping` und `tools/list` funktionieren ohne Authentifizierung. Authentifiziere `tools/call`-Anfragen entweder mit einem API-Schlüssel oder einem OAuth-Zugriffstoken.
+
+  </Expandable>
+  <Expandable title="Behält der Server eine MCP-Sitzung zwischen Anfragen?" default-open="false">
+
+Nein. Der Transport ist zustandslos. Sende alle Daten, die der Server benötigt, mit jeder Anfrage und verlasse dich nicht auf persistenten serverseitigen Sitzungszustand.
+
+  </Expandable>
+  <Expandable title="Unterstützt der Server browserbasierte Clients?" default-open="false">
+
+Ja. Der Server gibt permissiv gesetzte CORS-Header zurück und behandelt `OPTIONS`-Preflight-Anfragen mit einer `200`-Antwort ohne Body.
+
+  </Expandable>
+  <Expandable title="Was passiert, wenn mein Client Ressourcen oder Prompts anfordert?" default-open="false">
+
+`resources/list` und `prompts/list` geben leere Ergebnisse zurück. Tool-Entdeckung und -Ausführung sind heute die primären Integrationsflächen.
+
+  </Expandable>
+  <Expandable title="Wie sollte ich SSE-Antworten behandeln?" default-open="false">
+
+Wenn dein Client `Accept: text/event-stream` sendet, parse die Antwort als Server-Sent Events. Jede Nachricht ist als `event: message`-Frame mit der JSON-RPC-Nutzlast in der `data:`-Zeile formatiert.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Verwandte Seiten
+
+<Columns cols={2}>
+  <Card title="Authentifizierung" href="/de/api-reference/api/authentication" icon="lock" cta="Auth-Anleitung lesen" />
+  <Card title="MCP-Tools" href="/de/api-reference/api/mcp-tools" icon="code" cta="Tool-Definitionen durchsuchen" />
+  <Card title="API-Schlüssel verwalten" href="/de/account/api-keys" icon="settings" cta="API-Schlüssel erstellen" />
+  <Card title="Form-5472- und 1120-Einreichungen" href="/de/form-5472-1120" icon="file-text" cta="Einreichungsfelder prüfen" />
+</Columns>
+
+Für Partnerschafts-Workflows siehe [Partnerschaftserklärung](/de/partnership-filing).

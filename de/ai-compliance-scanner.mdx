@@ -1,0 +1,164 @@
+---
+title: KI-Compliance-Scanner und Erstellung unterstützender Erklärungen
+description: >-
+  Nutze KI, um erstellte Steuerformular-PDFs auf IRS-Compliance-Probleme zu prüfen
+  und Text für unterstützende Erklärungen deiner Einreichung zu entwerfen.
+---
+## Potenzielle Einreichungsprobleme vor dem Absenden erkennen
+
+Nomadfiling enthält im Formular-5472-Ablauf zwei KI-gestützte Funktionen: einen **KI-Compliance-Scanner** für erstellte PDFs und die **KI-Erstellung unterstützender Erklärungen** für Textentwürfe. Nutze den Scanner, nachdem du deine PDFs für Form 5472 und Form 1120 erstellt hast, und die Erklärungserstellung früher im Assistenten, wenn du Formulierungsentwürfe für Angaben in Part V oder Part VI benötigst.
+
+<Callout kind="info" collapsed="false">
+  Der KI-Compliance-Scanner ist im PDF-Vorschauschritt des Formular-5472-Assistenten verfügbar, die KI-Erstellung unterstützender Erklärungen im Schritt „Unterstützende Erklärungen“. Beide Funktionen helfen dir bei der Prüfung deiner Einreichung, ersetzen aber nicht deine abschließende Kontrolle vor dem Absenden.
+</Callout>
+
+## Was die einzelnen KI-Funktionen tun
+
+Die beiden KI-Funktionen lösen unterschiedliche Probleme im Einreichungsablauf. Die eine prüft fertige PDFs auf potenzielle Probleme, die andere hilft dir, unterstützenden Erläuterungstext zu entwerfen, bevor die PDFs fertiggestellt werden.
+
+### KI-Compliance-Scanner
+
+Der KI-Compliance-Scanner analysiert die erstellten PDFs für **Form 5472** und **Form 1120** in Schritt 8 des Einreichungsassistenten. Nomadfiling sendet die erstellten PDF-Bytes an die Supabase Edge Function `analyze-pdf`, die über eine KI-API nach potenziellen IRS-Compliance-Fehlern sucht und Ergebnisse für deine Prüfung zurückgibt.
+
+Der Scanner ist für die abschließende Prüfphase vorgesehen, wenn deine Einreichungsdaten bereits eingegeben und die PDFs erstellt wurden. So lassen sich Probleme erkennen, die erst in den fertigen Dokumenten sichtbar werden, etwa fehlende Angaben, Inkonsistenzen oder Felder, die nochmals geprüft werden sollten.
+
+### KI-Erstellung unterstützender Erklärungen
+
+Die KI-Erstellung unterstützender Erklärungen hilft dir in Schritt 6 des Formular-5472-Assistenten, Textentwürfe für unterstützende IRS-Erklärungen zu erstellen. Nomadfiling sendet den Kontext deiner Erklärung an die Supabase Edge Function `generate-statement`, die einen KI-Textentwurf erzeugt, den du prüfst und bearbeitest, bevor du ihn in die Einreichung aufnimmst.
+
+Anders als der Scanner prüft diese Funktion keine PDFs. Sie hilft dir, leere Textbereiche in einen brauchbaren ersten Entwurf zu verwandeln, insbesondere bei unterstützenden Erklärungen zu Part V und Part VI, die häufig individuelle Erläuterungen erfordern.
+
+## Den KI-Compliance-Scanner verwenden
+
+Führe den Scanner aus, nachdem du den PDF-Vorschauschritt erreicht und bestätigt hast, dass deine erstellten Formulare vollständig aussehen. Dies ist der beste Zeitpunkt, um Probleme vor dem Download oder Absenden zu erkennen.
+
+<Steps>
+  <Step title="PDF-Vorschauschritt öffnen" icon="file-text" title-type="p">
+    Schließe den Formular-5472-Assistenten bis zu **Schritt 8**, der PDF-Vorschau, ab. In diesem Schritt werden die Einreichungs-PDFs einschließlich Form 5472 und Form 1120 erstellt.
+
+    Bei Erfolg siehst du eine Live-Vorschau deiner erstellten PDFs und die Downloadoptionen für dein Einreichungspaket.
+  </Step>
+
+  <Step title="Compliance-Prüfung starten" icon="play-circle" title-type="p">
+    Starte die Prüfung mit dem KI-Compliance-Scanner im PDF-Vorschaubereich. Nomadfiling sendet die erstellten PDF-Bytes zur Analyse an die Edge Function `analyze-pdf`.
+
+    Die Prüfung untersucht die erstellten PDFs für Form 5472 und Form 1120 auf potenzielle Compliance-Probleme und gibt Ergebnisse zur Überprüfung zurück.
+  </Step>
+
+  <Step title="Ergebnisse überprüfen" icon="check-circle" title-type="p">
+    Lies die Ergebnisse sorgfältig und gleiche sie mit den Angaben in deiner Einreichung ab. Behandle jedes Ergebnis als Aufforderung, den betroffenen Abschnitt zu prüfen, nicht als automatische Ablehnung oder Genehmigung.
+
+    Bei Erfolg siehst du eine Liste potenzieller Probleme oder ein sauberes Ergebnis ohne wesentliche Scannerfunde.
+  </Step>
+
+  <Step title="Daten korrigieren und PDFs bei Bedarf neu erstellen" icon="edit" title-type="p">
+    Wenn die Prüfung ein Problem hervorhebt, gehe zum entsprechenden Schritt im Assistenten zurück, aktualisiere die zugrunde liegenden Formulardaten und erstelle die PDFs neu. Führe den Scanner anschließend erneut für die aktualisierten Dokumente aus.
+
+    Das ist wichtig, weil der Scanner die erstellten PDFs analysiert und nicht teilweise ausgefüllte Entwurfsfelder aus früheren Schritten.
+  </Step>
+</Steps>
+
+## Was du von den Prüfergebnissen erwarten kannst
+
+Der Scanner liefert **Ergebnisse zu potenziellen Compliance-Problemen** in deinen erstellten Steuerformular-PDFs. Sie helfen dir, deine Prüfung auf Bereiche zu konzentrieren, die vor dem Absenden möglicherweise korrigiert werden müssen.
+
+Ein Ergebnis garantiert nicht, dass ein Formular falsch ist, und eine saubere Prüfung garantiert nicht, dass die Einreichung in jeder rechtlichen oder steuerlichen Hinsicht vollständig ist. Nutze die Ergebnisse als Prüfhilfe neben deinen eigenen Kontrollen und jeder professionellen Beratung, auf die du dich stützt.
+
+<Callout kind="alert" collapsed="false">
+  Die Edge Function `analyze-pdf` erfordert keine JWT-Authentifizierung. Der Prüfendpunkt ist daher öffentlich, auch wenn du die Funktion innerhalb des Nomadfiling-Ablaufs aufrufst.
+</Callout>
+
+### Was der Scanner analysiert
+
+Der Scanner arbeitet mit der **erstellten PDF-Ausgabe**, nicht mit rohen Formularfeldern. Im aktuellen Formular-5472-Ablauf umfasst dies:
+
+- **Form 5472**, erstellt aus den Daten deiner Reporting Corporation, des Eigentümers, verbundener Parteien, Transaktionen und unterstützender Erklärungen
+- **Form 1120**, erstellt aus demselben Einreichungsablauf
+- Die spezifischen PDF-Versionen aus **StepPdfPreview**, Schritt 8 des Assistenten
+
+Diese Unterscheidung ist wichtig, weil die PDF-Prüfung Probleme erkennen kann, die nach dem Rendern der Formulare leichter auffallen als während der Dateneingabe.
+
+## KI-Erstellung unterstützender Erklärungen verwenden
+
+Erstelle Textentwürfe, während du in Schritt 6 an unterstützenden Erklärungen arbeitest. Diese Funktion soll den Entwurf beschleunigen, nicht den Text für dich finalisieren.
+
+<Steps>
+  <Step title="Schritt „Unterstützende Erklärungen“ öffnen" icon="paperclip" title-type="p">
+    Gehe im Formular-5472-Assistenten zu **Schritt 6**, „Unterstützende Erklärungen“. Hier verarbeitet Nomadfiling Erklärungstexte und zugehörige optionale Einreichungsdokumente.
+
+    Bei Erfolg siehst du bearbeitbare Felder für unterstützende Erklärungen und Optionen für Erklärungen, die der Einreichung beigefügt werden.
+  </Step>
+
+  <Step title="Textentwurf erstellen" icon="zap" title-type="p">
+    Nutze die KI-Option zur Erklärungserstellung, um einen Textentwurf für deine unterstützenden IRS-Erklärungen zu erstellen. Nomadfiling sendet die Anfrage an die Supabase Edge Function `generate-statement`.
+
+    Diese Funktion erfordert JWT-Authentifizierung und ist für authentifizierte Einreichungsaktivitäten vorgesehen.
+  </Step>
+
+  <Step title="Entwurf prüfen und bearbeiten" icon="edit" title-type="p">
+    Lies den erstellten Entwurf Zeile für Zeile und passe ihn an deine tatsächlichen Einreichungsfakten an. Du bleibst für den endgültigen Inhalt der in die Einreichung aufgenommenen Erklärung verantwortlich.
+
+    Bei Erfolg gibt der Erklärungstext deine Transaktionen, Angaben und unterstützenden Details korrekt wieder, bevor du mit Prüfung und PDF-Erstellung fortfährst.
+  </Step>
+</Steps>
+
+## KI-Compliance-Scanner im Vergleich zur Erklärungserstellung
+
+Am einfachsten wählst du die richtige Funktion, indem du sie deinem aktuellen Schritt im Einreichungsprozess zuordnest.
+
+| Funktion | Wo du sie verwendest | Was sie verarbeitet | Authentifizierungsanforderung | Ausgabe |
+| --- | --- | --- | --- | --- |
+| KI-Compliance-Scanner | Schritt 8, PDF-Vorschau | Erstellte PDFs für Form 5472 und Form 1120 | Kein JWT für Edge Function erforderlich | Ergebnisse zu potenziellen Compliance-Problemen |
+| KI-Erstellung unterstützender Erklärungen | Schritt 6, Unterstützende Erklärungen | Erklärungskontext zum Entwerfen unterstützender IRS-Texte | JWT erforderlich | Erklärungstextentwurf zur Prüfung und Bearbeitung |
+
+## Wann du welche Funktion verwenden solltest
+
+Nutze die **KI-Erstellung unterstützender Erklärungen**, wenn du die Einreichung noch erstellst und Hilfe beim Formulieren brauchst. Nutze den **KI-Compliance-Scanner**, wenn die Einreichungs-PDFs bereits vorhanden sind und du vor dem Absenden einen weiteren Prüfdurchgang möchtest.
+
+Diese Reihenfolge funktioniert meist am besten:
+
+- Unterstützende Erklärungen in Schritt 6 entwerfen und verfeinern
+- Den restlichen Assistenten abschließen
+- PDFs in Schritt 8 erstellen
+- Den KI-Compliance-Scanner für die fertigen Dokumente ausführen
+- Probleme korrigieren und bei Bedarf neu erstellen
+
+## Häufig gestellte Fragen
+
+<ExpandableGroup>
+  <Expandable title="Reicht der KI-Compliance-Scanner etwas für mich ein oder sendet er etwas ab?" default-open="true">
+    Nein. Der Scanner prüft erstellte PDFs und liefert Ergebnisse zu potenziellen Problemen. Du entscheidest weiterhin, ob du die Einreichung aktualisierst, die PDFs neu erstellst, sie herunterlädst oder über deinen eigenen Prozess einreichst.
+  </Expandable>
+
+  <Expandable title="Welche Formulare prüft der KI-Compliance-Scanner?" default-open="false">
+    Der Scanner analysiert die erstellten PDFs für **Form 5472** und **Form 1120**, die im PDF-Vorschauschritt des Formular-5472-Assistenten verfügbar sind.
+  </Expandable>
+
+  <Expandable title="Muss ich angemeldet sein, um die KI-Erstellung unterstützender Erklärungen zu verwenden?" default-open="false">
+    Ja. Die KI-Erstellung unterstützender Erklärungen verwendet die Edge Function `generate-statement`, die JWT-Authentifizierung erfordert.
+  </Expandable>
+
+  <Expandable title="Muss ich KI-generierte unterstützende Erklärungen bearbeiten?" default-open="false">
+    Ja. Behandle den erzeugten Text als Entwurf. Prüfe jede Erklärung auf Richtigkeit, Vollständigkeit und Eignung für deine Einreichung, bevor du sie in den endgültigen PDF-Satz aufnimmst.
+  </Expandable>
+
+  <Expandable title="Bedeutet eine saubere Prüfung, dass meine Einreichung definitiv konform ist?" default-open="false">
+    Nein. Eine saubere Prüfung bedeutet, dass die KI in den erstellten PDFs keine auffälligen Ergebnisse gefunden hat. Du solltest trotzdem deine eigene Prüfung durchführen und bei Bedarf professionelles Urteilsvermögen hinzuziehen.
+  </Expandable>
+</ExpandableGroup>
+
+## Verwandte Seiten
+
+<Columns cols="3">
+  <Card title="Form 5472 und 1120" href="/de/form-5472-1120" icon="file-text" cta="Leitfaden öffnen" horizontal="false">
+    Prüfe den zentralen Einreichungsablauf für Form 5472 und Form 1120.
+  </Card>
+
+  <Card title="Funktionen" href="/de/features" icon="zap" cta="Funktionen durchsuchen" horizontal="false">
+    Entdecke weitere Nomadfiling-Funktionen im gesamten Einreichungsablauf.
+  </Card>
+
+  <Card title="Partnership-Einreichung" href="/de/partnership-filing" icon="folder" cta="Einreichungsleitfaden ansehen" horizontal="false">
+    Sieh dir den separaten Einreichungsablauf für partnershipbezogene Formulare und Workflows an.
+  </Card>
+</Columns>

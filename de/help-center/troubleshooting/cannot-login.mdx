@@ -1,0 +1,127 @@
+---
+title: Einloggen nicht möglich
+description: Behebe die häufigsten Anmeldefehler mithilfe von Schritten zur Erkennung und Lösung von Passwortzurücksetzungen, Browsercache und Sitzungsproblemen in Nomadfiling.
+---
+
+## Behandle die häufigsten Anmeldefehler
+
+Die meisten Anmeldefehler entstehen aus einem falschen E-Mail-Adressen, einer abgelaufenen Sitzung, einem verpassten Passwortzurücksetzungs-E-Mail oder einem Browserproblem, das die Authentifizierung unterbricht. Führe die folgenden Schritte in der Reihenfolge durch, um die schnellsten Lösungen zu ermitteln.
+
+<Callout kind="info">
+
+Nomadfiling verwendet E-Mail und Passwort-Authentifizierung bei `/login`. Wenn deine Sitzung abgelaufen ist, logge dich erneut mit dem gleichen Konto ein. Deine Zahlungsstatus wird separat im Browser gespeichert, sodass eine erneute Anmeldung nicht den Status entfernt.
+
+</Callout>
+
+## Versuche diese Fixes in der Reihenfolge
+
+<Steps>
+  <Step title="Überprüfe die eingegebene E-Mail-Adresse" icon="check-circle">
+
+Überprüfe, ob du die gleiche E-Mail-Adresse verwendest, die du bei `/register` registriert hast. Überprüfe auf typische Fehler wie fehlende Buchstaben, zusätzliche Leerzeichen oder das falsche E-Mail-Domain.
+
+Wenn du eine `Invalid credentials`-Meldung siehst, ist die E-Mail-Adresse oder das Passwort nicht mit einem vorhandenen Konto übereinstimmen. Überprüfe die E-Mail zuerst, bevor du das Passwort zurücksetzt.
+
+  </Step>
+  <Step title="Setze dein Passwort zurück" icon="lock">
+
+Öffne `/forgot-password`, gib deine E-Mail-Adresse ein und sende den Formular. Nomadfiling sendet eine Passwortzurücksetzungsmail, die dich zu `/reset-password` verlinkt, wo du ein neues Passwort festlegen kannst.
+
+Nachdem du das neue Passwort gespeichert hast, gehe zurück zu `/login` und logge dich erneut ein. Wenn der Zurücksetzen funktioniert, sollte du auf dein Konto gelangen, anstatt auf die Anmeldefläche zurückzukehren.
+
+  </Step>
+  <Step title="Überprüfe deine Spam- oder Junk-Korb" icon="mail">
+
+Passwortzurücksetzungsmails können durch deinen E-Mail-Anbieter gefiltert werden. Suche in deinem Posteingang, Spam, Junk und Vermarktenordner nach Nachrichten zu Nomadfiling oder Passwortzurücksetzungsinstruktionen.
+
+Wenn du die Mail nicht findest, gehe zurück zu `/forgot-password`, bestätige die E-Mail-Adresse und fordere eine neue Zurücksetzungsmail an. Warte einige Minuten vor dem erneuten Versuch.
+
+  </Step>
+  <Step title="Lösche den Cache und Cookies für app.nomadfiling.com" icon="trash">
+
+Lösche deine gespeicherten Site-Daten für `app.nomadfiling.com`, öffne die App erneut und logge dich von `/login` ein. Dies löscht veraltete Sitzungsdaten, die dazu führen können, dass die Anmeldefläche ohne Fehler neu geladen wird.
+
+Wenn dein Browser dir die Möglichkeit gibt, Daten für einen einzelnen Ort zu löschen, entferne nur die Daten für `app.nomadfiling.com`. Das ist in der Regel schneller als alle Browsedaten zu löschen.
+
+  </Step>
+  <Step title="Versuche eine Incognito- oder Privat-Browserfenster" icon="monitor">
+
+Öffne ein privates Browserfenster und gehe direkt zu `app.nomadfiling.com`. Dann versuche dich mit der gleichen E-Mail-Adresse und Passwort einzuloggen.
+
+Wenn die Anmeldung in einem privaten Fenster funktioniert, ist das Problem wahrscheinlich Cache-Daten, eine Browser-Erweiterung oder ein anderes Browser-Einstellung im normalen Profil. Fortsetze mit dem nächsten Schritt, um es zu nähern.
+
+  </Step>
+  <Step title="Deaktiviere Browsererweiterungen" icon="minus">
+
+Deaktiviere temporär Ad-Blocker, Datenschutztools, Skriptblocker und ähnliche Erweiterungen. Einige Erweiterungen beeinträchtigen den Authentifizierungsfluss und können dazu führen, dass die Seite neu geladen wird anstatt die Anmeldung abzuschließen.
+
+Nachdem die Erweiterungen deaktiviert wurden, aktualisiere `app.nomadfiling.com` und versuche es erneut. Wenn die Anmeldung erfolgreich ist, aktiviere die Erweiterungen ein für ein nachfolgendes Problem zu finden.
+
+  </Step>
+  <Step title="Überprüfe, ob die App erreichbar ist" icon="cloud">
+
+Öffne `app.nomadfiling.com` direkt in deinem Browser. Wenn die App nicht geladen wird, könnte das Problem deine Netzwerkverbindung, VPN, Firewall oder ein temporärer Verbindungsproblem sein.
+
+Versuche eine andere Netzwerkverbindung, wenn möglich, oder trenne dich von einem VPN und laden die Seite erneut. Sobald die App normal geladen ist, versuche es erneut einzuloggen.
+
+  </Step>
+  <Step title="Versuche mit einer anderen unterstützten Browser" icon="external-link">
+
+Logge dich mit einem anderen Browser wie Chrome, Firefox, Safari oder Edge ein. Dies hilft zu bestätigen, ob das Problem nur in einem bestimmten Browserprofil oder Browserkonfiguration auftreten kann.
+
+Wenn die Anmeldung in einem anderen Browser funktioniert, gehe zurück zum Originalbrowser und lösche Site-Daten, deaktiviere Erweiterungen oder aktualisiere den Browser auf die neueste Version.
+
+  </Step>
+</Steps>
+
+## Übereinstimmung des Symptoms mit der möglichen Lösung
+
+<ExpandableGroup>
+  <Expandable title="Ich sehe Invalid credentials" default-open="true">
+
+Diese Meldung bedeutet normalerweise, dass die E-Mail-Adresse oder das Passwort falsch ist. Starte damit, die E-Mail-Adresse sorgfältig zu überprüfen, dann verwende `/forgot-password`, um ein neues Passwort festzulegen, wenn nötig.
+
+Wenn die Zurücksetzungsmail nie ankommt, überprüfe Spam-, Junk-, Vermarkten- und Filterordner und sende den Zurücksetzungsauftrag erneut mit der exakten E-Mail-Adresse, die du bei der Registrierung verwendet hast.
+
+  </Expandable>
+  <Expandable title="Die Anmeldefläche lädt aber nichts passiert">
+
+Dieser Pattern zeigt normalerweise an, dass veraltete Browserdaten oder eine Erweiterung den Sign-in-Fluss unterbricht. Lösche die gespeicherten Site-Daten für `app.nomadfiling.com`, dann versuche es erneut in einem Incognito- oder privaten Fenster.
+
+Wenn das Problem nur in einem bestimmten Browser auftreten kann, deaktiviere Erweiterungen und teste einen anderen unterstützten Browser.
+
+  </Expandable>
+  <Expandable title="Ich habe keine Passwortzurücksetzungsmail erhalten">
+
+Überprüfe Spam-, Junk-, Vermarkten- und gefilterte Ordnner zuerst. Dann gehe zurück zu `/forgot-password`, bestätige die E-Mail-Adresse und fordere eine neue Zurücksetzungsmail an.
+
+Wenn du nach einigen Minuten noch keine Mail findest, versuche es mit einem anderen Browser und stelle sicher, dass `app.nomadfiling.com` korrekt geladen wird.
+
+  </Expandable>
+  <Expandable title="Ich war vorher eingeloggt, aber jetzt bin ich ausgeloggt">
+
+Deine Sitzung könnte abgelaufen sein. Gehe zurück zu `/login` und logge dich erneut mit deiner E-Mail-Adresse und Passwort ein.
+
+Nomadfiling verwendet eine Sitzungsbasierende Authentifizierung, sodass die Auslösung des Logins nicht immer den Status deines Kontos oder Zahlungsstatus entfernt.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Wenn du Support kontaktieren solltest
+
+Wenn du alle Schritte oben durchgearbeitet hast und immer noch nicht auf dein Konto zugreifen kannst, kontaktiere Support mit den Details, die hilfreich sein werden, um das Problem schnell zu reproduzieren.
+
+<Callout kind="alert">
+
+Füge die E-Mail-Adresse an deinem Konto, die genaue Fehlermeldung, den Browser und Gerät, auf dem du versucht hast, dich anzumelden, sowie die bereits getroffenen Schritte hinzu. 
+
+</Callout>
+
+## Verwandte Hilfe
+
+<Columns cols={2}>
+  <Card title="Hilfzentrum" href="/de/help-center" icon="book-open" cta="Durchsuche Artikel" />
+  <Card title="FAQ zum Einstieg" href="/de/help-center/faq/getting-started" icon="help-circle" cta="Lese FAQ" />
+  <Card title="Quickstart" href="/de/quickstart" icon="rocket" cta="Öffne Quickstart" />
+  <Card title="Einführung" href="/de/introduction" icon="home" cta="Lerne die Grundlagen" />
+</Columns>
