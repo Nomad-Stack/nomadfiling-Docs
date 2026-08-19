@@ -1,0 +1,318 @@
+---
+title: Form 5472 and Form 1120 filing wizard
+description: Walk through each step of the Nomadfiling Form 5472 and Form 1120 wizard — from entity details through related parties, transactions, signatures, and PDF generation.
+---
+
+## Prepare Form 5472 and Form 1120 in one workflow
+
+Nomadfiling’s filing wizard collects the information needed for a foreign-owned single-member US LLC and turns it into a complete filing package. You can move through the steps in order, jump to any step at any time, review everything before generating PDFs, and save the filing to finish later.
+
+<Callout kind="info">
+
+If you add more than one related party, the wizard generates a separate Form 5472 for each related party. The Form 1120 is generated once for the filing.
+
+</Callout>
+
+### What the wizard generates
+
+The final download is a ZIP file built from the data you enter in the wizard. Depending on your selections, the ZIP can include:
+
+- Form 5472 for each related party
+- Form 1120 for the selected tax year
+- Supporting statements
+- Fax cover sheet
+- Late filing letter
+- Form 7004
+
+Form 1120 templates are available for tax years 2020 through 2025. PDF generation happens in the browser from IRS PDF templates, and the ZIP bundle is assembled before download.
+
+### Before you start
+
+Have these details ready so you can move through the wizard without stopping:
+
+- LLC legal name, EIN, address, and formation details
+- Tax year start and end dates
+- Foreign owner identification and tax residency details
+- Related party details for every reportable related party
+- Dollar amounts for Part IV transactions
+- Capital contribution and distribution amounts
+- Signature image or a device that supports drawing a signature
+
+## Work through the 8-step wizard
+
+<Steps>
+  <Step title="Enter entity information" icon="building-2">
+
+  The first step collects the reporting corporation information used in Part I of Form 5472 and in Form 1120. This is where you define the LLC, the tax year, and the business classification details that carry through the rest of the filing.
+
+  Use this step to enter:
+
+  - `llcName`
+  - `llcStreet`
+  - `llcCity`
+  - `ein`
+  - `totalAssets`
+  - `businessActivity`
+  - `businessActivityCode`
+  - `isInitialYear`
+  - `countryIncorporation`
+  - `dateIncorporation`
+  - `taxResidentCountry`
+  - `principalBusinessCountries`
+  - `taxYearBegin`
+  - `taxYearEnd`
+
+  The `businessActivityCode` is the NAICS code for the business activity. If this is the LLC’s first filing year, mark the initial year flag so the generated forms reflect that status correctly.
+
+  **Success check:** the entity section shows the LLC name, EIN, tax year dates, and incorporation details exactly as they should appear on the return.
+
+  </Step>
+
+  <Step title="Add foreign owner information" icon="users">
+
+  The second step collects the foreign owner details used in Part II of Form 5472. Enter the owner’s identifying information carefully, especially if the owner does not have a US tax identification number.
+
+  Use this step to enter:
+
+  - `ownerName`
+  - `ownerStreet`
+  - `ownerCity`
+  - `ownerUSId`
+  - `ownerRefId`
+  - `ownerFTIN`
+  - `ownerBusinessCountries`
+  - `ownerCitizenship`
+  - `ownerTaxResidentCountry`
+
+  Some filings rely on a foreign tax identification number or a reference ID instead of a US ID. Make sure the owner identification fields match the records you plan to file with.
+
+  **Success check:** the owner section clearly identifies the foreign shareholder with name, address, and at least the applicable identification details for the filing.
+
+  </Step>
+
+  <Step title="Add one or more related parties" icon="users">
+
+  The related party step supports multiple entries. Each related party you add becomes its own Form 5472 in the final ZIP package.
+
+  Use this step to enter, for each related party:
+
+  - `isForeign`
+  - `name`
+  - `street`
+  - `city`
+  - `usId`
+  - `refId`
+  - `ftin`
+  - `businessActivity`
+  - `businessCode`
+  - `relationship`
+  - `businessCountries`
+  - `taxResidentCountry`
+
+  The `relationship` field supports these values:
+
+  - `related_to_corp`
+  - `related_to_shareholder`
+  - `25pct_shareholder`
+
+  This step matters because Part III is completed separately for each reportable party. If your LLC had transactions with multiple related parties during the tax year, add each one here instead of trying to combine them into a single record.
+
+  **Success check:** every reportable related party appears in the list, and each entry has the correct relationship type and tax residency details.
+
+  </Step>
+
+  <Step title="Enter transactions and Part VII answers" icon="bar-chart">
+
+  This step captures the reportable transaction amounts from Part IV and the Yes or No answers from Part VII. Enter the amounts by line so the generated Form 5472 mirrors the IRS layout.
+
+  Use this step for:
+
+  - Part IV amounts on lines `9` through `21` for amounts received
+  - Part IV amounts on lines `23` through `35` for amounts paid
+  - `capitalContribution`
+  - `capitalDistribution`
+  - Part VII answers `q37` through `q43a`
+
+  The transaction lines are stored per related party, which means each party’s Form 5472 reflects only that party’s activity. Keep the amounts separated the same way you would if you prepared multiple paper forms.
+
+  **Success check:** the total received and paid amounts match your records for each related party, and every required Yes or No answer has a value.
+
+  </Step>
+
+  <Step title="Add the signature" icon="edit">
+
+  The signature step prepares the signature area for Form 1120. You can draw the signature in the browser or upload an image, then add the signing date and signer title.
+
+  Use this step to provide:
+
+  - `signatureDataUrl`
+  - `signatureDate`
+  - `signerTitle`
+
+  For recent Form 1120 templates, the signature is embedded directly into the generated PDF. Check that the image is legible and sized appropriately before moving on.
+
+  **Success check:** the signature preview is visible, the date is correct, and the signer title matches the person signing the return.
+
+  </Step>
+
+  <Step title="Add supporting statements and optional documents" icon="paperclip">
+
+  This step covers the text and document options that do not fit directly into the main form pages. Use it for Part V and Part VI narrative content, capital movement details, and optional attachments.
+
+  Use this step to enter or enable:
+
+  - `statement5xText`
+  - `statement6xText`
+  - `capitalContribution`
+  - `capitalDistribution`
+  - `generateLateFilingLetter`
+  - `generateForm7004`
+  - `generateFaxCover`
+  - `faxFromName`
+  - `faxNumberOfPages`
+  - `faxDate`
+
+  If you enable the fax cover sheet, the wizard includes it in the ZIP package along with the form PDFs. Supporting statements can also be generated per related party when the filing needs additional explanation for Part V or Part VI.
+
+  **Success check:** optional document toggles reflect the package you want to generate, and any narrative text is complete and ready to file.
+
+  </Step>
+
+  <Step title="Review the filing" icon="check-circle">
+
+  The review step shows your filing data in read-only form before PDF generation. This is the best place to catch mismatched tax year dates, missing related parties, or transaction amounts entered under the wrong party.
+
+  Review:
+
+  - Entity information
+  - Owner information
+  - Related parties
+  - Transaction amounts
+  - Signature details
+  - Supporting statement options
+
+  Because the wizard allows free navigation, you can jump back to any earlier step, make corrections, and return to review without losing your place.
+
+  **Success check:** the review screen matches the records you intend to file, and nothing appears missing or assigned to the wrong party.
+
+  </Step>
+
+  <Step title="Preview PDFs, download the ZIP, and save the filing" icon="file-text">
+
+  The final step generates a live PDF preview and assembles the filing package for download. It also saves the filing so you can return later to edit it.
+
+  From this step, you can:
+
+  - Preview the generated PDF output
+  - Download a ZIP containing all generated documents
+  - Save the filing to the database
+  - Run the AI compliance scanner on generated PDFs
+
+  The ZIP can include one Form 5472 per related party, one year-specific Form 1120, and any optional documents you enabled earlier. Form 1120 supports years 2020, 2021, 2022, 2023, 2024, and 2025.
+
+  **Success check:** the preview renders correctly, the ZIP downloads successfully, and the saved filing is available for later editing.
+
+  </Step>
+</Steps>
+
+## Understand how multi-party filings work
+
+Multiple related parties are one of the most important behaviors in the wizard. Instead of forcing all reportable relationships into one form, Nomadfiling creates a separate Form 5472 for each related party record.
+
+That affects three parts of the process:
+
+- **Related party entry:** you add each party separately in the related party step.
+- **Transaction reporting:** Part IV amounts and Part VII answers are tracked for each party.
+- **PDF generation:** the ZIP includes one Form 5472 per party, while Form 1120 remains a single form for the filing.
+
+<Callout kind="tip">
+
+If your LLC had transactions with more than one related party, review each party’s Part IV amounts separately before generating the ZIP. This is the most common place to catch data entered under the wrong party.
+
+</Callout>
+
+## Know what happens during PDF generation
+
+The wizard generates PDFs on the client side from IRS PDF templates. That means your browser prepares the forms, embeds the signature, and assembles the final ZIP package before download.
+
+This generation flow includes:
+
+- Form 5472 PDFs created from the data for each related party
+- A Form 1120 PDF selected by tax year
+- Optional supporting documents when enabled
+- ZIP bundling for a single download package
+- Save support so the filing can be reopened and edited later
+
+<Callout kind="info">
+
+Form 1120 template support covers tax years 2020 through 2025. If you are preparing a filing outside that range, confirm the available year before starting.
+
+</Callout>
+
+## Frequently asked questions
+
+<ExpandableGroup>
+  <Expandable title="Do I need a separate Form 5472 for each related party?" default-open="true">
+
+  Yes. The wizard supports multiple related parties and generates one Form 5472 for each related party in the final ZIP file.
+
+  </Expandable>
+
+  <Expandable title="Can I skip ahead to a later step?" default-open="false">
+
+  Yes. The wizard does not force strict step-by-step completion. You can jump to any step, move back to edit earlier information, and return to review or PDF generation at any time.
+
+  </Expandable>
+
+  <Expandable title="What years are supported for Form 1120?" default-open="false">
+
+  Form 1120 generation supports tax years 2020 through 2025.
+
+  </Expandable>
+
+  <Expandable title="Can I include a fax cover sheet?" default-open="false">
+
+  Yes. Enable the fax cover option in the supporting statements step, then enter `faxFromName`, `faxNumberOfPages`, and `faxDate`. The fax cover sheet is added to the ZIP package when generated.
+
+  </Expandable>
+
+  <Expandable title="Can I save a filing and come back later?" default-open="false">
+
+  Yes. The PDF preview step also supports saving the filing to the database so you can reopen and edit it later.
+
+  </Expandable>
+
+  <Expandable title="What does the AI compliance scanner do?" default-open="false">
+
+  The AI compliance scanner can be run on the generated PDFs to help review the filing package before submission.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Go deeper
+
+<Columns cols={3}>
+  <Card title="Quickstart" href="/quickstart" icon="rocket" cta="Open guide">
+    Start with the fastest path to your first filing.
+  </Card>
+
+  <Card title="Features" href="/features" icon="settings" cta="Browse features">
+    See what Nomadfiling supports across filing, review, and delivery.
+  </Card>
+
+  <Card title="AI compliance scanner" href="/ai-compliance-scanner" icon="shield" cta="Learn more">
+    Review generated PDFs before you submit them.
+  </Card>
+
+  <Card title="Fax service" href="/fax-service" icon="upload" cta="View fax options">
+    Send your filing package with an optional fax cover sheet.
+  </Card>
+
+  <Card title="Late filing letter" href="/late-filing-letter" icon="file-text" cta="Read guide">
+    Add a late filing explanation letter when needed.
+  </Card>
+
+  <Card title="Partnership filing" href="/partnership-filing" icon="folder" cta="Compare workflows">
+    Use the partnership workflow for multi-partner filings instead of single-member LLC filings.
+  </Card>
+</Columns>

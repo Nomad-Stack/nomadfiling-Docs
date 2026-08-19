@@ -1,128 +1,370 @@
 ---
 title: Integrations
-description: Connect Nomadfiling with external tools, services, and automate workflows.
+description: Understand the external services Nomadfiling connects to — payments, fax delivery, AI tools, email, analytics, and PDF generation.
 ---
 
-## Overview
+## Nomadfiling connects payments, filing delivery, document generation, and account data through a small set of third-party services
 
-Nomadfiling integrates seamlessly with popular tools to streamline your documentation workflows. You can sync changes with GitHub repositories, authenticate users via third-party providers, receive real-time notifications through webhooks, and export content to PDF or static sites. These integrations help you maintain consistency across platforms and automate repetitive tasks.
+Most integrations in Nomadfiling support a specific filing workflow: store filing data, collect payment, generate PDFs, send forms by fax, and track the result. A few integrations support surrounding tasks such as email delivery, affiliate attribution, and analytics.
+
+Use this page to understand what each integration does, where it appears in the product, and what data or actions depend on it.
+
+<Callout kind="info">
+
+Nomadfiling is a filing platform for foreign-owned LLCs. The integrations below are the production services used to create, pay for, deliver, and track U.S. tax filing documents in the app.
+
+</Callout>
 
 <Columns cols={2}>
-  <Card title="GitHub Sync" icon="github" href="#github-sync">
-    Keep your docs in sync with Git repositories for version control and collaboration.
+  <Card title="Supabase" icon="database" href="#supabase-backend-and-auth">
+    Stores user accounts, filing records, payments, fax logs, API credentials, and uploaded documents.
   </Card>
-  <Card title="Auth Providers" icon="shield" href="#auth-providers">
-    Enable secure logins with Google, GitHub, and more.
+  <Card title="Stripe" icon="credit-card" href="#stripe-payments">
+    Creates checkout sessions for filing purchases, extension payments, receipts, and promotion codes.
   </Card>
-  <Card title="Webhooks" icon="zap" href="#webhooks">
-    Get instant notifications for doc updates and events.
+  <Card title="Telnyx" icon="upload" href="#telnyx-fax-delivery">
+    Sends completed tax PDFs by fax and reports delivery status back to Nomadfiling.
   </Card>
-  <Card title="Exports" icon="download" href="#exports">
-    Generate PDFs or static HTML exports effortlessly.
+  <Card title="AI API" icon="zap" href="#ai-api-compliance-and-statement-generation">
+    Analyzes PDFs for filing issues and drafts supporting statement text.
+  </Card>
+  <Card title="Brevo" icon="mail" href="#brevo-email-and-event-tracking">
+    Sends registration emails and records email engagement events.
+  </Card>
+  <Card title="Tolt.io" icon="bar-chart" href="#toltio-affiliate-tracking">
+    Tracks affiliate referrals through checkout metadata and payment records.
+  </Card>
+  <Card title="Meta and Google" icon="external-link" href="#meta-and-google-analytics">
+    Tracks checkout and purchase conversions for marketing attribution.
+  </Card>
+  <Card title="pdf-lib and JSZip" icon="file-text" href="#pdf-generation-and-zip-bundling">
+    Fills IRS PDF templates and bundles generated forms into downloadable ZIP files.
   </Card>
 </Columns>
 
-## GitHub and Git Sync
+## Supabase backend and auth
 
-Connect your Nomadfiling workspace to a GitHub repository to automatically sync documentation changes. This enables version control, pull requests, and team collaboration directly from GitHub.
+Supabase is the core backend for Nomadfiling. It provides the application database, authentication, edge function runtime, and storage buckets used for uploaded and generated filing assets.
 
-<Steps>
-  <Step title="Create Repository" icon="repo">
-    Set up a new GitHub repository or use an existing one for your docs.
-  </Step>
-  <Step title="Connect in Settings" icon="settings">
-    Navigate to Workspace Settings > Integrations > GitHub. Authorize Nomadfiling and select your repository.
-  </Step>
-  <Step title="Sync Changes" icon="git-commit">
-    Push updates from Nomadfiling or pull from GitHub. Use the sync button to resolve conflicts.
+Nomadfiling uses Supabase for user accounts, filing data, fax uploads, payment records, API credentials, and server-side workflows that should not run directly in the browser.
 
-````bash
-git add .
-git commit -m "Update documentation"
-git push origin main
-````
+### What Supabase handles
 
-  </Step>
-</Steps>
+- **PostgreSQL database** for application data
+- **Authentication** for email and password sign-in with JWT-based sessions
+- **Edge Functions** for server-side workflows
+- **Storage buckets** for PDF uploads and related file storage
+
+### Core tables
+
+- `profiles`
+- `filings`
+- `partnership_filings`
+- `payments`
+- `feature_requests`
+- `feature_votes`
+- `fax_logs`
+- `api_keys`
+- `oauth_clients`
+- `oauth_tokens`
+- `oauth_auth_codes`
 
 <Callout kind="tip">
-  Enable branch protection in GitHub to prevent direct pushes to main.
+
+If your filing, payment, or fax activity appears in the app but a downstream action did not complete, the source record usually exists in Supabase first. That makes Supabase the system of record for most operational troubleshooting.
+
 </Callout>
 
-## Third-party Authentication Providers
+## Stripe payments
 
-Support single sign-on (SSO) with popular providers. Users log in with their existing accounts, improving security and user experience.
+Stripe handles one-time checkout for Nomadfiling purchases. It is used for the main filing tiers, Form 7004 extension checkout, receipt URLs, promotion codes, and metadata passed into payment records.
+
+Nomadfiling offers four pricing tiers, ranging from `$147` to `$497`, through Stripe-powered checkout flows.
+
+### Stripe workflows in Nomadfiling
+
+- **Main filing checkout** for product tiers shown on [Pricing](/getting-started/pricing)
+- **Extension checkout** for Form 7004 purchases
+- **Payment verification** after checkout completes
+- **Receipt URL storage** for paid orders
+- **Promotion code support** during checkout
+- **Affiliate metadata support** for referral attribution
+
+### Stripe edge functions
+
+- `create-checkout`
+- `create-extension-checkout`
+- `verify-payment`
+
+### What Stripe stores in the flow
+
+Stripe checkout metadata can include referral information that Nomadfiling later persists to the `payments` table. That metadata links affiliate attribution to a successful purchase without changing the filing workflow itself.
+
+## Telnyx fax delivery
+
+Telnyx sends tax form PDFs to IRS fax numbers. When you use Nomadfiling's fax workflow, the app prepares the PDF package, submits it to the Telnyx Fax API, and records the send attempt for later status updates.
+
+This integration powers the product's fax delivery flow described in [Fax service](/fax-service).
+
+### Fax API configuration
+
+<ParamField body="endpoint" param-type="string" required="true" show-location="false">
+`https://api.telnyx.com/v2/faxes`
+</ParamField>
+
+<ParamField body="fromNumber" param-type="string" required="true" show-location="false">
+`+17869848552`
+</ParamField>
+
+<ParamField body="connectionId" param-type="string" required="true" show-location="false">
+`2935264480004671439`
+</ParamField>
+
+<ParamField body="quality" param-type="string" required="true" show-location="false">
+`high`
+</ParamField>
+
+### Edge functions
+
+- `send-fax` sends the fax and writes a record to `fax_logs`
+- `telnyx-fax-webhook` receives status updates from Telnyx after submission
+
+<Request>
+```bash
+curl -X POST "https://api.telnyx.com/v2/faxes" \
+  -H "Authorization: Bearer txai_example_8k2m4q7p" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "connection_id": "2935264480004671439",
+    "from": "+17869848552",
+    "to": "+13051234567",
+    "media_url": "https://app.nomadfiling.com/storage/faxes/fil_9a2c7b1d.pdf",
+    "quality": "high"
+  }'
+```
+</Request>
+
+<Response tabs="202">
+```json
+{
+  "data": {
+    "id": "fax_01hv8s4n2p9x6m",
+    "status": "queued",
+    "from": "+17869848552",
+    "to": "+13051234567",
+    "connection_id": "2935264480004671439",
+    "quality": "high"
+  }
+}
+```
+</Response>
+
+Success usually looks like a queued or accepted fax record followed by later webhook updates. Nomadfiling uses those webhook events to keep fax status in sync.
+
+## AI API compliance and statement generation
+
+Nomadfiling uses an AI API for two focused tasks: checking generated PDFs for likely IRS filing issues and drafting supporting statement text. The AI layer supports review and drafting, not the underlying tax form generation itself.
+
+These features appear in product workflows such as the [AI compliance scanner](/ai-compliance-scanner).
+
+### Edge functions
+
+- `analyze-pdf` checks PDFs for filing or formatting issues
+- `generate-statement` drafts IRS supporting statement text
 
 <Tabs>
-  <Tab title="Google OAuth" icon="google">
-    Configure Google OAuth in your provider dashboard.
+  <Tab title="Compliance scanning" icon="shield">
 
-    <CodeGroup tabs="JavaScript,Python">
-    ````javascript
-    const { OAuth2Client } = require('google-auth-library');
-    const client = new OAuth2Client(CLIENT_ID);
-    ````
-    ````python
-    from google.oauth2 import id_token
-    from google.auth.transport import requests
-    ````
-    </CodeGroup>
+  The compliance scanner reviews a generated PDF and looks for issues that could block or weaken a filing, such as missing fields or inconsistent form content.
+
+  `analyze-pdf` does not require authentication.
+
   </Tab>
-  <Tab title="GitHub OAuth" icon="github">
-    Set redirect URI to `https://api.example.com/auth/github/callback`.
+  <Tab title="Statement generation" icon="edit">
+
+  Statement generation drafts text used in IRS supporting statements. The generated text is a starting point that you should review before filing.
+
+  `generate-statement` requires a valid JWT.
+
   </Tab>
 </Tabs>
 
-## Webhooks for Notifications
+<Callout kind="alert">
 
-Webhooks deliver real-time events from Nomadfiling to your services. Subscribe to events like `doc.updated` or `workspace.member_added`.
+AI-generated output should be reviewed before submission. Nomadfiling uses AI to assist with analysis and drafting, not to replace filing review.
+
+</Callout>
+
+## Brevo email and event tracking
+
+Brevo, previously known as Sendinblue, handles registration email delivery and email tracking events. Nomadfiling uses it for welcome emails and to record downstream engagement signals from sent messages.
+
+The same integration also supports purchase-related email event tracking workflows.
+
+### Edge functions
+
+- `send-registration-email` sends the welcome email
+- `brevo-track` receives email tracking events
+
+### What this integration covers
+
+- **Welcome and registration emails**
+- **Email delivery and engagement tracking**
+- **Purchase-related event tracking tied to email workflows**
+
+## Tolt.io affiliate tracking
+
+Tolt.io tracks affiliate referrals associated with purchases. When a visitor arrives through an affiliate link, Nomadfiling reads the referral identifier in the browser and passes it into Stripe checkout metadata.
+
+After a successful payment, Nomadfiling persists that referral value to the `payments` table so affiliate attribution remains connected to the order.
+
+### How referral tracking works
 
 ```mermaid
 sequenceDiagram
-    participant N as Nomadfiling
-    participant W as Webhook Endpoint
-    participant S as Slack
-    N->>W: POST /webhook (Event Payload)
-    W->>S: Forward Notification
-    S-->>W: 200 OK
-    W-->>N: Confirmation
+  participant V as Visitor
+  participant N as Nomadfiling
+  participant S as Stripe
+  participant D as Payments table
+
+  V->>N: Arrives with affiliate referral
+  N->>N: Read tolt_referral
+  N->>S: Create checkout with metadata
+  S-->>N: Payment success
+  N->>D: Store referral with payment record
 ```
 
-<ParamField path="webhook_url" param-type="string" required="true">
-  Your endpoint URL, e.g., `https://your-webhook-url.com/webhook`.
-</ParamField>
+The browser helper that reads the referral value lives in `src/lib/tolt.ts`.
 
-<ResponseField name="event" field-type="string">
-  Event type like `doc.updated`.
-</ResponseField>
+## Meta and Google analytics
 
-<ResponseField name="payload" field-type="object">
-  Full event data.
-</ResponseField>
+Nomadfiling uses Meta and Google services for conversion tracking around checkout and payment completion. These integrations support attribution and campaign measurement rather than filing logic.
 
-Example payload:
+Google Tag Manager is loaded in the app shell, and route change tracking sends analytics events during navigation.
 
-```json
-{
-  "event": "doc.updated",
-  "workspace_id": "ws_123",
-  "doc_id": "doc_456",
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+### Tracked events
 
-## Export to PDF or Static Sites
+- **Meta Conversions API**
+  - `InitiateCheckout` when checkout starts
+  - `Purchase` when payment succeeds
+  - Personally identifiable fields are SHA-256 hashed before transmission
 
-Export your documentation for sharing or archiving. Choose PDF for print-ready files or static sites for hosting.
+- **Google Ads**
+  - Conversion ID: `AW-18054761191`
+  - Conversion label: `dm54CP6SopMcEOeVl6FD`
 
-<Expandable title="Advanced Export Options" default-open="false">
-  Customize with CSS themes or include/exclude sections.
+- **Google Tag Manager**
+  - Loaded in `index.html`
 
-  ```bash
-  nomadfiling export --format=pdf --theme=dark /path/to/output
-  ```
-</Expandable>
+- **RouteChangeTracker**
+  - Fires analytics events on navigation
 
 <Callout kind="info">
-  Exports are generated asynchronously. Check the status in your dashboard at `https://dashboard.example.com`.
+
+These integrations are marketing and attribution tools. They do not affect PDF generation, filing record storage, or fax delivery.
+
 </Callout>
+
+## PDF generation and ZIP bundling
+
+Nomadfiling generates filing documents in the browser with `pdf-lib`. After generation, it can bundle multiple PDFs into a ZIP archive with `JSZip` for download.
+
+This integration layer is what turns filing data into completed IRS forms, cover sheets, supporting statements, and packaged document sets.
+
+### PDF generation with pdf-lib
+
+`pdf-lib` fills IRS form templates stored under `/public/templates/`. The generated output includes both core returns and supporting documents.
+
+Supported document generation includes:
+
+- Form 5472
+- Form 1120
+- Form 1065
+- Schedule K-1
+- Schedule K-2
+- Schedule K-3
+- Form 8804
+- Form 8805
+- Form 1040-NR
+- Form 7004
+- Fax cover sheets
+- Late filing letters
+- Supporting statements
+
+### ZIP bundling with JSZip
+
+When a filing includes multiple generated documents, Nomadfiling packages those PDFs into a single ZIP download. This is especially useful for multi-document or multi-party filing flows.
+
+A successful ZIP workflow ends with a browser download containing all generated PDFs together rather than separate file downloads.
+
+## UI component libraries
+
+Nomadfiling uses `shadcn/ui` and Radix UI for application interface components. These libraries are not external workflow integrations in the same sense as payments or fax delivery, but they are part of the platform stack readers often ask about.
+
+The codebase includes 46 generated UI components for common interface patterns such as buttons, dialogs, selects, and tables.
+
+## How the integrations fit together
+
+Most user-facing filing flows follow the same sequence: create or update filing data, pay if required, generate documents, then deliver or download the result.
+
+```mermaid
+graph TD
+  A[User signs in] --> B[Supabase stores filing data]
+  B --> C[Stripe creates checkout]
+  C --> D[Payment verified]
+  D --> E[pdf-lib generates IRS forms]
+  E --> F[JSZip bundles PDFs]
+  E --> G[Telnyx sends fax]
+  D --> H[Brevo sends email]
+  C --> I[Meta and Google track conversion]
+  B --> J[AI functions analyze or draft text]
+```
+
+That sequence is why service health can affect different parts of the product in different ways. A payment issue does not stop sign-in, and an analytics issue does not stop PDF generation, but a storage or fax issue can affect delivery.
+
+## Related product areas
+
+<Columns cols={2}>
+  <Card title="Features" href="/features" icon="rocket">
+    See how these integrations support the main filing workflows in Nomadfiling.
+  </Card>
+  <Card title="Pricing" href="/getting-started/pricing" icon="bar-chart">
+    Review the filing tiers and checkout paths powered by Stripe.
+  </Card>
+  <Card title="Fax service" href="/fax-service" icon="upload">
+    Learn how fax delivery works, including status updates and submission flow.
+  </Card>
+  <Card title="MCP overview" href="/api/mcp-overview" icon="code">
+    Review the broader API and automation surface available in Nomadfiling.
+  </Card>
+</Columns>
+
+## Common questions
+
+<ExpandableGroup>
+  <Expandable title="Does Nomadfiling store filing data itself or only in third-party services?" default-open="false">
+
+  Nomadfiling stores its application data in Supabase. Third-party services handle specialized tasks such as payments, fax transport, email delivery, analytics, and AI-assisted analysis.
+
+  </Expandable>
+  <Expandable title="Which integrations are required to complete a filing?" default-open="false">
+
+  Supabase is foundational because it stores accounts and filing records. Stripe is required when the workflow includes payment, `pdf-lib` is required to generate documents, and Telnyx is required only when you send the filing by fax instead of downloading the PDFs.
+
+  </Expandable>
+  <Expandable title="Does Nomadfiling send tax forms directly to the IRS?" default-open="false">
+
+  Nomadfiling can send completed PDF packages through the Telnyx fax integration when the filing workflow uses IRS fax delivery. The app does not rely on email delivery for tax form submission.
+
+  </Expandable>
+  <Expandable title="Is AI required to use Nomadfiling?" default-open="false">
+
+  No. AI features support compliance review and statement drafting, but the core filing flows depend on form generation, payment, storage, and delivery services rather than AI.
+
+  </Expandable>
+  <Expandable title="Where does affiliate attribution happen?" default-open="false">
+
+  Affiliate attribution starts in the browser when Nomadfiling reads `tolt_referral`. That value is passed into Stripe checkout metadata and later saved with the payment record.
+
+  </Expandable>
+</ExpandableGroup>

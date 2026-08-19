@@ -1,25 +1,127 @@
 ---
-title: Can't log in to Nomadfiling
-description: Fix login problems rapidly.
+title: Cannot log in
+description: Troubleshoot login issues with step-by-step fixes for password resets, browser cache, and session problems in Nomadfiling.
 ---
 
-## Symptoms
+## Fix the most common login problems
 
-- Login page reloads without errors
-- "Invalid credentials" message appears
+Most login issues come from an incorrect email address, an expired session, a missed password reset email, or a browser problem that interrupts authentication. Work through the steps below in order so you can rule out the fastest fixes first.
 
-## Common fixes
+<Callout kind="info">
+
+Nomadfiling uses email and password sign-in at `/login`. If your session expired, sign in again with the same account. Your payment status is stored separately in your browser, so logging in again does not remove it.
+
+</Callout>
+
+## Try these fixes in order
 
 <Steps>
-  <Step title="Reset your password">
-    Click "Forgot Password?" and follow the instructions sent to your email.
+  <Step title="Check the email address you entered" icon="check-circle">
+
+Verify that you are using the same email address you used to register your account at `/register`. Look for common mistakes such as missing characters, extra spaces, or the wrong email domain.
+
+If you see an `Invalid credentials` message, the email address or password does not match an existing account. Confirm the email first before you reset the password.
+
   </Step>
-  <Step title="Clear browser cache">
-    Try logging in after clearing cookies and cache.
+  <Step title="Reset your password" icon="lock">
+
+Open `/forgot-password`, enter your email address, and submit the form. Nomadfiling sends a password reset email that links you to `/reset-password`, where you can set a new password.
+
+After you save the new password, return to `/login` and sign in again. If the reset worked, you should reach your account instead of returning to the login screen.
+
   </Step>
-  <Step title="Check email spelling">
-    Ensure your email address is correct and active.
+  <Step title="Check your spam or junk folder" icon="mail">
+
+Password reset emails can be filtered by your email provider. Search your inbox, spam, junk, and promotions folders for messages related to Nomadfiling or password reset instructions.
+
+If you do not find the email, go back to `/forgot-password`, confirm the email address, and request a new reset link. Wait a few minutes before trying again.
+
+  </Step>
+  <Step title="Clear cache and cookies for app.nomadfiling.com" icon="trash">
+
+Clear your browser's saved site data for `app.nomadfiling.com`, then open the app again and sign in from `/login`. This removes stale session data that can cause the login page to reload without showing an error.
+
+If your browser lets you clear data for a single site, remove only the data for `app.nomadfiling.com`. That is usually faster than clearing all browsing data.
+
+  </Step>
+  <Step title="Try an incognito or private browsing window" icon="monitor">
+
+Open a private browsing window and go directly to `app.nomadfiling.com`. Then try signing in with the same email and password.
+
+If login works in private browsing, the issue is usually cached data, a browser extension, or another browser setting in your normal profile. Continue with the next step to narrow it down.
+
+  </Step>
+  <Step title="Disable browser extensions" icon="minus">
+
+Turn off ad blockers, privacy tools, script blockers, and similar extensions temporarily. Some extensions interfere with the authentication flow and can cause the page to refresh instead of completing sign-in.
+
+After disabling extensions, reload `app.nomadfiling.com` and try again. If login succeeds, re-enable extensions one at a time to find the one causing the problem.
+
+  </Step>
+  <Step title="Check whether the app is reachable" icon="cloud">
+
+Visit `app.nomadfiling.com` directly in your browser. If the app does not load at all, the problem may be your network connection, VPN, firewall, or a temporary connectivity issue.
+
+Try another network if possible, or disconnect from a VPN and reload the page. Once the app loads normally, try signing in again.
+
+  </Step>
+  <Step title="Try a different supported browser" icon="external-link">
+
+Sign in using another browser such as Chrome, Firefox, Safari, or Edge. This helps confirm whether the problem is limited to one browser profile or browser configuration.
+
+If login works in another browser, return to your original browser and clear site data, disable extensions, or update the browser to the latest version.
+
   </Step>
 </Steps>
 
-If issues persist, contact support at support@nomadfiling.com.
+## Match the symptom to the likely fix
+
+<ExpandableGroup>
+  <Expandable title="I see Invalid credentials" default-open="true">
+
+This message usually means the email address or password is wrong. Start by checking the email address carefully, then use `/forgot-password` to set a new password if needed.
+
+If the reset email never arrives, check spam or junk folders and submit the reset request again using the exact email address you used to sign up.
+
+  </Expandable>
+  <Expandable title="The login page reloads but nothing happens">
+
+This pattern usually points to stale browser data or an extension interfering with the sign-in flow. Clear site data for `app.nomadfiling.com`, then try again in an incognito or private window.
+
+If the problem only happens in one browser, disable extensions and test another supported browser.
+
+  </Expandable>
+  <Expandable title="I did not receive the password reset email">
+
+Check spam, junk, promotions, and filtered folders first. Then return to `/forgot-password`, confirm the email address, and request another reset link.
+
+If you still do not receive the email after a few minutes, try from another browser and make sure `app.nomadfiling.com` is loading correctly.
+
+  </Expandable>
+  <Expandable title="I was logged in before, but now I am signed out">
+
+Your session may have expired. Go back to `/login` and sign in again with your email and password.
+
+Nomadfiling uses session-based authentication, so being signed out does not usually mean your account or payment status was removed.
+
+  </Expandable>
+</ExpandableGroup>
+
+## When to contact support
+
+If you worked through all of the steps above and still cannot access your account, contact support with the details that will help reproduce the issue quickly.
+
+<Callout kind="alert">
+
+Include the email address tied to your account, the exact error message you see, the browser and device you used, and which troubleshooting steps you already tried.
+
+</Callout>
+
+## Related help
+
+<Columns cols={2}>
+  <Card title="Help center" href="/help-center" icon="book-open" cta="Browse articles" />
+  <Card title="Getting started FAQ" href="/help-center/faq/getting-started" icon="help-circle" cta="Read FAQ" />
+  <Card title="Quickstart" href="/quickstart" icon="rocket" cta="Open quickstart" />
+  <Card title="Introduction" href="/introduction" icon="home" cta="Learn the basics" />
+</Columns>

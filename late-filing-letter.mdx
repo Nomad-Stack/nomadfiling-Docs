@@ -1,0 +1,157 @@
+---
+title: Late filing letter generator
+description: Generate a reasonable cause statement PDF for late Form 5472 filings to include with your delinquent return package.
+---
+
+## Generate a reasonable cause statement for a missed Form 5472 filing
+
+Use the late filing letter generator at `/late-filing-letter` to create a PDF letter you can attach to a delinquent Form 5472 and Form 1120 filing package. The tool is designed for foreign-owned U.S. disregarded entities that missed the filing deadline and need a reasonable cause statement to help avoid the IRS late-filing penalty, which can reach `25,000` dollars per year.
+
+<Callout kind="info">
+
+You do not need an account to use this tool. The late filing letter generator is available without authentication.
+
+</Callout>
+
+The interface is available in English and German, but the generated letter is always written in English because it is intended for the IRS. The letter also references the *Farhy v. Commissioner* case as part of its supporting language.
+
+## What the generator does
+
+The generator collects a small set of details about your LLC, the missed tax year, and the person signing the statement. It then creates a PDF reasonable cause letter that you can preview in the browser and download for printing or submission.
+
+<Callout kind="alert">
+
+The generator helps you prepare a reasonable cause statement, but it does not file anything for you. You still need to include the letter with your late Form 5472 and Form 1120 submission and send the full package to the IRS.
+
+</Callout>
+
+## What information you need
+
+Have these details ready before you start.
+
+<ParamField body="llcName" param-type="string" required="true" show-location="false">
+
+The legal name of the LLC or reporting entity.
+
+</ParamField>
+
+<ParamField body="ein" param-type="string" required="true" show-location="false">
+
+Your Employer Identification Number in `XX-XXXXXXX` format.
+
+</ParamField>
+
+<ParamField body="missedYear" param-type="string" required="true" show-location="false">
+
+The tax year you missed. The dropdown includes years from the previous calendar year back to `2018`.
+
+</ParamField>
+
+<ParamField body="ownerName" param-type="string" required="true" show-location="false">
+
+The name of the foreign owner signing or being named in the letter.
+
+</ParamField>
+
+<ParamField body="signature" param-type="image" required="false" show-location="false">
+
+A signature added either by drawing on the signature canvas or by uploading a `PNG`, `JPG`, or `SVG` file.
+
+</ParamField>
+
+<ParamField body="signatureDate" param-type="string" required="false" show-location="false">
+
+The signature date. The form fills this automatically with today's date in `MM/DD/YYYY` format, and you can review it before generating the PDF.
+
+</ParamField>
+
+## Complete the two-step workflow
+
+The generator has a short two-step flow: enter your details, then review and download the PDF.
+
+<Steps>
+  <Step title="Enter the letter details" icon="edit">
+
+  Start on the form screen and fill in the required fields: LLC name, EIN, missed tax year, and owner name. The Generate action becomes available when `llcName`, `ein`, `missedYear`, and `ownerName` all contain values.
+
+  Add a signature in the mode that works best for you. You can either draw directly in the browser on a `200` pixel tall signature canvas or switch modes and upload an existing signature image file.
+
+  Review the signature date before you continue. By default, the tool fills today's date automatically, which saves time and reduces formatting mistakes.
+
+  </Step>
+  <Step title="Preview and download the PDF" icon="download">
+
+  After you generate the letter, the app creates the PDF by calling `generateLateFilingLetter(data)` and renders the result in the built-in PDF preview. The preview uses the `PdfCanvasViewer` component so you can confirm the letter looks correct before downloading it.
+
+  Download the finished file with a filename in this format: `Reasonable-Cause-Letter-{llcName}-{missedYear}.pdf`. Once the file is saved, print it or include it in your late filing package.
+
+  The preview step also includes a next-steps reminder telling you to include the letter with your late Form 5472 and Form 1120 filing and submit the package to the IRS by mail or fax.
+
+  </Step>
+</Steps>
+
+## What the generated PDF includes
+
+The PDF is a reasonable cause statement intended to accompany a late Form 5472 filing. It uses the information you enter to identify the entity, the missed year, and the foreign owner, then formats that information as an IRS-facing letter.
+
+In practice, this means the output is not a blank template or a generic note. The generator produces a finished PDF document that is ready to download and attach to your delinquent return package.
+
+## What success looks like
+
+You know the generator worked when the preview screen shows a readable PDF and the download button offers a file named like `Reasonable-Cause-Letter-Nomad Ventures LLC-2023.pdf`. At that point, your next task is no longer preparing the letter but assembling the full filing package.
+
+<Callout kind="tip">
+
+Before you send anything to the IRS, confirm that the LLC name, EIN, missed year, owner name, and signature date in the PDF match the forms you are submitting with it.
+
+</Callout>
+
+## Next steps after downloading
+
+Once you have the PDF, include it with your late Form 5472 and Form 1120 materials. The app's preview step specifically reminds you to print the letter and send it with the rest of your delinquent filing package by mail or fax.
+
+If you still need to prepare the forms themselves, move next to the main Form 5472 and Form 1120 workflow. If you plan to fax the package, use the fax-related tools and instructions before sending.
+
+## Common questions
+
+<ExpandableGroup>
+  <Expandable title="Do I need to sign in to use the late filing letter generator?" default-open="false">
+
+  No. The generator is available without authentication at `/late-filing-letter`.
+
+  </Expandable>
+  <Expandable title="Is the letter available in German?" default-open="false">
+
+  The interface is bilingual in English and German, but the generated letter itself is always in English because it is meant for the IRS.
+
+  </Expandable>
+  <Expandable title="What if I missed more than one tax year?" default-open="false">
+
+  The form generates a letter for one missed tax year at a time. If you need letters for multiple years, generate a separate PDF for each missed year and make sure each one matches the corresponding filing package.
+
+  </Expandable>
+  <Expandable title="Can I upload a signature instead of drawing one?" default-open="false">
+
+  Yes. You can switch between drawing your signature in the browser and uploading a `PNG`, `JPG`, or `SVG` signature image.
+
+  </Expandable>
+  <Expandable title="Does the tool submit the letter to the IRS for me?" default-open="false">
+
+  No. The generator only creates the PDF. You must include it with your late Form 5472 and Form 1120 filing and send the package yourself.
+
+  </Expandable>
+</ExpandableGroup>
+
+## Related tools
+
+<Columns cols={3}>
+  <Card title="Prepare Form 5472 and Form 1120" href="/form-5472-1120" icon="file-text" cta="Open form generator">
+  Complete the main filing workflow and generate the forms that go with your reasonable cause letter.
+  </Card>
+  <Card title="Fax your filing package" href="/fax-service" icon="upload" cta="View fax options">
+  Review fax-related options if you plan to submit your late filing package by fax.
+  </Card>
+  <Card title="Browse all features" href="/features" icon="grid-2x2" cta="See all tools">
+  Explore other filing tools available in Nomadfiling.
+  </Card>
+</Columns>

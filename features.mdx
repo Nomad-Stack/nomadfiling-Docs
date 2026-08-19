@@ -1,123 +1,252 @@
 ---
-title: Core Features
-description: Overview of core capabilities and real-world use cases for managing project documentation.
+title: Nomadfiling features
+description: Explore Nomadfiling features for Form 5472, Form 1065, extensions, AI checks, IRS fax delivery, dashboard management, and MCP access.
 ---
 
-## Overview
+## File US tax forms with guided workflows
 
-Nomadfiling provides essential tools for organizing, editing, and collaborating on project documentation. You can structure your docs like a file system with folders, edit in rich text or Markdown, track changes over time, and control access for teams.
+Nomadfiling helps you prepare, review, and deliver IRS filing documents for foreign-owned LLCs and partnerships from one dashboard. Use guided wizards for core tax forms, generate IRS-ready PDFs, add supporting documents, and send eligible filings by fax without leaving the product.
 
 <Callout kind="info">
-  Start by creating a new project to experience these features hands-on.
+
+Nomadfiling supports foreign-owned single-member US LLC workflows and partnership workflows. Some features, such as direct fax delivery and AI checks, are optional parts of the filing flow rather than separate products.
+
 </Callout>
 
-## Project Organization and Folders
+## Use the filing workflow that matches your entity
 
-Organize your documentation into a hierarchical structure using folders and subfolders. This mirrors traditional file systems, making it intuitive to navigate large projects.
+The main workflows are organized by filing type. Start with the path that matches your tax obligation, then add extensions, supporting statements, or late-filing documentation as needed.
 
 <Columns cols={2}>
-  <Card title="Nested Folders" icon="folder" href="/guides/organization">
-    Create unlimited nesting for complex projects like API docs or user guides.
+  <Card title="Form 5472 and 1120 filing wizard" icon="file-text" href="/form-5472-1120">
+    Complete an 8-step workflow for foreign-owned single-member US LLC filings, then generate IRS-ready Form 5472 and Form 1120 PDFs.
   </Card>
-  <Card title="Search and Filter" icon="search" href="/guides/search">
-    Quickly find documents with full-text search across folders.
+  <Card title="Partnership filing wizard" icon="users" href="/partnership-filing">
+    Prepare Form 1065 and related partnership filings through an 8-step workflow that includes partners, Schedule K, withholding, and international reporting.
   </Card>
-  <Card title="Drag and Drop" icon="move" href="/guides/reorder">
-    Rearrange pages and folders effortlessly.
+  <Card title="Form 7004 tax extension" icon="calendar" href="/form-7004-extension">
+    Check eligibility with a short quiz, generate Form 7004, and optionally send the extension by fax to the IRS.
   </Card>
-  <Card title="Bulk Operations" icon="layers" href="/guides/bulk">
-    Move, rename, or delete multiple items at once.
+  <Card title="Late filing letter generator" icon="edit" href="/late-filing-letter">
+    Create a reasonable cause statement PDF for late Form 5472 filings when you need to explain why the filing was delayed.
   </Card>
 </Columns>
 
-Use cases include separating API references from tutorials or grouping release notes by version.
+## Complete Form 5472 and Form 1120 in one wizard
 
-## Rich Text Editing and Markdown Support
-
-Edit documents in a WYSIWYG rich text editor or switch to Markdown for precise control. Nomadfiling supports GitHub-flavored Markdown with live previews.
-
-<Tabs>
-  <Tab title="Rich Text" icon="edit-3">
-    Use familiar tools like bold, italics, lists, and embeds. Perfect for non-technical users.
-  </Tab>
-  <Tab title="Markdown" icon="code">
-    Write `**bold**`, `_italic_`, or `` `inline code` `` for advanced formatting.
-  </Tab>
-</Tabs>
-
-<CodeGroup tabs="Markdown,HTML">
-  ```markdown
-  # Document Title
-
-  ## Features
-  - **Bold** text
-  - *Italic* text
-  - `Inline code`
-
-  > Blockquote for tips.
-  ```
-  ```html
-  <h1>Document Title</h1>
-
-  <h2>Features</h2>
-  <ul>
-    <li><strong>Bold</strong> text</li>
-    <li><em>Italic</em> text</li>
-    <li><code>Inline code</code></li>
-  </ul>
-
-  <blockquote>Blockquote for tips.</blockquote>
-  ```
-</CodeGroup>
-
-## Version History and Revisions
-
-Track every change with automatic version history. Restore previous versions or compare diffs to maintain document integrity.
+The Form 5472 and Form 1120 workflow is built for foreign-owned single-member US LLCs that need an annual information return package. The wizard walks you from entity details through final PDF generation so you can review every section before download.
 
 <Steps>
-  <Step title="View History" icon="clock">
-    Open any document and click the history icon in the toolbar.
+  <Step title="Enter entity and owner details" icon="building2">
+
+  Add reporting corporation information for the LLC, then enter the foreign owner details used in the filing package. This covers the core business identity data needed for Form 5472 and Form 1120.
+
   </Step>
-  <Step title="Compare Changes" icon="git-compare">
-    Select two versions to see side-by-side diffs.
+  <Step title="Add related parties and transactions" icon="users">
+
+  Enter one or more related parties, then record the reportable transactions tied to each party. The workflow supports multiple related parties in the same filing session.
+
   </Step>
-  <Step title="Restore Version" icon="refresh-cw">
-    Revert to a previous state with one click.
+  <Step title="Sign, review, and generate PDFs" icon="check-circle">
+
+  Add a signature, include supporting statements if needed, review the filing, and generate the final PDFs. The last step includes PDF preview and download.
+
   </Step>
 </Steps>
 
-<Callout kind="tip">
-  Enable notifications for major revisions to stay updated on team changes.
+### What the Form 5472 and 1120 wizard includes
+
+<Columns cols={2}>
+  <Card title="8-step guided flow" icon="arrow-right" href="/form-5472-1120">
+    Move through Entity, Owner, Related Party, Transactions, Signature, Supporting Statements, Review, and PDF Preview in a fixed order.
+  </Card>
+  <Card title="IRS-ready PDF generation" icon="download" href="/form-5472-1120">
+    Generate completed Form 5472 and Form 1120 PDFs based on the data you entered in the wizard.
+  </Card>
+  <Card title="Supporting statements" icon="paperclip" href="/supporting-statements">
+    Add Part V and Part VI supporting statement content and include related capital contribution or distribution details where needed.
+  </Card>
+  <Card title="Optional filing add-ons" icon="plus" href="/late-filing-letter">
+    Add a late filing letter, Form 7004 extension workflow, or fax cover page when your filing situation requires extra documents.
+  </Card>
+</Columns>
+
+## Prepare partnership filings from a single workflow
+
+The partnership workflow covers more than Form 1065 alone. It collects partnership details, partner-level information, income and deduction data, withholding details, and international items, then generates the corresponding output forms.
+
+### What the partnership workflow covers
+
+<Columns cols={2}>
+  <Card title="Form 1065 workflow" icon="file-text" href="/partnership-filing">
+    Complete an 8-step filing process for partnership information, partner ownership, income and deductions, review, and final generation.
+  </Card>
+  <Card title="Partner forms and schedules" icon="database" href="/partnership-filing">
+    Generate related output including Schedule K-1 and partnership schedules based on the data entered in the wizard.
+  </Card>
+  <Card title="Withholding forms" icon="shield" href="/partnership-filing">
+    Include withholding data for Forms 8804 and 8805 as part of the partnership filing flow.
+  </Card>
+  <Card title="International reporting" icon="globe" href="/partnership-filing">
+    Add international K-2 and K-3 information for partnerships that need cross-border reporting.
+  </Card>
+</Columns>
+
+### Partnership outputs
+
+The partnership flow can generate these forms and schedules from the same filing session:
+
+- **Form 1065**
+- **Schedule K-1**
+- **Schedule K-2**
+- **Schedule K-3**
+- **Form 8804**
+- **Form 8805**
+- **Form 1040-NR**
+
+## Handle extensions and late filings
+
+Not every filing starts with a standard annual return. Nomadfiling also covers two common exception workflows: filing an extension and documenting reasonable cause for a late Form 5472 filing.
+
+<Tabs>
+  <Tab title="Form 7004 extension" icon="clock">
+
+  Use the Form 7004 workflow when you need more time to file. The process includes a 6-question eligibility quiz, form generation, and an optional IRS fax delivery step.
+
+  A good fit for this workflow is a filing that is not ready by the due date but still qualifies for an extension request.
+
+  </Tab>
+  <Tab title="Late filing letter" icon="alert-triangle">
+
+  Use the late filing letter generator when the due date has already passed and you need to submit a reasonable cause statement with your filing package. The generated PDF is designed for late Form 5472 situations and references the Farhy v. Commissioner case.
+
+  This workflow is separate from an extension request. It helps you explain a missed deadline rather than request more time before the deadline.
+
+  </Tab>
+</Tabs>
+
+<Callout kind="alert">
+
+A Form 7004 extension request and a late filing letter solve different problems. Use the extension workflow before the deadline when eligible. Use the late filing letter after a missed deadline to document reasonable cause.
+
 </Callout>
 
-## Collaboration and Permissions
+## Add AI checks and AI-generated supporting text
 
-Invite team members and set granular permissions per folder or document. Control who can view, edit, or admin.
+Nomadfiling includes AI features that help you catch issues and draft supporting material faster. These features assist your workflow, but you still review the final filing before submission.
 
-```mermaid
-graph TD
-    A[Owner] --> B[Admin]
-    A --> C[Editor]
-    B --> D[Viewer]
-    C --> D
-    D[Viewer] -->|Read-only| E[Document]
-```
+<Columns cols={2}>
+  <Card title="AI compliance scanner" icon="search" href="/ai-compliance-scanner">
+    Send a generated PDF for AI-powered compliance checking to catch potential filing issues before you download or fax the final package.
+  </Card>
+  <Card title="AI supporting statement generation" icon="zap" href="/supporting-statements">
+    Generate draft supporting statement text for IRS attachments, then review and edit the language before using it in your filing.
+  </Card>
+</Columns>
 
-<Board title="Permission Workflow">
-  <BoardColumn title="Setup" color="0" icon="settings">
-    <BoardCard title="Invite Users" description="Add emails or teams" icon="users" />
-    <BoardCard title="Set Roles" description="Owner, Editor, Viewer" />
-  </BoardColumn>
-  <BoardColumn title="Review" color="1" icon="eye">
-    <BoardCard title="Pending Changes" description="Approve edits" dueDate="2024-12-15" />
-  </BoardColumn>
-  <BoardColumn title="Live" color="2" icon="check-circle">
-    <BoardCard title="Published Docs" description="Public or private access" createdAt="2024-12-01" />
-  </BoardColumn>
-</Board>
+### How the AI features fit into the workflow
 
-<Expandable title="Advanced Permissions" default-open="false">
-  Use role-based access control (RBAC) for enterprise teams. Assign custom roles like "Reviewer" with approve-only powers.
-</Expandable>
+The compliance scanner analyzes generated PDFs after the filing data has been assembled. Supporting statement generation helps earlier in the process when you are preparing attachment text for the filing package.
 
-These features enable seamless teamwork on documentation for software projects, internal wikis, or knowledge bases. Explore the quickstart to set up your first project.
+<Callout kind="tip">
+
+Treat AI output as a review layer, not a substitute for checking your filing data. Confirm names, dates, amounts, entity details, and transaction entries before you generate the final PDFs.
+
+</Callout>
+
+## Send documents to the IRS by fax
+
+Fax delivery is built into the platform for workflows that support document transmission. You can generate the PDFs, add a fax cover page when needed, send the package, and then track delivery status from your account.
+
+<Columns cols={2}>
+  <Card title="Direct IRS fax delivery" icon="upload" href="/fax-service">
+    Send eligible filing PDFs to the IRS from inside Nomadfiling instead of downloading and faxing them manually.
+  </Card>
+  <Card title="Fax history and status" icon="bar-chart" href="/fax-service">
+    View sent faxes, outbox history, and delivery status for transmitted filing packages.
+  </Card>
+  <Card title="Optional fax cover page" icon="file-text" href="/fax-service">
+    Add sender details and a fax cover page as part of the document package when your filing flow includes fax delivery.
+  </Card>
+  <Card title="Extension faxing" icon="arrow-right" href="/form-7004-extension">
+    Use the same fax capability for Form 7004 when you choose direct IRS delivery during the extension workflow.
+  </Card>
+</Columns>
+
+## Manage filings from the dashboard
+
+The dashboard is the control center for work that is already in progress and filings you completed earlier. Use it to return to saved work, filter by year, and keep track of what still needs attention.
+
+<Columns cols={2}>
+  <Card title="Saved filing management" icon="folder" href="/dashboard">
+    View, open, and continue existing filings without re-entering all data from the beginning.
+  </Card>
+  <Card title="Year filter" icon="calendar" href="/dashboard">
+    Filter filings by tax year so you can focus on the period you are currently preparing or reviewing.
+  </Card>
+  <Card title="Edit, view, and delete" icon="settings" href="/dashboard">
+    Update a draft, open a completed filing, or remove records you no longer need.
+  </Card>
+  <Card title="Credits tracking" icon="bar-chart" href="/dashboard">
+    Monitor available credits connected to paid filing activity from the same account area.
+  </Card>
+</Columns>
+
+## Connect AI agents through the MCP server
+
+Nomadfiling includes an MCP server for teams that want to access filing workflows through AI clients and custom agents. This is the integration layer for products such as Claude Desktop, ChatGPT, or your own agent-based tooling.
+
+### MCP access options
+
+<Tabs>
+  <Tab title="Interactive clients" icon="monitor">
+
+  Connect supported clients such as Claude Desktop or ChatGPT to Nomadfiling through the MCP server. This path is useful when you want an AI assistant to help you work with filing tasks through a connected client.
+
+  </Tab>
+  <Tab title="Custom agents" icon="code">
+
+  Use the MCP server in your own agent environment when you need deeper integration into internal tools or automated workflows. This path is useful for teams building custom orchestration around tax filing tasks.
+
+  </Tab>
+</Tabs>
+
+### MCP and authentication features
+
+<Columns cols={2}>
+  <Card title="MCP server" icon="cloud" href="/mcp-server">
+    Access 14 tools for AI agent integration across supported Nomadfiling workflows.
+  </Card>
+  <Card title="OAuth 2.1 with PKCE" icon="lock" href="/oauth">
+    Authorize MCP clients with an authorization code flow that supports PKCE for public and desktop-style clients.
+  </Card>
+  <Card title="API key management" icon="key" href="/api-keys">
+    Create and revoke API keys for MCP access when your integration uses key-based authentication.
+  </Card>
+  <Card title="Client setup guides" icon="book-open" href="/mcp-server">
+    Follow detailed setup instructions for supported AI clients and custom agent environments.
+  </Card>
+</Columns>
+
+## Use Nomadfiling in your preferred language
+
+Nomadfiling includes a 16-language user interface so you can work through filing flows in the language that is most comfortable for you. Language support applies to the product interface, which is especially helpful when collecting detailed tax information across complex multi-step workflows.
+
+## Choose the right starting point
+
+The fastest way to get value from Nomadfiling is to start with the filing workflow that matches your immediate need, then add only the supporting features you require.
+
+<Columns cols={2}>
+  <Card title="Start Form 5472 and 1120" icon="rocket" href="/form-5472-1120">
+    Use this path for foreign-owned single-member US LLC annual filing requirements.
+  </Card>
+  <Card title="Start partnership filing" icon="users" href="/partnership-filing">
+    Use this path for Form 1065, partner schedules, withholding, and international reporting.
+  </Card>
+  <Card title="Request an extension" icon="clock" href="/form-7004-extension">
+    Use this path when you need more time before the filing deadline.
+  </Card>
+  <Card title="Prepare a late filing letter" icon="alert-triangle" href="/late-filing-letter">
+    Use this path when the deadline has passed and you need a reasonable cause statement.
+  </Card>
+</Columns>

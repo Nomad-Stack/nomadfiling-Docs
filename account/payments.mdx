@@ -1,0 +1,137 @@
+---
+title: Payments and billing
+description: Review your Nomadfiling payment history, download receipts, and check filing credits from the payments page.
+---
+
+## Review payments, receipts, and billing details
+
+The Payments page shows every payment on your account in reverse chronological order, so your newest charges appear first. Use it to confirm a payment status, open the Stripe receipt, or cross-check a charge before contacting support.
+
+<Callout kind="info">
+
+If you are not signed in, Nomadfiling redirects you from `/payments` to `/login`. Sign in first, then open the Payments page from the main navigation.
+
+</Callout>
+
+### Open the Payments page
+
+<Steps>
+  <Step title="Sign in to your account" icon="lock">
+
+  Open Nomadfiling and sign in with the account that made the payment.
+
+  </Step>
+  <Step title="Select Payments from the navigation" icon="credit-card">
+
+  Use the main navigation and select **Payments**. The navigation includes **Dashboard**, **Fax Outbox**, **Payments**, **Account**, **Language**, and **Logout**.
+
+  When the page loads, **Payments** is the active section.
+
+  </Step>
+  <Step title="Review your most recent charges first" icon="check-circle">
+
+  Nomadfiling loads all payment records and sorts them by `created_at` in descending order. Your newest payment appears at the top of the list.
+
+  If your account has no payment records yet, the page shows a credit card icon and the message **No payments yet**.
+
+  </Step>
+</Steps>
+
+### What each payment shows
+
+Each payment appears as a card with the payment status, formatted amount, payment date, and supporting links. This layout is designed for quick scanning, so you can tell whether a charge succeeded without opening the receipt.
+
+The page reads each payment record from the payments table and displays the following fields:
+
+- `id`
+- `stripe_session_id`
+- `stripe_payment_intent_id`
+- `amount`
+- `currency`
+- `status`
+- `customer_email`
+- `created_at`
+- `receipt_url`
+
+### Understand statuses and amounts
+
+A payment card combines an icon, a status label, and the formatted amount so you can scan the list quickly.
+
+| Status | Icon color | What it means |
+| --- | --- | --- |
+| `paid` | Green | The payment completed successfully. |
+| `failed` | Red | Stripe did not complete the payment. |
+| `pending` | Amber | The payment is still processing or waiting on confirmation. |
+| Any other status | Amber | The payment is not yet in a final successful or failed state. |
+
+Nomadfiling formats amounts from cents into a currency value using the German locale. For example, an `amount` of `19700` with currency `USD` displays as `197,00 $`.
+
+<Callout kind="tip">
+
+If the amount format looks unusual, that is expected. The page uses German-style number formatting, which places the decimal comma before the currency symbol for supported currencies.
+
+</Callout>
+
+### Open a receipt or Stripe payment record
+
+Each payment card includes direct links for follow-up actions, so you do not need to search your email for receipts.
+
+- **Receipt link** — opens the Stripe receipt URL stored in `receipt_url`
+- **Stripe link** — opens the Stripe payment page at `https://dashboard.stripe.com/payments/{stripe_payment_intent_id}`
+- **Customer email** — shows the email address associated with the payment
+
+On mobile devices, the receipt and Stripe links move into a separate bottom section of the card with a top border. The information is the same, but the layout changes to fit smaller screens.
+
+### When to use the Payments page
+
+Use the Payments page when you need a quick answer about a charge without leaving your account.
+
+- Confirm whether a payment succeeded
+- Download or re-open a Stripe receipt
+- Match a charge to the email address used during checkout
+- Check the order of recent payments
+- Verify billing activity before contacting support
+
+### Troubleshoot missing or unexpected payments
+
+Most payment questions come down to account access, timing, or status.
+
+<ExpandableGroup>
+  <Expandable title="I cannot open the Payments page" default-open="true">
+
+  Nomadfiling restricts the Payments page to signed-in users. If you open `/payments` while signed out, the app redirects you to `/login`.
+
+  Sign in, then try again from the main navigation.
+
+  </Expandable>
+  <Expandable title="I do not see a payment I expected">
+
+  The list shows all payments for the current account, sorted with the newest first. If a payment is missing, first confirm that you are signed in to the same account and email identity used during checkout.
+
+  If the payment was recent, refresh the page and check again. Also look for a `pending` status, which can appear before Stripe finishes processing the charge.
+
+  </Expandable>
+  <Expandable title="My payment shows failed">
+
+  A `failed` status means Stripe did not complete the transaction. The charge card remains visible in your history so you can confirm what happened.
+
+  If you still need the filing or service, return to the relevant checkout flow and try the payment again. If the failure looks incorrect, keep the payment date and amount handy before contacting support.
+
+  </Expandable>
+  <Expandable title="I need the official receipt for reimbursement or bookkeeping">
+
+  Open the **Receipt** link on the payment card. That link points to the Stripe-hosted receipt URL saved with the payment.
+
+  If the payment does not include a receipt link, gather the payment date, amount, and customer email before reaching out to support.
+
+  </Expandable>
+</ExpandableGroup>
+
+### Related pages
+
+<Columns cols={2}>
+  <Card title="View pricing" href="/getting-started/pricing" icon="bar-chart" cta="Open pricing" />
+  <Card title="Go to dashboard" href="/dashboard" icon="home" cta="Open dashboard" />
+  <Card title="Manage your profile" href="/account/profile" icon="settings" cta="Open profile" />
+  <Card title="Manage API keys" href="/account/api-keys" icon="key" cta="Open API keys" />
+</Columns>
