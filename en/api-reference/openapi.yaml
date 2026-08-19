@@ -920,7 +920,7 @@ components:
             - type: string
             - type: integer
             - type: number
-            - type: 'null'
+          nullable: true
           example: req_1
         result:
           type: object
@@ -974,7 +974,7 @@ components:
             - type: string
             - type: integer
             - type: number
-            - type: 'null'
+          nullable: true
           example: req_1
         error:
           type: object
