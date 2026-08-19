@@ -18,13 +18,13 @@ The two AI features solve different problems in the filing flow. One checks comp
 
 ### AI Compliance Scanner
 
-The AI Compliance Scanner analyzes the generated **Form 5472** and **Form 1120** PDFs in Step 8 of the filing wizard. Nomadfiling sends the generated PDF bytes to the `analyze-pdf` Supabase Edge Function, which calls an AI API to look for potential IRS compliance errors and returns findings for your review.
+The AI Compliance Scanner analyzes the generated **Form 5472** and **Form 1120** PDFs in Step 8 of the filing wizard. Nomadfiling sends the generated PDF bytes to the server-side `analyze-pdf` function, which calls an AI API to look for potential IRS compliance errors and returns findings for your review.
 
 The scanner is designed for the final review stage, when your filing data is already entered and the PDFs have been generated. That makes it useful for spotting issues that only become visible in the finished documents, such as missing information, inconsistencies, or fields that may need another look.
 
 ### AI Supporting Statement Generation
 
-AI Supporting Statement Generation helps you create draft text for IRS supporting statements in Step 6 of the Form 5472 wizard. Nomadfiling sends your statement context to the `generate-statement` Supabase Edge Function, which generates AI draft language that you review and edit before including it in the filing.
+AI Supporting Statement Generation helps you create draft text for IRS supporting statements in Step 6 of the Form 5472 wizard. Nomadfiling sends your statement context to the server-side `generate-statement` function, which generates AI draft language that you review and edit before including it in the filing.
 
 Unlike the scanner, this feature is not checking PDFs. It helps you move from blank text areas to a usable first draft, especially for Part V and Part VI supporting statements that often need custom explanations.
 
@@ -90,7 +90,7 @@ Generate draft text when you are working on supporting statements in Step 6. Thi
   </Step>
 
   <Step title="Generate draft text" icon="zap" title-type="p">
-    Use the AI statement generation option to create draft language for your IRS supporting statements. Nomadfiling sends the request to the `generate-statement` Supabase Edge Function.
+    Use the AI statement generation option to create draft language for your IRS supporting statements. Nomadfiling sends the request to the server-side `generate-statement` function.
 
     This feature requires JWT authentication and is intended for authenticated filing activity.
   </Step>

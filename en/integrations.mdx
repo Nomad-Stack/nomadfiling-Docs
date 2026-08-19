@@ -1,11 +1,11 @@
 ---
 title: Integrations
-description: Understand the external services Nomadfiling connects to — payments, fax delivery, AI tools, email, analytics, and PDF generation.
+description: Understand how Nomadfiling handles payments, fax delivery, AI-assisted checks, and document generation.
 ---
 
 ## Nomadfiling connects payments, filing delivery, document generation, and account data through a small set of third-party services
 
-Most integrations in Nomadfiling support a specific filing workflow: store filing data, collect payment, generate PDFs, send forms by fax, and track the result. A few integrations support surrounding tasks such as email delivery, affiliate attribution, and analytics.
+Most integrations in Nomadfiling support a specific filing workflow: collect payment, generate PDFs, send forms by fax, and track the result.
 
 Use this page to understand what each integration does, where it appears in the product, and what data or actions depend on it.
 
@@ -16,9 +16,6 @@ Nomadfiling is a filing platform for foreign-owned LLCs. The integrations below 
 </Callout>
 
 <Columns cols={2}>
-  <Card title="Supabase" icon="database" href="#supabase-backend-and-auth">
-    Stores user accounts, filing records, payments, fax logs, API credentials, and uploaded documents.
-  </Card>
   <Card title="Stripe" icon="credit-card" href="#stripe-payments">
     Creates checkout sessions for filing purchases, extension payments, receipts, and promotion codes.
   </Card>
@@ -28,52 +25,10 @@ Nomadfiling is a filing platform for foreign-owned LLCs. The integrations below 
   <Card title="AI API" icon="zap" href="#ai-api-compliance-and-statement-generation">
     Analyzes PDFs for filing issues and drafts supporting statement text.
   </Card>
-  <Card title="Brevo" icon="mail" href="#brevo-email-and-event-tracking">
-    Sends registration emails and records email engagement events.
-  </Card>
-  <Card title="Tolt.io" icon="bar-chart" href="#toltio-affiliate-tracking">
-    Tracks affiliate referrals through checkout metadata and payment records.
-  </Card>
-  <Card title="Meta and Google" icon="external-link" href="#meta-and-google-analytics">
-    Tracks checkout and purchase conversions for marketing attribution.
-  </Card>
-  <Card title="pdf-lib and JSZip" icon="file-text" href="#pdf-generation-and-zip-bundling">
+  <Card title="Document generation" icon="file-text" href="#pdf-generation-and-zip-bundling">
     Fills IRS PDF templates and bundles generated forms into downloadable ZIP files.
   </Card>
 </Columns>
-
-## Supabase backend and auth
-
-Supabase is the core backend for Nomadfiling. It provides the application database, authentication, edge function runtime, and storage buckets used for uploaded and generated filing assets.
-
-Nomadfiling uses Supabase for user accounts, filing data, fax uploads, payment records, API credentials, and server-side workflows that should not run directly in the browser.
-
-### What Supabase handles
-
-- **PostgreSQL database** for application data
-- **Authentication** for email and password sign-in with JWT-based sessions
-- **Edge Functions** for server-side workflows
-- **Storage buckets** for PDF uploads and related file storage
-
-### Core tables
-
-- `profiles`
-- `filings`
-- `partnership_filings`
-- `payments`
-- `feature_requests`
-- `feature_votes`
-- `fax_logs`
-- `api_keys`
-- `oauth_clients`
-- `oauth_tokens`
-- `oauth_auth_codes`
-
-<Callout kind="tip">
-
-If your filing, payment, or fax activity appears in the app but a downstream action did not complete, the source record usually exists in Supabase first. That makes Supabase the system of record for most operational troubleshooting.
-
-</Callout>
 
 ## Stripe payments
 
@@ -88,17 +43,12 @@ Nomadfiling offers four pricing tiers, ranging from `$147` to `$497`, through St
 - **Payment verification** after checkout completes
 - **Receipt URL storage** for paid orders
 - **Promotion code support** during checkout
-- **Affiliate metadata support** for referral attribution
 
 ### Stripe edge functions
 
 - `create-checkout`
 - `create-extension-checkout`
 - `verify-payment`
-
-### What Stripe stores in the flow
-
-Stripe checkout metadata can include referral information that Nomadfiling later persists to the `payments` table. That metadata links affiliate attribution to a successful purchase without changing the filing workflow itself.
 
 ## Telnyx fax delivery
 
@@ -195,85 +145,15 @@ AI-generated output should be reviewed before submission. Nomadfiling uses AI to
 
 </Callout>
 
-## Brevo email and event tracking
-
-Brevo, previously known as Sendinblue, handles registration email delivery and email tracking events. Nomadfiling uses it for welcome emails and to record downstream engagement signals from sent messages.
-
-The same integration also supports purchase-related email event tracking workflows.
-
-### Edge functions
-
-- `send-registration-email` sends the welcome email
-- `brevo-track` receives email tracking events
-
-### What this integration covers
-
-- **Welcome and registration emails**
-- **Email delivery and engagement tracking**
-- **Purchase-related event tracking tied to email workflows**
-
-## Tolt.io affiliate tracking
-
-Tolt.io tracks affiliate referrals associated with purchases. When a visitor arrives through an affiliate link, Nomadfiling reads the referral identifier in the browser and passes it into Stripe checkout metadata.
-
-After a successful payment, Nomadfiling persists that referral value to the `payments` table so affiliate attribution remains connected to the order.
-
-### How referral tracking works
-
-```mermaid
-sequenceDiagram
-  participant V as Visitor
-  participant N as Nomadfiling
-  participant S as Stripe
-  participant D as Payments table
-
-  V->>N: Arrives with affiliate referral
-  N->>N: Read tolt_referral
-  N->>S: Create checkout with metadata
-  S-->>N: Payment success
-  N->>D: Store referral with payment record
-```
-
-The browser helper that reads the referral value lives in `src/lib/tolt.ts`.
-
-## Meta and Google analytics
-
-Nomadfiling uses Meta and Google services for conversion tracking around checkout and payment completion. These integrations support attribution and campaign measurement rather than filing logic.
-
-Google Tag Manager is loaded in the app shell, and route change tracking sends analytics events during navigation.
-
-### Tracked events
-
-- **Meta Conversions API**
-  - `InitiateCheckout` when checkout starts
-  - `Purchase` when payment succeeds
-  - Personally identifiable fields are SHA-256 hashed before transmission
-
-- **Google Ads**
-  - Conversion ID: `AW-18054761191`
-  - Conversion label: `dm54CP6SopMcEOeVl6FD`
-
-- **Google Tag Manager**
-  - Loaded in `index.html`
-
-- **RouteChangeTracker**
-  - Fires analytics events on navigation
-
-<Callout kind="info">
-
-These integrations are marketing and attribution tools. They do not affect PDF generation, filing record storage, or fax delivery.
-
-</Callout>
-
 ## PDF generation and ZIP bundling
 
-Nomadfiling generates filing documents in the browser with `pdf-lib`. After generation, it can bundle multiple PDFs into a ZIP archive with `JSZip` for download.
+Nomadfiling generates filing documents in the browser. After generation, it can bundle multiple PDFs into a ZIP archive for download.
 
 This integration layer is what turns filing data into completed IRS forms, cover sheets, supporting statements, and packaged document sets.
 
-### PDF generation with pdf-lib
+### PDF generation
 
-`pdf-lib` fills IRS form templates stored under `/public/templates/`. The generated output includes both core returns and supporting documents.
+The document generator fills IRS form templates stored under `/public/templates/`. The generated output includes both core returns and supporting documents.
 
 Supported document generation includes:
 
@@ -291,7 +171,7 @@ Supported document generation includes:
 - Late filing letters
 - Supporting statements
 
-### ZIP bundling with JSZip
+### ZIP bundling
 
 When a filing includes multiple generated documents, Nomadfiling packages those PDFs into a single ZIP download. This is especially useful for multi-document or multi-party filing flows.
 
@@ -309,18 +189,16 @@ Most user-facing filing flows follow the same sequence: create or update filing 
 
 ```mermaid
 graph TD
-  A[User signs in] --> B[Supabase stores filing data]
+  A[User signs in] --> B[Filing data is saved]
   B --> C[Stripe creates checkout]
   C --> D[Payment verified]
-  D --> E[pdf-lib generates IRS forms]
-  E --> F[JSZip bundles PDFs]
+  D --> E[Document generator creates IRS forms]
+  E --> F[Generated PDFs are bundled]
   E --> G[Telnyx sends fax]
-  D --> H[Brevo sends email]
-  C --> I[Meta and Google track conversion]
   B --> J[AI functions analyze or draft text]
 ```
 
-That sequence is why service health can affect different parts of the product in different ways. A payment issue does not stop sign-in, and an analytics issue does not stop PDF generation, but a storage or fax issue can affect delivery.
+That sequence is why service health can affect different parts of the product in different ways. A payment issue does not stop sign-in, but a storage or fax issue can affect delivery.
 
 ## Related product areas
 
@@ -344,27 +222,22 @@ That sequence is why service health can affect different parts of the product in
 <ExpandableGroup>
   <Expandable title="Does Nomadfiling store filing data itself or only in third-party services?" default-open="false">
 
-  Nomadfiling stores its application data in Supabase. Third-party services handle specialized tasks such as payments, fax transport, email delivery, analytics, and AI-assisted analysis.
+  Nomadfiling stores the application data needed for accounts and filing workflows. Specialized services handle payments, fax transport, and AI-assisted analysis.
 
   </Expandable>
   <Expandable title="Which integrations are required to complete a filing?" default-open="false">
 
-  Supabase is foundational because it stores accounts and filing records. Stripe is required when the workflow includes payment, `pdf-lib` is required to generate documents, and Telnyx is required only when you send the filing by fax instead of downloading the PDFs.
+  Account and filing storage are part of the core platform. Stripe is required when the workflow includes payment, document generation is required to create filing files, and Telnyx is required only when you send a filing by fax instead of downloading the PDFs.
 
   </Expandable>
   <Expandable title="Does Nomadfiling send tax forms directly to the IRS?" default-open="false">
 
-  Nomadfiling can send completed PDF packages through the Telnyx fax integration when the filing workflow uses IRS fax delivery. The app does not rely on email delivery for tax form submission.
+  Nomadfiling can send completed PDF packages through the Telnyx fax integration when the filing workflow uses IRS fax delivery.
 
   </Expandable>
   <Expandable title="Is AI required to use Nomadfiling?" default-open="false">
 
   No. AI features support compliance review and statement drafting, but the core filing flows depend on form generation, payment, storage, and delivery services rather than AI.
-
-  </Expandable>
-  <Expandable title="Where does affiliate attribution happen?" default-open="false">
-
-  Affiliate attribution starts in the browser when Nomadfiling reads `tolt_referral`. That value is passed into Stripe checkout metadata and later saved with the payment record.
 
   </Expandable>
 </ExpandableGroup>

@@ -110,7 +110,7 @@ If you know you are liable for tax, have already filed other extensions, or have
 
   #### What success looks like
 
-  After a valid submission, Nomadfiling calls `generateForm7004()` and produces a PDF using `pdf-lib`. The workflow then moves to the result screen where you can review the filing summary and download the file.
+  After a valid submission, Nomadfiling calls `generateForm7004()` and produces a PDF in the browser. The workflow then moves to the result screen where you can review the filing summary and download the file.
 
   </Step>
 
@@ -198,7 +198,7 @@ The extension form itself is generated before payment, but direct fax delivery u
 
 ### Client-side PDF generation
 
-The generated file uses the `f7004-2025.pdf` template and is built client-side with `pdf-lib`. Your form data is used to populate the 2025 extension PDF before you download it or send it by fax.
+The generated file uses the `f7004-2025.pdf` template and is built in the browser. Your form data is used to populate the 2025 extension PDF before you download it or send it by fax.
 
 ## FAQ
 

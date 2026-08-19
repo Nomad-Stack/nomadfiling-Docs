@@ -18,13 +18,13 @@ Die beiden KI-Funktionen lösen unterschiedliche Probleme im Einreichungsablauf.
 
 ### KI-Compliance-Scanner
 
-Der KI-Compliance-Scanner analysiert die erstellten PDFs für **Form 5472** und **Form 1120** in Schritt 8 des Einreichungsassistenten. Nomadfiling sendet die erstellten PDF-Bytes an die Supabase Edge Function `analyze-pdf`, die über eine KI-API nach potenziellen IRS-Compliance-Fehlern sucht und Ergebnisse für deine Prüfung zurückgibt.
+Der KI-Compliance-Scanner analysiert die erstellten PDFs für **Form 5472** und **Form 1120** in Schritt 8 des Einreichungsassistenten. Nomadfiling sendet die erstellten PDF-Bytes an die serverseitige Funktion `analyze-pdf`, die über eine KI-API nach potenziellen IRS-Compliance-Fehlern sucht und Ergebnisse für deine Prüfung zurückgibt.
 
 Der Scanner ist für die abschließende Prüfphase vorgesehen, wenn deine Einreichungsdaten bereits eingegeben und die PDFs erstellt wurden. So lassen sich Probleme erkennen, die erst in den fertigen Dokumenten sichtbar werden, etwa fehlende Angaben, Inkonsistenzen oder Felder, die nochmals geprüft werden sollten.
 
 ### KI-Erstellung unterstützender Erklärungen
 
-Die KI-Erstellung unterstützender Erklärungen hilft dir in Schritt 6 des Formular-5472-Assistenten, Textentwürfe für unterstützende IRS-Erklärungen zu erstellen. Nomadfiling sendet den Kontext deiner Erklärung an die Supabase Edge Function `generate-statement`, die einen KI-Textentwurf erzeugt, den du prüfst und bearbeitest, bevor du ihn in die Einreichung aufnimmst.
+Die KI-Erstellung unterstützender Erklärungen hilft dir in Schritt 6 des Formular-5472-Assistenten, Textentwürfe für unterstützende IRS-Erklärungen zu erstellen. Nomadfiling sendet den Kontext deiner Erklärung an die serverseitige Funktion `generate-statement`, die einen KI-Textentwurf erzeugt, den du prüfst und bearbeitest, bevor du ihn in die Einreichung aufnimmst.
 
 Anders als der Scanner prüft diese Funktion keine PDFs. Sie hilft dir, leere Textbereiche in einen brauchbaren ersten Entwurf zu verwandeln, insbesondere bei unterstützenden Erklärungen zu Part V und Part VI, die häufig individuelle Erläuterungen erfordern.
 
@@ -90,7 +90,7 @@ Erstelle Textentwürfe, während du in Schritt 6 an unterstützenden Erklärunge
   </Step>
 
   <Step title="Textentwurf erstellen" icon="zap" title-type="p">
-    Nutze die KI-Option zur Erklärungserstellung, um einen Textentwurf für deine unterstützenden IRS-Erklärungen zu erstellen. Nomadfiling sendet die Anfrage an die Supabase Edge Function `generate-statement`.
+    Nutze die KI-Option zur Erklärungserstellung, um einen Textentwurf für deine unterstützenden IRS-Erklärungen zu erstellen. Nomadfiling sendet die Anfrage an die serverseitige Funktion `generate-statement`.
 
     Diese Funktion erfordert JWT-Authentifizierung und ist für authentifizierte Einreichungsaktivitäten vorgesehen.
   </Step>

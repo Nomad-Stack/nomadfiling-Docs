@@ -25,7 +25,7 @@ You need:
 The MCP endpoint is:
 
 ```text
-{VITE_SUPABASE_URL}/functions/v1/mcp-server
+{API_BASE_URL}/mcp-server
 ```
 
 If you are configuring a local client file, keep the endpoint and key together so you can test the connection immediately after creating the key.
@@ -151,10 +151,10 @@ Claude Desktop connects to Nomadfiling's MCP server by sending your API key in t
       "command": "npx",
       "args": [
         "mcp-remote",
-        "{VITE_SUPABASE_URL}/functions/v1/mcp-server"
+        "{API_BASE_URL}/mcp-server"
       ],
       "env": {
-        "MCP_REMOTE_HEADERS": "{\"Authorization\":\"Bearer nf_example_9a7c4d2e1f6b8c3d5a9e7f4b2c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6\"}"
+        "MCP_REMOTE_HEADERS": "{\"Authorization\":\"Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a\"}"
       }
     }
   }
@@ -166,9 +166,9 @@ Claude Desktop connects to Nomadfiling's MCP server by sending your API key in t
   "name": "nomadfiling",
   "transport": {
     "type": "http",
-    "url": "{VITE_SUPABASE_URL}/functions/v1/mcp-server",
+    "url": "{API_BASE_URL}/mcp-server",
     "headers": {
-      "Authorization": "Bearer nf_example_9a7c4d2e1f6b8c3d5a9e7f4b2c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6"
+      "Authorization": "Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a"
     }
   }
 }

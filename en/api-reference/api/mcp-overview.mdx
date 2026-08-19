@@ -5,7 +5,7 @@ description: Connect AI agents to Nomadfiling through the Model Context Protocol
 
 ## Connect agents to the Nomadfiling MCP server
 
-Nomadfiling exposes a Model Context Protocol server for AI agents that need to discover filing tools, read tool schemas, and create filings over a standard JSON-RPC interface. The server runs as a Deno-based Supabase Edge Function, uses streamable HTTP transport, and stays stateless between requests.
+Nomadfiling exposes a Model Context Protocol server for AI agents that need to discover filing tools, read tool schemas, and create filings over a standard JSON-RPC interface. The server uses streamable HTTP transport and stays stateless between requests.
 
 <Callout kind="info">
 
@@ -19,13 +19,13 @@ Use these values when configuring MCP clients or validating the `initialize` res
 
 <ParamField body="baseUrl" param-type="string" required="true" show-location="false">
 
-`{SUPABASE_URL}/functions/v1/mcp-server`
+`{API_BASE_URL}/mcp-server`
 
 </ParamField>
 
 <ParamField body="runtime" param-type="string" show-location="false">
 
-Deno on Supabase Edge Functions.
+Serverless runtime.
 
 </ParamField>
 
@@ -109,7 +109,7 @@ Send JSON-RPC requests to the root MCP endpoint. If your client requests server-
 
 <Request tabs="cURL,JavaScript" default-tab="1">
 ```bash
-curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+curl -X POST "{API_BASE_URL}/mcp-server" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{
@@ -127,7 +127,7 @@ curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
 ```
 
 ```javascript
-const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+const response = await fetch("{API_BASE_URL}/mcp-server", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -178,7 +178,7 @@ Use SSE when your MCP client expects `event: message` frames instead of a plain 
 
 <CodeGroup tabs="cURL,JavaScript">
 ```bash
-curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+curl -X POST "{API_BASE_URL}/mcp-server" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
@@ -190,7 +190,7 @@ curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
 ```
 
 ```javascript
-const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+const response = await fetch("{API_BASE_URL}/mcp-server", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -296,7 +296,7 @@ This example shows the pattern for invoking a tool after discovery. Replace the 
 
 <Request tabs="cURL,JavaScript" default-tab="1">
 ```bash
-curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
+curl -X POST "{API_BASE_URL}/mcp-server" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer nf_example_9xmk7q2r4b7m8n2p6t1v5c8a" \
   -d '{
@@ -313,7 +313,7 @@ curl -X POST "{SUPABASE_URL}/functions/v1/mcp-server" \
 ```
 
 ```javascript
-const response = await fetch("{SUPABASE_URL}/functions/v1/mcp-server", {
+const response = await fetch("{API_BASE_URL}/mcp-server", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -411,7 +411,7 @@ Starts the authorization flow and redirects to `https://app.nomadfiling.com/oaut
 
 <ParamField path="/approve" param-type="POST" required="true">
 
-Approves OAuth consent in a frontend-facing flow that uses a Supabase JWT.
+Approves OAuth consent in a frontend-facing flow that uses the signed-in user's JWT.
 
 </ParamField>
 
