@@ -1,0 +1,160 @@
+---
+title: Changelog
+description: Version history with recent updates, new features, and changes.
+---
+
+## Recent Releases
+
+Stay up to date with the latest improvements to Nomadfiling. Check this page for new features, bug fixes, and breaking changes.
+
+<Callout kind="info">
+  Subscribe to our RSS feed or join the Discord community to get notified about new releases automatically.
+</Callout>
+
+<Update label="2024-10-15" description="v1.2.0" tags={["feature", "improvement"]}>
+
+## New Features
+
+- Added real-time collaboration for documentation editing with multiple users.
+- Introduced version history and rollback for pages.
+- New search bar with fuzzy matching across all docs.
+
+## Improvements
+
+- Enhanced performance for large documentation sites (20% faster load times).
+- Improved mobile responsiveness for the editor interface.
+
+## Bug Fixes
+
+- Fixed issue where images failed to upload in certain browsers.
+- Resolved sync errors during offline editing.
+
+</Update>
+
+<Update label="2024-09-20" description="v1.1.0" tags={["feature", "bugfix"]}>
+
+## New Features
+
+- Integrated GitHub sync for seamless version control.
+- Added custom themes and branding options (e.g., primary color `#3B82F6`).
+
+## Bug Fixes
+
+- Fixed authentication token refresh loops.
+- Corrected table rendering issues in preview mode.
+
+</Update>
+
+<Update label="2024-08-10" description="v1.0.0" tags={["breaking", "feature"]}>
+
+## Initial Release
+
+- Core documentation editor with MDX support.
+- Project organization with folders and tags.
+- Basic authentication via API keys.
+
+## Breaking Changes
+
+- Updated configuration format from JSON to YAML for better readability.
+
+</Update>
+
+## Upgrade Instructions
+
+Follow these steps to update your Nomadfiling instance to the latest version.
+
+<Steps>
+  <Step title="Backup Your Data" icon="database">
+
+    Create a full backup of your documentation space.
+
+    ```
+    nomadfiling backup --output ./backup-$(date +%Y%m%d)
+    ```
+
+  </Step>
+  <Step title="Update CLI" icon="download">
+    <Tabs>
+      <Tab title="npm" icon="package">
+````bash
+npm install -g nomadfiling@latest
+````
+      </Tab>
+      <Tab title="yarn" icon="package">
+````bash
+yarn global add nomadfiling@latest
+````
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Run Migration" icon="settings">
+
+    Apply any database migrations.
+
+    ```
+    nomadfiling migrate
+    ```
+
+  </Step>
+  <Step title="Restart Server" icon="refresh-cw">
+
+    Restart your Nomadfiling server to apply changes.
+
+    ```
+    nomadfiling start
+    ```
+
+  </Step>
+</Steps>
+
+## Upcoming Roadmap
+
+View our planned features and improvements.
+
+<Board title="Q4 2024 Roadmap">
+  <BoardColumn title="Planned" color="0" icon="calendar">
+    <BoardCard
+      title="AI-powered content suggestions"
+      description="Auto-generate outlines and summaries"
+      icon="sparkles"
+      dueDate="2024-12-15"
+    />
+    <BoardCard
+      title="Advanced analytics"
+      description="Page views, edit history, contributor stats"
+      icon="bar-chart-3"
+    />
+  </BoardColumn>
+  <BoardColumn title="In Progress" color="1" icon="loader-2">
+    <BoardCard
+      title="Webhook integrations"
+      description="Connect to Slack, Discord, and custom endpoints"
+      icon="zap"
+      author="Engineering Team"
+    />
+  </BoardColumn>
+  <BoardColumn title="Completed" color="2" icon="check-circle">
+    <BoardCard
+      title="Export to PDF"
+      description="Generate printable documentation"
+      createdAt="2024-10-15"
+    />
+  </BoardColumn>
+</Board>
+
+## Next Steps
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="book-open" href="/quickstart">
+    Get started with Nomadfiling in minutes.
+  </Card>
+  <Card title="Authentication" icon="shield" href="/authentication">
+    Secure your documentation space.
+  </Card>
+</Columns>
+
+<Expandable title="View Full Detailed Changelog" default-open="false">
+
+For a complete list of all changes including minor patches, visit our [GitHub releases page](https://github.com/nomadfiling/nomadfiling/releases).
+
+</Expandable>

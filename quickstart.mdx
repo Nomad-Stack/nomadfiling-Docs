@@ -1,0 +1,151 @@
+---
+title: Quickstart
+description: Step-by-step guide to account setup and creating your first documentation project in under 5 minutes.
+---
+
+## Prerequisites
+
+Before starting, ensure you have:
+
+- A modern web browser like Chrome, Firefox, or Safari
+- An email address for account verification
+- Optional: A GitHub account for version control integration
+
+<Callout kind="info">
+
+Nomadfiling works entirely in your browser—no downloads required. You'll be up and running in under 5 minutes.
+
+</Callout>
+
+## Step-by-Step Setup
+
+Follow these steps to create your first documentation project.
+
+<Steps>
+  <Step title="Create an Account" icon="user-plus">
+
+    Visit `https://app.nomadfiling.com` and click **Sign Up**.
+
+    Fill in your email and password, then verify your email address.
+
+    <Image
+      src="https://images.unsplash.com/photo-1551650975-87deedd944b3?w=800&fit=crop"
+      alt="Account creation screen"
+      width="800"
+      height="500"
+    />
+
+  </Step>
+
+  <Step title="Set Up Your First Project" icon="folder-plus">
+
+    After logging in, click **New Project**.
+
+    Enter a project name like `My Docs` and select a template (e.g., Documentation Starter).
+
+    Choose your workspace or create a new one.
+
+  </Step>
+
+  <Step title="Add and Edit Your First Page" icon="edit-3">
+
+    In your project, click **Add Page** and select **Blank Page**.
+
+    Use the visual editor to add headings, text, and components.
+
+    Preview changes with the live preview pane.
+
+    <Callout kind="tip">
+
+      Drag-and-drop components like Cards or Steps directly into your page.
+
+    </Callout>
+
+  </Step>
+
+  <Step title="Publish and Share" icon="globe">
+
+    Click **Publish** to make your site live.
+
+    Copy the shareable URL or embed code.
+
+    ```html
+    <iframe src="https://docs.nomadfiling.com/my-docs" width="100%" height="600"></iframe>
+    ```
+
+    Invite collaborators via email or share the public link.
+
+  </Step>
+</Steps>
+
+## Platform-Specific Tips
+
+Customize your setup based on your operating system.
+
+<Tabs>
+  <Tab title="GitHub Integration" icon="github">
+
+    Connect your GitHub repo for automatic syncing.
+
+    ```bash
+    git remote add nomadfiling https://github.com/your-username/my-docs.git
+    git push nomadfiling main
+    ```
+
+  </Tab>
+
+  <Tab title="CLI Setup" icon="terminal">
+
+    Install the Nomadfiling CLI for local editing.
+
+    <CodeGroup tabs="npm,yarn">
+    ````bash
+    npm install -g @nomadfiling/cli
+    ````
+    ````bash
+    yarn global add @nomadfiling/cli
+    ````
+    </CodeGroup>
+
+    Initialize: `nomadfiling init`
+
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+Explore these resources to build more advanced documentation.
+
+<Columns cols={2}>
+  <Card title="Authentication" icon="shield" href="/authentication">
+    Secure your projects with team logins and permissions.
+  </Card>
+
+  <Card title="Advanced Guides" icon="book-open" href="/guides">
+    Learn custom domains, SEO, and custom components.
+  </Card>
+
+  <Card title="Configuration" icon="settings" href="/configuration">
+    Customize themes and workflows.
+  </Card>
+
+  <Card title="Changelog" icon="git-branch" href="/changelog">
+    Stay updated with new features.
+  </Card>
+</Columns>
+
+## Troubleshooting
+
+<Expandable title="Common Issues" default-open="true">
+
+- **Publish fails**: Check your internet connection and project permissions.
+- **Editor freezes**: Refresh the page and clear browser cache.
+- **Custom domain not working**: Verify DNS settings point to Nomadfiling's servers.
+
+</Expandable>
+
+<Callout kind="tip">
+
+This quickstart uses Nomadfiling's core features. Customize your projects to fit your needs—this is your starter documentation space.
+
+</Callout>

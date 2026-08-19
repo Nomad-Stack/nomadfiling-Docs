@@ -1,0 +1,22 @@
+---
+title: How do I get started?
+description: Learn how to create your first Nomadfiling project.
+---
+
+## Steps
+
+1. Sign up at `https://app.nomadfiling.com`.
+2. Verify your email address.
+3. Click "New Project" on your dashboard.
+4. Enter a project name and description.
+5. Click "Create" to save your project.
+
+Your new project is ready to organize documentation!
+
+## Example
+
+```bash
+curl -X POST https://api.nomadfiling.com/v1/projects \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"name": "My Project"}'
+```
